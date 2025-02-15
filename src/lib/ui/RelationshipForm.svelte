@@ -61,5 +61,31 @@
 				{/each}
 			</div>
 		</fieldset>
+
+		<!-- Additional Notes Section -->
+		<div>
+			<label
+				for="additionalNotes"
+				class="mb-2 block text-sm font-medium text-slate-700 {!$isStep1Complete
+					? 'opacity-75'
+					: ''}"
+			>
+				Additional Notes <span class="text-slate-400">(optional)</span>
+			</label>
+			<textarea
+				id="additionalNotes"
+				bind:value={$relationshipDetails.additionalNotes}
+				placeholder="Add any additional context about your relationship..."
+				class="
+					w-full rounded-lg border border-slate-200
+					bg-white p-3 text-sm text-slate-700
+					placeholder:text-slate-400
+					focus:border-slate-400 focus:outline-none
+					disabled:cursor-not-allowed disabled:opacity-75
+				"
+				rows="3"
+				disabled={!$isStep1Complete}
+			/>
+		</div>
 	</div>
 </fieldset>

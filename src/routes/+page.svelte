@@ -42,21 +42,25 @@
 			</div>
 
 			<!-- Right Column - Upload & Results -->
-			<div class="lg:col-span-2">
-				<div class="grid h-full gap-6 md:grid-cols-2">
+			<div class="flex lg:col-span-2">
+				<div class="grid flex-1 gap-6 md:grid-cols-2">
 					<!-- Upload Section -->
 					<div
-						class="rounded-xl bg-white p-6 shadow-sm transition-opacity {!$isStep2Complete
+						class="relative flex flex-col rounded-xl bg-white p-6 shadow-sm transition-opacity {!$isStep2Complete
 							? 'pointer-events-none opacity-50'
 							: ''}"
 					>
 						<h2 class="mb-4 text-lg font-semibold text-slate-900">3. Upload Conversation</h2>
-						<ImageInput />
+						<div class="flex-1">
+							<ImageInput />
+						</div>
 					</div>
 
-					<div class="rounded-xl bg-white p-6 shadow-sm">
+					<div class="flex flex-col rounded-xl bg-white p-6 shadow-sm">
 						<h2 class="mb-4 text-lg font-semibold text-slate-900">AI Response</h2>
-						<ProcessedText />
+						<div class="flex-1">
+							<ProcessedText />
+						</div>
 					</div>
 				</div>
 			</div>

@@ -5,7 +5,8 @@ export const selectedApp = writable<SupportedApps | null>(null);
 export const relationshipDetails = writable<{
 	duration: number;
 	objective: string;
-}>({ duration: 0, objective: '' });
+	additionalNotes?: string;
+}>({ duration: 0, objective: '', additionalNotes: '' });
 
 // Derived stores for step completion
 export const isStep1Complete = derived(selectedApp, ($selectedApp) => !!$selectedApp);
