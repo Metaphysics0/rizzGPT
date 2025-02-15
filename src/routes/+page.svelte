@@ -1,2 +1,8 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<script>
+	import ImageInput from '$lib/ui/ImageInput.svelte';
+	import { processedText } from '$lib/stores/processed-text.store';
+</script>
+
+<ImageInput />
+
+<div>{$processedText}</div>
