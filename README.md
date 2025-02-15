@@ -1,38 +1,31 @@
-# sv
+# RizzGPT
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+A web app that allows you to upload a screen recording of a whatsapp / instagram DM / tinder / bumble / okcupid text conversation with someone you are interested in, and AI will process the text and provide you with the best possible response.
 
-## Creating a project
+## Features
 
-If you're seeing this, you've probably already done this step. Congrats!
+- Multi Language Support
+- Lightning fast responses
+- History of conversations
+- Download response as text file
 
-```bash
-# create a new project in the current directory
-npx sv create
+## Tech Stack
 
-# create a new project in my-app
-npx sv create my-app
-```
+- SvelteKit
+- TailwindCSS
+- OpenAI
+- Tesseract OCR
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
+## Development
 
 ```bash
-npm run build
+pnpm install
+pnpm dev
 ```
 
-You can preview the production build with `npm run preview`.
+## Deployment
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+```bash
+pnpm build
+pnpm deploy
+```
