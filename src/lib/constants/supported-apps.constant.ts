@@ -3,5 +3,6 @@ export enum SupportedApps {
 	WHATSAPP = 'whatsapp',
 	TINDER = 'tinder',
 	BUMBLE = 'bumble',
-	OKCUPID = 'okcupid'
+	OKCUPID = 'okcupid',
+	OTHER = 'other'
 }
