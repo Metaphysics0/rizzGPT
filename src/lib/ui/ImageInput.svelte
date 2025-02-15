@@ -7,6 +7,8 @@
 	let fileInput: HTMLInputElement;
 
 	async function processImage(event: Event) {
+		console.log('event!!', event);
+
 		const file = (event.target as HTMLInputElement).files?.[0];
 		if (!file) return;
 
@@ -35,6 +37,11 @@
 		} finally {
 			processedTextIsLoading.set(false);
 		}
+	}
+
+	// Add this reactive statement to reset file input
+	$: if (!$imagePreview && fileInput) {
+		fileInput.value = '';
 	}
 </script>
 

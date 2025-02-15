@@ -2,10 +2,11 @@
 	import { processedText, processedTextIsLoading } from '$lib/stores/processed-text.store';
 	import { imagePreview } from '$lib/stores/image-preview.store';
 	import Icon from '@iconify/svelte';
+	import { fade } from 'svelte/transition';
 
 	function clearAll() {
 		processedText.set('');
-		imagePreview.set('');
+		imagePreview.set(null);
 	}
 </script>
 
@@ -13,20 +14,20 @@
 	<div class="mb-4 flex items-center justify-between">
 		<h2 class="text-xl font-semibold">Processed Text</h2>
 		<div class="flex items-center gap-2">
-			{#if $processedTextIsLoading}
-				<Icon icon="svg-spinners:90-ring-with-bg" class="h-6 w-6 text-blue-500" />
+			{#if $processedText}
+				<button
+					in:fade
+					on:click={clearAll}
+					class="
+						rounded-lg p-2 text-gray-500
+						transition-colors hover:bg-gray-100
+						hover:text-red-600
+					"
+					title="Clear all"
+				>
+					<Icon icon="mdi:close" class="h-6 w-6" />
+				</button>
 			{/if}
-			<button
-				on:click={clearAll}
-				class="
-					rounded-lg p-2 text-gray-500
-					transition-colors hover:bg-gray-100
-					hover:text-red-600
-				"
-				title="Clear all"
-			>
-				<Icon icon="mdi:close" class="h-6 w-6" />
-			</button>
 		</div>
 	</div>
 	<div
@@ -44,7 +45,7 @@
 				<Icon icon="svg-spinners:90-ring-with-bg" class="h-12 w-12 text-blue-500" />
 			</div>
 		{:else}
-			{$processedText || 'Text will appear here after processing...'}
+			{$processedText || 'Text will appear here after uploading an image...'}
 		{/if}
 	</div>
 </div>
