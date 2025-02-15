@@ -12,15 +12,22 @@
 					: ''}"
 			>
 				Duration of communication
+
 				<span class="ml-2 text-slate-600">
-					{$relationshipDetails.duration}
-					{$relationshipDetails.duration === 1 ? 'year' : 'years'}
+					{#if $relationshipDetails.duration === 0}
+						Just started talking
+					{:else if $relationshipDetails.duration < 12}
+						{$relationshipDetails.duration} month{$relationshipDetails.duration === 1 ? '' : 's'}
+					{:else}
+						1+ years
+					{/if}
 				</span>
 			</label>
 			<input
 				type="range"
 				min="0"
-				max="5"
+				max="12"
+				step="1"
 				bind:value={$relationshipDetails.duration}
 				class="
 					h-2 w-full cursor-pointer appearance-none rounded-lg
