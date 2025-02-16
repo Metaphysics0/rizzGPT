@@ -8,21 +8,50 @@
 	import { FFmpeg } from '@ffmpeg/ffmpeg';
 	import { videoProcessingState, MAX_FILE_SIZE } from '$lib/stores/form.store';
 	import { browser } from '$app/environment';
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
+	import { toBlobURL } from '@ffmpeg/util';
+
 	let fileInput: HTMLInputElement;
 
 	// Initialize FFmpeg
 	let ffmpeg: FFmpeg;
-	onMount(() => {
+	let worker: Tesseract.Worker;
+
+	onMount(async () => {
+		ffmpeg = new FFmpeg();
+		await initializeFFmpeg();
 		if (!browser) {
 			throw new Error('ImageInput is not supported in the server');
 		}
-		ffmpeg = new FFmpeg();
+		worker = await createWorker('eng');
 	});
 
-	let videoUrl = '';
+	onDestroy(() => {
+		if (worker) {
+			worker.terminate();
+		}
+		if (ffmpeg) {
+			ffmpeg.terminate();
+		}
+	});
 
-	// Add these variables
+	async function initializeFFmpeg() {
+		if (!browser) {
+			return;
+		}
+		const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd';
+		try {
+			await ffmpeg.load({
+				coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
+				wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm')
+			});
+			console.log('FFmpeg loaded successfully');
+		} catch (error) {
+			console.error('Error loading FFmpeg:', error);
+		}
+	}
+
+	let videoUrl = '';
 	let isVideo = false;
 	let videoElement: HTMLVideoElement;
 
@@ -35,58 +64,58 @@
 
 		try {
 			videoProcessingState.update((s) => ({ ...s, isProcessing: true }));
-			await ffmpeg.load();
 
 			// Write video file to FFmpeg
 			await ffmpeg.writeFile('input.mp4', new Uint8Array(await file.arrayBuffer()));
+			console.log('Video file written to FFmpeg');
 
 			// Extract frames at 1fps
 			await ffmpeg.exec(['-i', 'input.mp4', '-r', '1', 'frame-%04d.png']);
+			console.log('Frames extracted');
 
 			// Get frame list
 			const files = await ffmpeg.listDir('/');
 			const frames = files.filter((f) => f.name.startsWith('frame-')).sort();
+			console.log('Frames:', frames);
 
-			// Process each frame
+			// Process each frame sequentially
 			for (const [index, frame] of frames.entries()) {
+				console.log(`Processing frame ${index + 1}: ${frame.name}`);
 				const data = await ffmpeg.readFile(frame.name);
 				const blob = new Blob([data], { type: 'image/png' });
-				await processFrame(blob);
+
+				const {
+					data: { text }
+				} = await worker.recognize(blob);
+				processedText.update((current) => `${current}\n${text}`);
 
 				videoProcessingState.update((s) => ({
 					...s,
 					progress: ((index + 1) / frames.length) * 100,
 					currentFrame: index + 1
 				}));
+
+				// Clean up the frame file
+				await ffmpeg.unmount(frame.name);
 			}
 		} catch (error) {
 			console.error('Video processing failed:', error);
 		} finally {
 			videoProcessingState.set({ progress: 0, currentFrame: 0, isProcessing: false });
+			// Clean up input file
+			await ffmpeg.unmount('input.mp4');
 		}
 	}
 
-	async function processFrame(blob: Blob) {
-		const worker = await createWorker('eng');
-		const {
-			data: { text }
-		} = await worker.recognize(blob);
-		processedText.update((current) => `${current}\n${text}`);
-		await worker.terminate();
-	}
-
-	// Update processImage function
 	async function processImage(event: Event) {
 		const file = (event.target as HTMLInputElement).files?.[0];
 		if (!file) return;
 
-		// Reset if empty
 		if (file.size === 0) {
 			imagePreview.set('');
 			return;
 		}
 
-		// Check file type
 		if (file.type.startsWith('video/')) {
 			isVideo = true;
 			videoUrl = URL.createObjectURL(file);
@@ -94,16 +123,28 @@
 			await processVideo(file);
 		} else if (file.type.startsWith('image/')) {
 			isVideo = false;
-			// Existing image processing logic...
+			// ---  PLACE YOUR EXISTING IMAGE PROCESSING LOGIC HERE ---
+			// Example (replace with your actual image processing):
+			const reader = new FileReader();
+			reader.onload = (e) => {
+				imagePreview.set(e.target?.result as string);
+			};
+			reader.readAsDataURL(file);
+			processedTextIsLoading.set(true);
+			const worker = await createWorker('eng');
+			const {
+				data: { text }
+			} = await worker.recognize(file);
+			processedText.set(text);
+			await worker.terminate();
+			processedTextIsLoading.set(false);
 		}
 	}
 
-	// Add video preview cleanup
 	function cleanupVideo() {
 		if (videoUrl) URL.revokeObjectURL(videoUrl);
 	}
 
-	// Add this reactive statement to reset file input
 	$: if (!$imagePreview && fileInput) {
 		fileInput.value = '';
 	}
