@@ -10,6 +10,7 @@
 				class="mb-2 block text-sm font-medium text-slate-700 {!$isStep1Complete
 					? 'opacity-75'
 					: ''}"
+				for="duration"
 			>
 				Duration of communication
 
@@ -24,6 +25,7 @@
 				</span>
 			</label>
 			<input
+				id="duration"
 				type="range"
 				min="0"
 				max="12"
@@ -92,7 +94,7 @@
 				"
 				rows="3"
 				disabled={!$isStep1Complete}
-			/>
+			></textarea>
 		</div>
 	</div>
 </fieldset>
