@@ -1,5 +1,4 @@
 <script lang="ts">
-import { generateRizz } from "$lib/server/gemini.service";
 import {
   generatedResponse,
   isGeneratingResponse,
@@ -15,6 +14,7 @@ import ConversationSource from "$lib/ui/ConversationSource.svelte";
 import GeneratedResponse from "$lib/ui/GeneratedResponse.svelte";
 import ImageInput from "$lib/ui/ImageInput.svelte";
 import RelationshipForm from "$lib/ui/RelationshipForm.svelte";
+import { api } from "$lib/utils/api";
 
 // Check if we can generate response (all steps complete + file uploaded)
 $: canGenerateResponse =
@@ -38,10 +38,7 @@ async function handleGenerateResponse() {
       notes: $relationshipDetails.additionalNotes || "",
     };
 
-    const response = await generateRizz({
-      formData,
-      file: $uploadedFile,
-    });
+    const response = await api.generateRizz(formData, $uploadedFile);
     generatedResponse.set(response);
   } catch (error) {
     responseError.set(
