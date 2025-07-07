@@ -35,8 +35,6 @@
 		]
 	},
 	"dependencies": {
-		"@ffmpeg/ffmpeg": "^0.12.15",
-		"@ffmpeg/util": "^0.12.2",
-		"tesseract.js": "^6.0.0"
+		"@google/genai": "^1.8.0"
 	}
 }

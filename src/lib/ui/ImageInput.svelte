@@ -1,151 +1,43 @@
 <script lang="ts">
-	import { createWorker } from 'tesseract.js';
-	import { processedText } from '$lib/stores/processed-text.store';
+	import { isGeneratingResponse, isStep2Complete, uploadedFile } from '$lib/stores/form.store';
 	import { imagePreview } from '$lib/stores/image-preview.store';
-	import { processedTextIsLoading } from '$lib/stores/processed-text.store';
 	import Icon from '@iconify/svelte';
-	import { isStep2Complete } from '$lib/stores/form.store';
-	import { FFmpeg } from '@ffmpeg/ffmpeg';
-	import { videoProcessingState, MAX_FILE_SIZE } from '$lib/stores/form.store';
-	import { browser } from '$app/environment';
-	import { onMount, onDestroy } from 'svelte';
-	import { toBlobURL } from '@ffmpeg/util';
 
 	let fileInput: HTMLInputElement;
-
-	// Initialize FFmpeg
-	let ffmpeg: FFmpeg;
-	let worker: Tesseract.Worker;
-
-	onMount(async () => {
-		ffmpeg = new FFmpeg();
-		await initializeFFmpeg();
-		if (!browser) {
-			throw new Error('ImageInput is not supported in the server');
-		}
-		worker = await createWorker('eng');
-	});
-
-	onDestroy(() => {
-		if (worker) {
-			worker.terminate();
-		}
-		if (ffmpeg) {
-			ffmpeg.terminate();
-		}
-	});
-
-	async function initializeFFmpeg() {
-		if (!browser) {
-			return;
-		}
-		const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd';
-		try {
-			await ffmpeg.load({
-				coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
-				wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm')
-			});
-			console.log('FFmpeg loaded successfully');
-		} catch (error) {
-			console.error('Error loading FFmpeg:', error);
-		}
-	}
-
-	let videoUrl = '';
 	let isVideo = false;
 	let videoElement: HTMLVideoElement;
 
-	async function processVideo(file: File) {
-		if (file.size > MAX_FILE_SIZE) {
-			alert('File size exceeds 15MB limit');
-			fileInput.value = '';
-			return;
-		}
-
-		try {
-			videoProcessingState.update((s) => ({ ...s, isProcessing: true }));
-
-			// Write video file to FFmpeg
-			await ffmpeg.writeFile('input.mp4', new Uint8Array(await file.arrayBuffer()));
-			console.log('Video file written to FFmpeg');
-
-			// Extract frames at 1fps
-			await ffmpeg.exec(['-i', 'input.mp4', '-r', '1', 'frame-%04d.png']);
-			console.log('Frames extracted');
-
-			// Get frame list
-			const files = await ffmpeg.listDir('/');
-			const frames = files.filter((f) => f.name.startsWith('frame-')).sort();
-			console.log('Frames:', frames);
-
-			// Process each frame sequentially
-			for (const [index, frame] of frames.entries()) {
-				console.log(`Processing frame ${index + 1}: ${frame.name}`);
-				const data = await ffmpeg.readFile(frame.name);
-				const blob = new Blob([data], { type: 'image/png' });
-
-				const {
-					data: { text }
-				} = await worker.recognize(blob);
-				processedText.update((current) => `${current}\n${text}`);
-
-				videoProcessingState.update((s) => ({
-					...s,
-					progress: ((index + 1) / frames.length) * 100,
-					currentFrame: index + 1
-				}));
-
-				// Clean up the frame file
-				await ffmpeg.unmount(frame.name);
-			}
-		} catch (error) {
-			console.error('Video processing failed:', error);
-		} finally {
-			videoProcessingState.set({ progress: 0, currentFrame: 0, isProcessing: false });
-			// Clean up input file
-			await ffmpeg.unmount('input.mp4');
-		}
-	}
-
 	async function processImage(event: Event) {
-		const file = (event.target as HTMLInputElement).files?.[0];
+		const target = event.target as HTMLInputElement;
+		const file = target.files?.[0];
+
 		if (!file) return;
 
-		if (file.size === 0) {
-			imagePreview.set('');
-			return;
-		}
+		// Store the file for later use in API call
+		uploadedFile.set(file);
 
-		if (file.type.startsWith('video/')) {
-			isVideo = true;
-			videoUrl = URL.createObjectURL(file);
-			imagePreview.set(videoUrl);
-			await processVideo(file);
-		} else if (file.type.startsWith('image/')) {
-			isVideo = false;
-			const reader = new FileReader();
-			reader.onload = (e) => {
-				imagePreview.set(e.target?.result as string);
-			};
-			reader.readAsDataURL(file);
-			processedTextIsLoading.set(true);
-			const worker = await createWorker('eng');
-			const {
-				data: { text }
-			} = await worker.recognize(file);
-			processedText.set(text);
-			await worker.terminate();
-			processedTextIsLoading.set(false);
-		}
+		// Check if it's a video file
+		isVideo = file.type.startsWith('video/');
+
+		// Create preview URL
+		const previewUrl = URL.createObjectURL(file);
+		imagePreview.set(previewUrl);
 	}
 
 	$: if (!$imagePreview && fileInput) {
 		fileInput.value = '';
+		uploadedFile.set(null);
 	}
 
 	function triggerFileInput() {
 		fileInput?.click();
 	}
+
+	const uploadIcons = [
+		{ icon: 'mdi:upload', color: 'blue' },
+		{ icon: 'mdi:image', color: 'green' },
+		{ icon: 'mdi:video', color: 'purple' }
+	];
 </script>
 
 <div class="flex h-max flex-col">
@@ -161,19 +53,6 @@
 						controls
 						class="h-auto max-h-64 w-full rounded-xl object-contain"
 					></video>
-					{#if $videoProcessingState.isProcessing}
-						<div class="absolute right-0 bottom-0 left-0 rounded-b-xl bg-black/70 p-3 text-white">
-							<div class="mb-2 text-sm">
-								Processing frame {$videoProcessingState.currentFrame}...
-							</div>
-							<div class="h-2 overflow-hidden rounded-full bg-gray-600">
-								<div
-									class="h-full bg-blue-500 transition-all duration-300"
-									style={`width: ${$videoProcessingState.progress}%`}
-								></div>
-							</div>
-						</div>
-					{/if}
 				</div>
 			{:else}
 				<img
@@ -184,7 +63,6 @@
 			{/if}
 		</div>
 	{:else}
-		<!-- Upload Area -->
 		<div class="flex-1">
 			<div
 				class="
@@ -192,30 +70,23 @@
 					border-2 border-dashed border-gray-300 bg-gray-50/50 py-5
 					transition-all duration-200 hover:border-purple-400 hover:bg-purple-50/30
 					{!$isStep2Complete ? 'pointer-events-none opacity-50' : ''}
-					{$processedTextIsLoading ? 'pointer-events-none' : ''}
 				"
 				on:click={triggerFileInput}
 				role="button"
 				tabindex="0"
 				on:keydown={(e) => e.key === 'Enter' && triggerFileInput()}
 			>
-				<!-- Upload Icons -->
 				<div class="mb-4 flex items-center gap-3">
-					<div class="rounded-lg bg-blue-100 p-3 text-blue-600 group-hover:bg-blue-200">
-						<Icon icon="mdi:upload" class="h-6 w-6" />
-					</div>
-					<div class="rounded-lg bg-green-100 p-3 text-green-600 group-hover:bg-green-200">
-						<Icon icon="mdi:image" class="h-6 w-6" />
-					</div>
-					<div class="rounded-lg bg-purple-100 p-3 text-purple-600 group-hover:bg-purple-200">
-						<Icon icon="mdi:video" class="h-6 w-6" />
-					</div>
+					{#each uploadIcons as { icon, color }}
+						<div class="rounded-lg bg-{color}-100 p-3 text-{color}-600 group-hover:bg-{color}-200">
+							<Icon {icon} class="h-6 w-6" />
+						</div>
+					{/each}
 				</div>
 
-				<!-- Upload Text -->
 				<div class="text-center">
 					<p class="mb-2 text-lg font-medium text-gray-700">
-						{#if $processedTextIsLoading}
+						{#if $isGeneratingResponse}
 							<Icon icon="svg-spinners:90-ring-with-bg" class="mr-2 inline h-5 w-5" />
 							Processing...
 						{:else}
@@ -225,8 +96,7 @@
 					<p class="mb-4 text-sm text-gray-500">Supported formats: JPG, PNG, MP4, MOV (max 15MB)</p>
 				</div>
 
-				<!-- Choose File Button -->
-				{#if !$processedTextIsLoading}
+				{#if !$isGeneratingResponse}
 					<button
 						type="button"
 						class="
@@ -264,6 +134,6 @@
 		on:change={processImage}
 		class="hidden"
 		bind:this={fileInput}
-		disabled={$processedTextIsLoading}
+		disabled={$isGeneratingResponse}
 	/>
 </div>

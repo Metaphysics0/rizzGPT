@@ -1,5 +1,6 @@
-import { writable, derived } from 'svelte/store';
 import type { SupportedApps } from '$lib/constants/supported-apps.constant';
+import type { GeneratedResponse } from '$lib/types';
+import { derived, writable } from 'svelte/store';
 
 export const selectedApp = writable<SupportedApps | null>(null);
 export const relationshipDetails = writable<{
@@ -12,11 +13,10 @@ export const relationshipDetails = writable<{
 export const isStep1Complete = derived(selectedApp, ($selectedApp) => !!$selectedApp);
 export const isStep2Complete = derived(relationshipDetails, ($rd) => $rd.objective !== '');
 
-// Add new stores for video processing
-export const videoProcessingState = writable<{
-	progress: number;
-	currentFrame: number;
-	isProcessing: boolean;
-}>({ progress: 0, currentFrame: 0, isProcessing: false });
+// Stores for AI response handling
+export const isGeneratingResponse = writable<boolean>(false);
+export const generatedResponse = writable<GeneratedResponse | null>(null);
+export const responseError = writable<string | null>(null);
+export const uploadedFile = writable<File | null>(null);
 
 export const MAX_FILE_SIZE = 15 * 1024 * 1024; // 15MB
