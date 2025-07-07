@@ -3,11 +3,11 @@
 	import { relationshipObjectives } from '$lib/constants/relationship-objectives.constant';
 
 	function getDurationLabel(duration: number): string {
-		if (duration === 0) return 'just started talking';
-		if (duration <= 25) return 'few messages exchanged';
-		if (duration <= 50) return 'been chatting a while';
-		if (duration <= 75) return 'getting to know each other';
-		return 'long established conversation';
+		if (duration === 0) return 'Just started talking';
+		if (duration <= 25) return 'Few messages exchanged';
+		if (duration <= 50) return 'Been chatting a while';
+		if (duration <= 75) return 'Getting to know each other';
+		return 'Long established conversation';
 	}
 
 	function getObjectiveEmoji(objective: string): string {
@@ -54,7 +54,11 @@
 
 				<!-- Slider Labels -->
 				<div class="mt-2 flex justify-between text-xs text-gray-500">
-					<span>{getDurationLabel($relationshipDetails.duration)}</span>
+					<span class="text-left">Just started talking</span>
+					<span class="text-center font-medium text-pink-500"
+						>{getDurationLabel($relationshipDetails.duration)}</span
+					>
+					<span class="text-right">Long established</span>
 				</div>
 			</div>
 		</div>
@@ -63,6 +67,7 @@
 		<div>
 			<label
 				class="mb-4 block text-sm font-medium text-gray-700 {!$isStep1Complete ? 'opacity-75' : ''}"
+				for="objective"
 			>
 				Relationship objective
 			</label>
@@ -87,9 +92,7 @@
 							class="sr-only"
 							disabled={!$isStep1Complete}
 						/>
-						<div
-							class="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-lg group-hover:bg-gray-200"
-						>
+						<div class="flex h-7 w-7 items-center justify-center rounded-lg text-lg">
 							{getObjectiveEmoji(objective)}
 						</div>
 						<span class="font-medium text-gray-700 group-hover:text-gray-900">

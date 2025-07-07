@@ -27,7 +27,7 @@
 		>
 			<div
 				class="
-				flex h-12 w-12 items-center justify-center rounded-xl text-3xl text-white
+				flex h-12 w-12 items-center justify-center rounded-xl text-3xl
 			"
 			>
 				{appData.emoji}
