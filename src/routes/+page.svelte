@@ -16,7 +16,20 @@
 				</span>
 			</h1>
 			<p class="mt-4 text-lg text-gray-600 md:text-xl">
-				Get the perfect response for bae 💌
+				Get the perfect response for bae
+				<svg
+					class="ml-2 inline-block h-6 w-6 text-pink-500"
+					viewBox="0 0 100 100"
+					fill="currentColor"
+				>
+					<!-- Hinge H lettermark -->
+					<path
+						d="M20 15 L20 85 L30 85 L30 55 L70 55 L70 85 L80 85 L80 15 L70 15 L70 45 L30 45 L30 15 Z"
+						fill="currentColor"
+					/>
+					<!-- Subtle connecting element representing the Hinge ligature -->
+					<circle cx="50" cy="50" r="2" fill="currentColor" opacity="0.6" />
+				</svg>
 				<span class="mt-2 block text-sm text-gray-400"> Snap → Scan → Sweet Talk </span>
 			</p>
 		</div>
@@ -50,7 +63,9 @@
 							? 'pointer-events-none opacity-50'
 							: ''}"
 					>
-						<h2 class="mb-4 text-lg font-semibold text-slate-900">3. Upload Conversation</h2>
+						<h2 class="mb-4 text-lg font-semibold text-slate-900">
+							3. Upload Conversation (image or video)
+						</h2>
 						<div class="flex-1">
 							<ImageInput />
 						</div>

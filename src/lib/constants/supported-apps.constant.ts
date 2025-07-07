@@ -4,5 +4,6 @@ export enum SupportedApps {
 	TINDER = 'tinder',
 	BUMBLE = 'bumble',
 	OKCUPID = 'okcupid',
+	HINGE = 'hinge',
 	OTHER = 'other'
 }
