@@ -1,28 +1,28 @@
 <script lang="ts">
-	import { relationshipDetails, isStep1Complete } from '$lib/stores/form.store';
-	import { relationshipObjectives } from '$lib/constants/relationship-objectives.constant';
+import { relationshipDetails, isStep1Complete } from "$lib/stores/form.store";
+import { relationshipObjectives } from "$lib/constants/relationship-objectives.constant";
 
-	function getDurationLabel(duration: number): string {
-		if (duration === 0) return 'Just started talking';
-		if (duration <= 25) return 'Few messages exchanged';
-		if (duration <= 50) return 'Been chatting a while';
-		if (duration <= 75) return 'Getting to know each other';
-		return 'Long established conversation';
-	}
+function getDurationLabel(duration: number): string {
+  if (duration === 0) return "Just started talking";
+  if (duration <= 25) return "Few messages exchanged";
+  if (duration <= 50) return "Been chatting a while";
+  if (duration <= 75) return "Getting to know each other";
+  return "Long established conversation";
+}
 
-	function getObjectiveEmoji(objective: string): string {
-		if (objective.includes('New Friends')) return '😊';
-		if (objective.includes('Long-term partner')) return '💑';
-		if (objective.includes('Short-term fun')) return '🎉';
-		if (objective.includes('Long-term, open to short')) return '😄';
-		if (objective.includes('Short-term, open to long')) return '😊';
-		if (objective.includes('Still figuring')) return '🤔';
-		return '💕';
-	}
+function getObjectiveEmoji(objective: string): string {
+  if (objective.includes("New Friends")) return "😊";
+  if (objective.includes("Long-term partner")) return "💑";
+  if (objective.includes("Short-term fun")) return "🎉";
+  if (objective.includes("Long-term, open to short")) return "😄";
+  if (objective.includes("Short-term, open to long")) return "😊";
+  if (objective.includes("Still figuring")) return "🤔";
+  return "💕";
+}
 
-	function getObjectiveLabel(objective: string): string {
-		return objective.replace(/[^\w\s,'-]/g, '').trim();
-	}
+function getObjectiveLabel(objective: string): string {
+  return objective.replace(/[^\w\s,'-]/g, "").trim();
+}
 </script>
 
 <fieldset disabled={!$isStep1Complete}>

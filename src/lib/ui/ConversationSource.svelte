@@ -1,16 +1,17 @@
 <script lang="ts">
-	import { selectedApp } from '$lib/stores/form.store';
-	import { SupportedApps } from '$lib/constants/supported-apps.constant';
+import { selectedApp } from "$lib/stores/form.store";
+import { SupportedApps } from "$lib/constants/supported-apps.constant";
 
-	const appToUiDataMap: Record<SupportedApps, { label: string; emoji: string }> = {
-		[SupportedApps.INSTAGRAM]: { label: 'Instagram', emoji: '📷' },
-		[SupportedApps.WHATSAPP]: { label: 'WhatsApp', emoji: '💬' },
-		[SupportedApps.TINDER]: { label: 'Tinder', emoji: '🔥' },
-		[SupportedApps.BUMBLE]: { label: 'Bumble', emoji: '🐝' },
-		[SupportedApps.OKCUPID]: { label: 'OkCupid', emoji: '💖' },
-		[SupportedApps.HINGE]: { label: 'Hinge', emoji: '🔗' },
-		[SupportedApps.OTHER]: { label: 'Other', emoji: '💕' }
-	};
+const appToUiDataMap: Record<SupportedApps, { label: string; emoji: string }> =
+  {
+    [SupportedApps.INSTAGRAM]: { label: "Instagram", emoji: "📷" },
+    [SupportedApps.WHATSAPP]: { label: "WhatsApp", emoji: "💬" },
+    [SupportedApps.TINDER]: { label: "Tinder", emoji: "🔥" },
+    [SupportedApps.BUMBLE]: { label: "Bumble", emoji: "🐝" },
+    [SupportedApps.OKCUPID]: { label: "OkCupid", emoji: "💖" },
+    [SupportedApps.HINGE]: { label: "Hinge", emoji: "🔗" },
+    [SupportedApps.OTHER]: { label: "Other", emoji: "💕" },
+  };
 </script>
 
 <div class="grid grid-cols-4 gap-4">

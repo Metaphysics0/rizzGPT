@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { generatedResponse, responseError } from '$lib/stores/form.store';
-	import Icon from '@iconify/svelte';
+import { generatedResponse, responseError } from "$lib/stores/form.store";
+import Icon from "@iconify/svelte";
 
-	function copyToClipboard(text: string) {
-		navigator.clipboard.writeText(text);
-		// Could add a toast notification here
-	}
+function copyToClipboard(text: string) {
+  navigator.clipboard.writeText(text);
+  // Could add a toast notification here
+}
 </script>
 
 {#if $responseError}

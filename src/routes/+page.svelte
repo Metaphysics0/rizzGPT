@@ -1,51 +1,55 @@
 <script lang="ts">
-	import { generateRizz } from '$lib/services/gemini.service';
-	import {
-		generatedResponse,
-		isGeneratingResponse,
-		isStep1Complete,
-		isStep2Complete,
-		relationshipDetails,
-		responseError,
-		selectedApp,
-		uploadedFile
-	} from '$lib/stores/form.store';
-	import { imagePreview } from '$lib/stores/image-preview.store';
-	import type { RizzGPTFormData } from '$lib/types';
-	import ConversationSource from '$lib/ui/ConversationSource.svelte';
-	import GeneratedResponse from '$lib/ui/GeneratedResponse.svelte';
-	import ImageInput from '$lib/ui/ImageInput.svelte';
-	import RelationshipForm from '$lib/ui/RelationshipForm.svelte';
+import { generateRizz } from "$lib/services/gemini.service";
+import {
+  generatedResponse,
+  isGeneratingResponse,
+  isStep1Complete,
+  isStep2Complete,
+  relationshipDetails,
+  responseError,
+  selectedApp,
+  uploadedFile,
+} from "$lib/stores/form.store";
+import type { RizzGPTFormData } from "$lib/types";
+import ConversationSource from "$lib/ui/ConversationSource.svelte";
+import GeneratedResponse from "$lib/ui/GeneratedResponse.svelte";
+import ImageInput from "$lib/ui/ImageInput.svelte";
+import RelationshipForm from "$lib/ui/RelationshipForm.svelte";
 
-	// Check if we can generate response (all steps complete + file uploaded)
-	$: canGenerateResponse =
-		$isStep1Complete && $isStep2Complete && $uploadedFile && !$isGeneratingResponse;
+// Check if we can generate response (all steps complete + file uploaded)
+$: canGenerateResponse =
+  $isStep1Complete &&
+  $isStep2Complete &&
+  $uploadedFile &&
+  !$isGeneratingResponse;
 
-	async function handleGenerateResponse() {
-		if (!$uploadedFile || !$selectedApp) return;
+async function handleGenerateResponse() {
+  if (!$uploadedFile || !$selectedApp) return;
 
-		isGeneratingResponse.set(true);
-		responseError.set(null);
-		generatedResponse.set(null);
+  isGeneratingResponse.set(true);
+  responseError.set(null);
+  generatedResponse.set(null);
 
-		try {
-			const formData: RizzGPTFormData = {
-				source: $selectedApp,
-				duration: $relationshipDetails.duration,
-				objective: $relationshipDetails.objective,
-				notes: $relationshipDetails.additionalNotes || ''
-			};
+  try {
+    const formData: RizzGPTFormData = {
+      source: $selectedApp,
+      duration: $relationshipDetails.duration,
+      objective: $relationshipDetails.objective,
+      notes: $relationshipDetails.additionalNotes || "",
+    };
 
-			const response = await generateRizz(formData, $uploadedFile);
-			generatedResponse.set(response);
-		} catch (error) {
-			responseError.set(
-				error instanceof Error ? error.message : 'An error occurred while generating response'
-			);
-		} finally {
-			isGeneratingResponse.set(false);
-		}
-	}
+    const response = await generateRizz(formData, $uploadedFile);
+    generatedResponse.set(response);
+  } catch (error) {
+    responseError.set(
+      error instanceof Error
+        ? error.message
+        : "An error occurred while generating response",
+    );
+  } finally {
+    isGeneratingResponse.set(false);
+  }
+}
 </script>
 
 <div class="min-h-screen bg-gradient-to-br from-pink-100 via-purple-50 to-yellow-100 p-4 md:p-8">

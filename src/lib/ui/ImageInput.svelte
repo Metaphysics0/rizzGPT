@@ -1,43 +1,47 @@
 <script lang="ts">
-	import { isGeneratingResponse, isStep2Complete, uploadedFile } from '$lib/stores/form.store';
-	import { imagePreview } from '$lib/stores/image-preview.store';
-	import Icon from '@iconify/svelte';
+import {
+  isGeneratingResponse,
+  isStep2Complete,
+  uploadedFile,
+} from "$lib/stores/form.store";
+import { imagePreview } from "$lib/stores/image-preview.store";
+import Icon from "@iconify/svelte";
 
-	let fileInput: HTMLInputElement;
-	let isVideo = false;
-	let videoElement: HTMLVideoElement;
+let fileInput: HTMLInputElement;
+let isVideo = false;
+let videoElement: HTMLVideoElement;
 
-	async function processImage(event: Event) {
-		const target = event.target as HTMLInputElement;
-		const file = target.files?.[0];
+async function processImage(event: Event) {
+  const target = event.target as HTMLInputElement;
+  const file = target.files?.[0];
 
-		if (!file) return;
+  if (!file) return;
 
-		// Store the file for later use in API call
-		uploadedFile.set(file);
+  // Store the file for later use in API call
+  uploadedFile.set(file);
 
-		// Check if it's a video file
-		isVideo = file.type.startsWith('video/');
+  // Check if it's a video file
+  isVideo = file.type.startsWith("video/");
 
-		// Create preview URL
-		const previewUrl = URL.createObjectURL(file);
-		imagePreview.set(previewUrl);
-	}
+  // Create preview URL
+  const previewUrl = URL.createObjectURL(file);
+  imagePreview.set(previewUrl);
+}
 
-	$: if (!$imagePreview && fileInput) {
-		fileInput.value = '';
-		uploadedFile.set(null);
-	}
+$: if (!$imagePreview && fileInput) {
+  fileInput.value = "";
+  uploadedFile.set(null);
+}
 
-	function triggerFileInput() {
-		fileInput?.click();
-	}
+function triggerFileInput() {
+  fileInput?.click();
+}
 
-	const uploadIcons = [
-		{ icon: 'mdi:upload', color: 'blue' },
-		{ icon: 'mdi:image', color: 'green' },
-		{ icon: 'mdi:video', color: 'purple' }
-	];
+const uploadIcons = [
+  { icon: "mdi:upload", color: "blue" },
+  { icon: "mdi:image", color: "green" },
+  { icon: "mdi:video", color: "purple" },
+];
 </script>
 
 <div class="flex h-max flex-col">
