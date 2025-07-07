@@ -1,6 +1,6 @@
 <script lang="ts">
-import { selectedApp } from "$lib/stores/form.store";
 import { SupportedApps } from "$lib/constants/supported-apps.constant";
+import { selectedApp } from "$lib/stores/form.store";
 
 const appToUiDataMap: Record<SupportedApps, { label: string; emoji: string }> =
   {

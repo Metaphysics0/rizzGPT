@@ -1,42 +1,19 @@
-import { browser } from "$app/environment";
-import { GEMINI_API_KEY } from "$env/static/private";
 import type { GeneratedResponse, RizzGPTFormData } from "$lib/types";
+import { fileToGenerativePart } from "$lib/utils/file-to-generative-part.util";
 import { type GenerateContentResponse, GoogleGenAI } from "@google/genai";
 
-// In Svelte, we'll get the API key from environment variables or a config
-let ai: GoogleGenAI | null = null;
-
-// Initialize the AI client when in browser
-if (browser) {
-  const apiKey = GEMINI_API_KEY;
-  if (!apiKey) {
-    console.error("VITE_GEMINI_API_KEY environment variable is not set.");
-  } else {
-    ai = new GoogleGenAI({ apiKey });
-  }
-}
-
-const fileToGenerativePart = async (file: File) => {
-  const base64EncodedData = await new Promise<string>((resolve) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve((reader.result as string).split(",")[1]);
-    reader.readAsDataURL(file);
-  });
-  return {
-    inlineData: {
-      mimeType: file.type,
-      data: base64EncodedData,
-    },
-  };
-};
-
-export const generateRizz = async (
-  formData: RizzGPTFormData,
-  file: File,
-): Promise<GeneratedResponse> => {
+export async function generateRizz({
+  formData,
+  file,
+}: {
+  formData: RizzGPTFormData;
+  file: File;
+}): Promise<GeneratedResponse> {
+  const apiKey = "";
+  const ai = new GoogleGenAI({ apiKey });
   if (!ai) {
     throw new Error(
-      "Gemini AI client is not initialized. Please check your API key.",
+      "Gemini AI client is not initialized. Please check your API key."
     );
   }
 
@@ -101,7 +78,7 @@ Example:
     console.error("Failed to parse JSON response:", e);
     console.error("Raw response text:", jsonStr);
     throw new Error(
-      "AI returned an invalid response format. Please try again.",
+      "AI returned an invalid response format. Please try again."
     );
   }
-};
+}

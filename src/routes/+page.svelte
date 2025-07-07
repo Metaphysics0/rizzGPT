@@ -1,5 +1,5 @@
 <script lang="ts">
-import { generateRizz } from "$lib/services/gemini.service";
+import { generateRizz } from "$lib/server/gemini.service";
 import {
   generatedResponse,
   isGeneratingResponse,
@@ -38,7 +38,10 @@ async function handleGenerateResponse() {
       notes: $relationshipDetails.additionalNotes || "",
     };
 
-    const response = await generateRizz(formData, $uploadedFile);
+    const response = await generateRizz({
+      formData,
+      file: $uploadedFile,
+    });
     generatedResponse.set(response);
   } catch (error) {
     responseError.set(
