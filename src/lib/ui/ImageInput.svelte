@@ -148,43 +148,30 @@
 	$: if (!$imagePreview && fileInput) {
 		fileInput.value = '';
 	}
+
+	function triggerFileInput() {
+		fileInput?.click();
+	}
 </script>
 
-<div class="flex h-full flex-col gap-4">
-	<label
-		class="
-			relative flex
-			flex-1 cursor-pointer items-center
-			justify-center
-			rounded-lg
-			border-2
-			border-dashed border-slate-200 transition-all
-			{!$isStep2Complete ? 'pointer-events-none opacity-50' : 'hover:border-slate-400'}
-		"
-	>
-		<input
-			type="file"
-			accept="image/*, video/mp4, video/quicktime, video/x-msvideo"
-			on:change={processImage}
-			class="hidden"
-			bind:this={fileInput}
-			disabled={$processedTextIsLoading}
-		/>
-		{#if $imagePreview}
+<div class="flex h-full flex-col">
+	{#if $imagePreview}
+		<!-- Preview Section -->
+		<div class="mb-4 flex-1">
 			{#if isVideo}
-				<div class="relative mb-4">
+				<div class="relative">
 					<video
 						bind:this={videoElement}
 						src={$imagePreview}
 						controls
-						class="max-h-64 w-full rounded-lg object-contain"
+						class="h-auto max-h-64 w-full rounded-xl object-contain"
 					/>
 					{#if $videoProcessingState.isProcessing}
-						<div class="absolute right-0 bottom-0 left-0 bg-black/50 p-2 text-white">
-							<div class="mb-1 text-sm">
+						<div class="absolute right-0 bottom-0 left-0 rounded-b-xl bg-black/70 p-3 text-white">
+							<div class="mb-2 text-sm">
 								Processing frame {$videoProcessingState.currentFrame}...
 							</div>
-							<div class="h-1 bg-gray-600">
+							<div class="h-2 overflow-hidden rounded-full bg-gray-600">
 								<div
 									class="h-full bg-blue-500 transition-all duration-300"
 									style={`width: ${$videoProcessingState.progress}%`}
@@ -194,17 +181,94 @@
 					{/if}
 				</div>
 			{:else}
-				<img src={$imagePreview} alt="Preview" class="h-full w-full object-contain p-4" />
+				<img
+					src={$imagePreview}
+					alt="Preview"
+					class="h-auto max-h-64 w-full rounded-xl object-contain"
+				/>
 			{/if}
-		{:else}
-			<span class="p-8 text-center text-gray-500">
-				{#if $processedTextIsLoading}
-					<Icon icon="svg-spinners:90-ring-with-bg" class="mr-2 h-5 w-5" />
-					Processing...
-				{:else}
-					Click to upload image
+		</div>
+	{:else}
+		<!-- Upload Area -->
+		<div class="flex-1">
+			<div
+				class="
+					group flex h-full min-h-[200px] cursor-pointer flex-col items-center justify-center
+					rounded-xl border-2 border-dashed border-gray-300 bg-gray-50/50
+					transition-all duration-200 hover:border-purple-400 hover:bg-purple-50/30
+					{!$isStep2Complete ? 'pointer-events-none opacity-50' : ''}
+					{$processedTextIsLoading ? 'pointer-events-none' : ''}
+				"
+				on:click={triggerFileInput}
+				role="button"
+				tabindex="0"
+				on:keydown={(e) => e.key === 'Enter' && triggerFileInput()}
+			>
+				<!-- Upload Icons -->
+				<div class="mb-4 flex items-center gap-3">
+					<div class="rounded-lg bg-blue-100 p-3 text-blue-600 group-hover:bg-blue-200">
+						<Icon icon="mdi:upload" class="h-6 w-6" />
+					</div>
+					<div class="rounded-lg bg-green-100 p-3 text-green-600 group-hover:bg-green-200">
+						<Icon icon="mdi:image" class="h-6 w-6" />
+					</div>
+					<div class="rounded-lg bg-purple-100 p-3 text-purple-600 group-hover:bg-purple-200">
+						<Icon icon="mdi:video" class="h-6 w-6" />
+					</div>
+				</div>
+
+				<!-- Upload Text -->
+				<div class="text-center">
+					<p class="mb-2 text-lg font-medium text-gray-700">
+						{#if $processedTextIsLoading}
+							<Icon icon="svg-spinners:90-ring-with-bg" class="mr-2 inline h-5 w-5" />
+							Processing...
+						{:else}
+							Upload your conversation screenshot or screen recording
+						{/if}
+					</p>
+					<p class="mb-4 text-sm text-gray-500">Supported formats: JPG, PNG, MP4, MOV (max 15MB)</p>
+				</div>
+
+				<!-- Choose File Button -->
+				{#if !$processedTextIsLoading}
+					<button
+						type="button"
+						class="
+							flex items-center gap-2 rounded-xl bg-gradient-to-r from-purple-600 to-blue-600
+							px-6 py-3 font-medium text-white shadow-md transition-all duration-200
+							hover:scale-105 hover:from-purple-700 hover:to-blue-700 hover:shadow-lg
+						"
+					>
+						<Icon icon="mdi:folder-upload" class="h-5 w-5" />
+						Choose File
+					</button>
 				{/if}
-			</span>
-		{/if}
-	</label>
+			</div>
+		</div>
+	{/if}
+
+	<!-- Pro Tip -->
+	<div class="mt-4 rounded-lg bg-blue-50 p-3 text-sm">
+		<div class="flex items-start gap-2">
+			<Icon icon="mdi:lightbulb" class="mt-0.5 h-4 w-4 text-blue-600" />
+			<div>
+				<span class="font-medium text-blue-800">💡 Pro tip:</span>
+				<span class="text-blue-700">
+					For best results, make sure the conversation is clearly visible and well-lit. The AI will
+					extract and analyze your messages! ✨
+				</span>
+			</div>
+		</div>
+	</div>
+
+	<!-- Hidden File Input -->
+	<input
+		type="file"
+		accept="image/*, video/mp4, video/quicktime, video/x-msvideo"
+		on:change={processImage}
+		class="hidden"
+		bind:this={fileInput}
+		disabled={$processedTextIsLoading}
+	/>
 </div>

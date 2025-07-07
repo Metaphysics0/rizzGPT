@@ -1,36 +1,40 @@
 <script lang="ts">
 	import { selectedApp } from '$lib/stores/form.store';
 	import { SupportedApps } from '$lib/constants/supported-apps.constant';
-	import Icon from '@iconify/svelte';
 
-	const appToUiDataMap: Record<SupportedApps, { label: string; icon: string }> = {
-		[SupportedApps.INSTAGRAM]: { label: 'Instagram', icon: 'mdi:instagram' },
-		[SupportedApps.WHATSAPP]: { label: 'WhatsApp', icon: 'mdi:whatsapp' },
-		[SupportedApps.TINDER]: { label: 'Tinder', icon: 'mdi:fire' },
-		[SupportedApps.BUMBLE]: { label: 'Bumble', icon: 'mdi:bee' },
-		[SupportedApps.OKCUPID]: { label: 'OkCupid', icon: 'mdi:heart' },
-		[SupportedApps.HINGE]: { label: 'Hinge', icon: 'mdi:heart' },
-		[SupportedApps.OTHER]: { label: 'Other', icon: 'mdi:chat' }
+	const appToUiDataMap: Record<SupportedApps, { label: string; emoji: string }> = {
+		[SupportedApps.INSTAGRAM]: { label: 'Instagram', emoji: '📷' },
+		[SupportedApps.WHATSAPP]: { label: 'WhatsApp', emoji: '💬' },
+		[SupportedApps.TINDER]: { label: 'Tinder', emoji: '🔥' },
+		[SupportedApps.BUMBLE]: { label: 'Bumble', emoji: '🐝' },
+		[SupportedApps.OKCUPID]: { label: 'OkCupid', emoji: '💖' },
+		[SupportedApps.HINGE]: { label: 'Hinge', emoji: '🔗' },
+		[SupportedApps.OTHER]: { label: 'Other', emoji: '💕' }
 	};
 </script>
 
-<div class="flex flex-wrap gap-2">
+<div class="grid grid-cols-4 gap-4">
 	{#each Object.entries(appToUiDataMap) as [appName, appData]}
 		<button
 			on:click={() => selectedApp.set(appName as SupportedApps)}
-			class:selected={$selectedApp === appName}
 			class="
-				flex cursor-pointer items-center gap-2 rounded-full
-				border border-slate-200 bg-slate-50 px-4
-        py-2
-				text-sm text-slate-600
-				transition-colors
-				hover:border-slate-300 hover:bg-slate-100
-				[&.selected]:border-slate-600 [&.selected]:bg-slate-600 [&.selected]:text-white
+				group relative flex cursor-pointer flex-col items-center gap-3
+				rounded-2xl border-2 border-gray-200 bg-white p-4 transition-all
+				duration-200 hover:scale-105 hover:border-gray-300
+				hover:shadow-md
+				{$selectedApp === appName ? 'border-purple-400 bg-purple-50 ring-2 shadow-lg ring-purple-200' : ''}
 			"
 		>
-			<Icon icon={appData.icon} class="h-4 w-4 [&.selected]:text-white" />
-			<span>{appData.label}</span>
+			<div
+				class="
+				flex h-12 w-12 items-center justify-center rounded-xl text-3xl text-white
+			"
+			>
+				{appData.emoji}
+			</div>
+			<span class="text-sm font-medium text-gray-700 group-hover:text-gray-900">
+				{appData.label}
+			</span>
 		</button>
 	{/each}
 </div>

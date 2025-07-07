@@ -6,89 +6,70 @@
 	import ConversationSource from '$lib/ui/ConversationSource.svelte';
 </script>
 
-<div class="min-h-screen bg-slate-50 p-8">
-	<div class="mx-auto max-w-7xl space-y-8">
+<div class="min-h-screen bg-gradient-to-br from-pink-100 via-purple-50 to-yellow-100 p-4 md:p-8">
+	<div class="mx-auto max-w-4xl space-y-8">
 		<!-- Header -->
-		<div class="mx-auto mb-12 max-w-7xl text-center">
+		<div class="mx-auto mb-12 max-w-2xl text-center">
 			<h1 class="text-4xl font-bold md:text-5xl">
-				<span class="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+				💕 <span class="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
 					RizzGPT
 				</span>
 			</h1>
-			<p class="mt-4 text-lg text-gray-600 md:text-xl">
-				Get the perfect response for bae
-				<svg
-					class="ml-2 inline-block h-6 w-6 text-pink-500"
-					viewBox="0 0 100 100"
-					fill="currentColor"
-				>
-					<!-- Hinge H lettermark -->
-					<path
-						d="M20 15 L20 85 L30 85 L30 55 L70 55 L70 85 L80 85 L80 15 L70 15 L70 45 L30 45 L30 15 Z"
-						fill="currentColor"
-					/>
-					<!-- Subtle connecting element representing the Hinge ligature -->
-					<circle cx="50" cy="50" r="2" fill="currentColor" opacity="0.6" />
-				</svg>
-				<span class="mt-2 block text-sm text-gray-400"> Snap → Scan → Sweet Talk </span>
+			<p class="mt-4 text-lg font-medium text-gray-600 md:text-xl">
+				Get the perfect response for bae 💕
 			</p>
+			<p class="mt-2 text-sm text-gray-500">Your AI wingman for dating apps</p>
 		</div>
 
-		<!-- Main Grid -->
-		<div class="grid gap-8 lg:grid-cols-3">
-			<!-- Left Column - Configuration -->
-			<div class="space-y-6 lg:col-span-1">
-				<div class="rounded-xl bg-white p-6 shadow-sm">
-					<h2 class="mb-4 text-lg font-semibold text-slate-900">1. Conversation Source</h2>
-					<ConversationSource />
-				</div>
+		<!-- Main Content -->
+		<div class="space-y-6">
+			<!-- Step 1: Conversation Source -->
+			<div class="rounded-2xl border border-white/20 bg-white/70 p-6 shadow-lg backdrop-blur-sm">
+				<h2 class="mb-4 text-lg font-semibold text-gray-700">1. Conversation Source</h2>
+				<ConversationSource />
+			</div>
 
-				<!-- Relationship Context Section -->
+			<!-- Step 2: Relationship Context -->
+			<div
+				class="rounded-2xl border border-white/20 bg-white/70 p-6 shadow-lg backdrop-blur-sm transition-opacity {!$isStep1Complete
+					? 'pointer-events-none opacity-50'
+					: ''}"
+			>
+				<h2 class="mb-4 text-lg font-semibold text-gray-700">2. Relationship Context</h2>
+				<RelationshipForm />
+			</div>
+
+			<!-- Step 3: Upload and Results Grid -->
+			<div class="grid gap-6 md:grid-cols-2">
+				<!-- Upload Section -->
 				<div
-					class="rounded-xl bg-white p-6 shadow-sm transition-opacity {!$isStep1Complete
+					class="rounded-2xl border border-white/20 bg-white/70 p-6 shadow-lg backdrop-blur-sm transition-opacity {!$isStep2Complete
 						? 'pointer-events-none opacity-50'
 						: ''}"
 				>
-					<h2 class="mb-4 text-lg font-semibold text-slate-900">2. Relationship Context</h2>
-					<RelationshipForm />
+					<h2 class="mb-4 text-lg font-semibold text-gray-700">
+						3. Upload Conversation (Image or Video)
+					</h2>
+					<ImageInput />
 				</div>
-			</div>
 
-			<!-- Right Column - Upload & Results -->
-			<div class="flex lg:col-span-2">
-				<div class="grid flex-1 gap-6 md:grid-cols-2">
-					<!-- Upload Section -->
-					<div
-						class="relative flex flex-col rounded-xl bg-white p-6 shadow-sm transition-opacity {!$isStep2Complete
-							? 'pointer-events-none opacity-50'
-							: ''}"
-					>
-						<h2 class="mb-4 text-lg font-semibold text-slate-900">
-							3. Upload Conversation (image or video)
-						</h2>
-						<div class="flex-1">
-							<ImageInput />
-						</div>
-					</div>
-
-					<div class="flex flex-col rounded-xl bg-white p-6 shadow-sm">
-						<h2 class="mb-4 text-lg font-semibold text-slate-900">AI Response</h2>
-						<div class="flex-1">
-							<ProcessedText />
-						</div>
-					</div>
+				<!-- AI Response Section -->
+				<div class="rounded-2xl border border-white/20 bg-white/70 p-6 shadow-lg backdrop-blur-sm">
+					<h2 class="mb-4 text-lg font-semibold text-gray-700">AI Response</h2>
+					<ProcessedText />
 				</div>
 			</div>
 		</div>
 
 		<!-- Submit Button -->
-		<div class="flex justify-center">
+		<div class="flex justify-center pt-4">
 			<button
 				disabled={!$isStep1Complete || !$isStep2Complete}
 				class="
-					rounded-lg bg-slate-800 px-8 py-3 text-sm font-medium text-white
-					transition-colors hover:bg-slate-900
-					disabled:opacity-50
+					rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 px-8 py-3 font-medium
+					text-white shadow-lg transition-all duration-200
+					hover:scale-105 hover:from-purple-700 hover:to-pink-700 hover:shadow-xl
+					disabled:transform-none disabled:cursor-not-allowed disabled:opacity-50
 				"
 			>
 				Generate Response

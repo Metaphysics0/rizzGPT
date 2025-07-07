@@ -1,59 +1,81 @@
 <script lang="ts">
 	import { relationshipDetails, isStep1Complete } from '$lib/stores/form.store';
 	import { relationshipObjectives } from '$lib/constants/relationship-objectives.constant';
+
+	function getDurationLabel(duration: number): string {
+		if (duration === 0) return 'just started talking';
+		if (duration <= 25) return 'few messages exchanged';
+		if (duration <= 50) return 'been chatting a while';
+		if (duration <= 75) return 'getting to know each other';
+		return 'long established conversation';
+	}
+
+	function getObjectiveEmoji(objective: string): string {
+		if (objective.includes('New Friends')) return '😊';
+		if (objective.includes('Long-term partner')) return '💑';
+		if (objective.includes('Short-term fun')) return '🎉';
+		if (objective.includes('Long-term, open to short')) return '😄';
+		if (objective.includes('Short-term, open to long')) return '😊';
+		if (objective.includes('Still figuring')) return '🤔';
+		return '💕';
+	}
+
+	function getObjectiveLabel(objective: string): string {
+		return objective.replace(/[^\w\s,'-]/g, '').trim();
+	}
 </script>
 
 <fieldset disabled={!$isStep1Complete}>
 	<div class="space-y-6">
+		<!-- Duration of Communication -->
 		<div>
 			<label
-				class="mb-2 block text-sm font-medium text-slate-700 {!$isStep1Complete
-					? 'opacity-75'
-					: ''}"
+				class="mb-3 block text-sm font-medium text-gray-700 {!$isStep1Complete ? 'opacity-75' : ''}"
 				for="duration"
 			>
 				Duration of communication
-
-				<span class="ml-2 text-slate-600">
-					{#if $relationshipDetails.duration === 0}
-						Just started talking
-					{:else if $relationshipDetails.duration < 12}
-						{$relationshipDetails.duration} month{$relationshipDetails.duration === 1 ? '' : 's'}
-					{:else}
-						1+ years
-					{/if}
-				</span>
 			</label>
-			<input
-				id="duration"
-				type="range"
-				min="0"
-				max="12"
-				step="1"
-				bind:value={$relationshipDetails.duration}
-				class="
-					h-2 w-full cursor-pointer appearance-none rounded-lg
-					bg-slate-200 accent-slate-600
-					{!$isStep1Complete ? 'cursor-not-allowed opacity-75' : ''}
-				"
-				disabled={!$isStep1Complete}
-			/>
+
+			<div class="relative">
+				<input
+					id="duration"
+					type="range"
+					min="0"
+					max="100"
+					step="1"
+					bind:value={$relationshipDetails.duration}
+					class="
+						h-2 w-full cursor-pointer appearance-none rounded-lg
+						bg-gray-200 accent-purple-500
+						{!$isStep1Complete ? 'cursor-not-allowed opacity-75' : ''}
+					"
+					disabled={!$isStep1Complete}
+				/>
+
+				<!-- Slider Labels -->
+				<div class="mt-2 flex justify-between text-xs text-gray-500">
+					<span>{getDurationLabel($relationshipDetails.duration)}</span>
+				</div>
+			</div>
 		</div>
 
-		<fieldset>
-			<legend
-				class="mb-4 text-sm font-medium text-slate-700 {!$isStep1Complete ? 'opacity-75' : ''}"
+		<!-- Relationship Objective -->
+		<div>
+			<label
+				class="mb-4 block text-sm font-medium text-gray-700 {!$isStep1Complete ? 'opacity-75' : ''}"
 			>
 				Relationship objective
-			</legend>
-			<div class="grid grid-cols-1 gap-2">
+			</label>
+			<div class="grid grid-cols-2 gap-3">
 				{#each relationshipObjectives as objective}
 					<label
 						class="
-							relative flex cursor-pointer items-center rounded-lg border
-							border-slate-200 bg-white p-3 text-sm
-							hover:border-slate-300
-							has-[:checked]:border-slate-600 has-[:checked]:bg-slate-50
+							group relative flex cursor-pointer items-center gap-3 rounded-xl border-2
+							border-gray-200 bg-white p-4 text-sm transition-all duration-200
+							hover:scale-105 hover:border-gray-300 hover:shadow-md
+							{$relationshipDetails.objective === objective
+							? 'border-purple-400 bg-purple-50 ring-2 shadow-lg ring-purple-200'
+							: ''}
 							{!$isStep1Complete ? 'cursor-not-allowed opacity-75' : ''}
 						"
 					>
@@ -65,34 +87,39 @@
 							class="sr-only"
 							disabled={!$isStep1Complete}
 						/>
-						<span class="text-slate-700">{objective}</span>
+						<div
+							class="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-lg group-hover:bg-gray-200"
+						>
+							{getObjectiveEmoji(objective)}
+						</div>
+						<span class="font-medium text-gray-700 group-hover:text-gray-900">
+							{getObjectiveLabel(objective)}
+						</span>
 					</label>
 				{/each}
 			</div>
-		</fieldset>
+		</div>
 
 		<!-- Additional Notes Section -->
 		<div>
 			<label
 				for="additionalNotes"
-				class="mb-2 block text-sm font-medium text-slate-700 {!$isStep1Complete
-					? 'opacity-75'
-					: ''}"
+				class="mb-3 block text-sm font-medium text-gray-700 {!$isStep1Complete ? 'opacity-75' : ''}"
 			>
-				Additional Notes <span class="text-slate-400">(optional)</span>
+				Additional Notes <span class="text-gray-400">(optional)</span>
 			</label>
 			<textarea
 				id="additionalNotes"
 				bind:value={$relationshipDetails.additionalNotes}
-				placeholder="Add any additional context about your relationship..."
+				placeholder="Add any additional context about your conversation, their personality, shared interests, or what kind of vibe you're going for..."
 				class="
-					w-full rounded-lg border border-slate-200
-					bg-white p-3 text-sm text-slate-700
-					placeholder:text-slate-400
-					focus:border-slate-400 focus:outline-none
+					w-full rounded-xl border-2 border-gray-200
+					bg-white p-4 text-sm text-gray-700
+					transition-all duration-200 placeholder:text-gray-400
+					focus:border-purple-400 focus:ring-2 focus:ring-purple-200 focus:outline-none
 					disabled:cursor-not-allowed disabled:opacity-75
 				"
-				rows="3"
+				rows="4"
 				disabled={!$isStep1Complete}
 			></textarea>
 		</div>
