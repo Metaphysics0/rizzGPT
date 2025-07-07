@@ -1,9 +1,9 @@
 <script>
+	import { isStep1Complete, isStep2Complete } from '$lib/stores/form.store';
+	import ConversationSource from '$lib/ui/ConversationSource.svelte';
 	import ImageInput from '$lib/ui/ImageInput.svelte';
 	import ProcessedText from '$lib/ui/ProcessedText.svelte';
 	import RelationshipForm from '$lib/ui/RelationshipForm.svelte';
-	import { isStep1Complete, isStep2Complete } from '$lib/stores/form.store';
-	import ConversationSource from '$lib/ui/ConversationSource.svelte';
 </script>
 
 <div class="min-h-screen bg-gradient-to-br from-pink-100 via-purple-50 to-yellow-100 p-4 md:p-8">

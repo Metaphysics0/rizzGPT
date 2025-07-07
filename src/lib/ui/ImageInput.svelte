@@ -123,8 +123,6 @@
 			await processVideo(file);
 		} else if (file.type.startsWith('image/')) {
 			isVideo = false;
-			// ---  PLACE YOUR EXISTING IMAGE PROCESSING LOGIC HERE ---
-			// Example (replace with your actual image processing):
 			const reader = new FileReader();
 			reader.onload = (e) => {
 				imagePreview.set(e.target?.result as string);
@@ -139,10 +137,6 @@
 			await worker.terminate();
 			processedTextIsLoading.set(false);
 		}
-	}
-
-	function cleanupVideo() {
-		if (videoUrl) URL.revokeObjectURL(videoUrl);
 	}
 
 	$: if (!$imagePreview && fileInput) {
@@ -160,12 +154,13 @@
 		<div class="mb-4 flex-1">
 			{#if isVideo}
 				<div class="relative">
+					<!-- svelte-ignore a11y_media_has_caption -->
 					<video
 						bind:this={videoElement}
 						src={$imagePreview}
 						controls
 						class="h-auto max-h-64 w-full rounded-xl object-contain"
-					/>
+					></video>
 					{#if $videoProcessingState.isProcessing}
 						<div class="absolute right-0 bottom-0 left-0 rounded-b-xl bg-black/70 p-3 text-white">
 							<div class="mb-2 text-sm">
@@ -175,7 +170,7 @@
 								<div
 									class="h-full bg-blue-500 transition-all duration-300"
 									style={`width: ${$videoProcessingState.progress}%`}
-								/>
+								></div>
 							</div>
 						</div>
 					{/if}
