@@ -40,7 +40,7 @@
 			</div>
 
 			<!-- Step 3: Upload and Results Grid -->
-			<div class="grid gap-6 md:grid-cols-2">
+			<div class="grid gap-6 md:grid-cols-1">
 				<!-- Upload Section -->
 				<div
 					class="rounded-2xl border border-white/20 bg-white/70 p-6 shadow-lg backdrop-blur-sm transition-opacity {!$isStep2Complete
@@ -54,10 +54,10 @@
 				</div>
 
 				<!-- AI Response Section -->
-				<div class="rounded-2xl border border-white/20 bg-white/70 p-6 shadow-lg backdrop-blur-sm">
+				<!-- <div class="rounded-2xl border border-white/20 bg-white/70 p-6 shadow-lg backdrop-blur-sm">
 					<h2 class="mb-4 text-lg font-semibold text-gray-700">AI Response</h2>
 					<ProcessedText />
-				</div>
+				</div> -->
 			</div>
 		</div>
 

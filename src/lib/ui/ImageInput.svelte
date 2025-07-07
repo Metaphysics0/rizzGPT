@@ -154,7 +154,7 @@
 	}
 </script>
 
-<div class="flex h-full flex-col">
+<div class="flex h-max flex-col">
 	{#if $imagePreview}
 		<!-- Preview Section -->
 		<div class="mb-4 flex-1">
@@ -193,8 +193,8 @@
 		<div class="flex-1">
 			<div
 				class="
-					group flex h-full min-h-[200px] cursor-pointer flex-col items-center justify-center
-					rounded-xl border-2 border-dashed border-gray-300 bg-gray-50/50
+					group flex h-full min-h-[200px] cursor-pointer flex-col items-center justify-center rounded-xl
+					border-2 border-dashed border-gray-300 bg-gray-50/50 py-5
 					transition-all duration-200 hover:border-purple-400 hover:bg-purple-50/30
 					{!$isStep2Complete ? 'pointer-events-none opacity-50' : ''}
 					{$processedTextIsLoading ? 'pointer-events-none' : ''}
