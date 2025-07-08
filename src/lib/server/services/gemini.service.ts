@@ -80,12 +80,10 @@ export class GeminiService {
   }
 
   private getGenerateRizzPrompt(formData: RizzGPTFormData) {
-    const { source, duration, objective, notes } = formData;
+    const { duration, objective, notes } = formData;
 
     // Check if user has provided any meaningful relationship context
-    const hasContext = Boolean(
-      source?.trim() || objective?.trim() || notes?.trim()
-    );
+    const hasContext = Boolean(objective?.trim() || notes?.trim());
 
     // Convert objective ID to human-readable label if provided
     const objectiveData = getObjectiveById(objective);
@@ -95,7 +93,6 @@ export class GeminiService {
     if (hasContext) {
       contextSection = `
 User's Context:
-- Dating App/Platform: ${source || "Unknown"}
 - Communication Duration: ${duration}% on a scale from 'just started' to 'long established'.
 - Relationship Objective: ${objectiveLabel}
 - Additional Notes from user: ${notes || "None"}

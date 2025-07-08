@@ -1,66 +1,39 @@
 import type { GeneratedResponse, RizzGPTFormData } from "$lib/types";
+import { upload } from "@vercel/blob/client";
 
-export const api = {
-  async uploadFile(
-    file: File
-  ): Promise<{ url: string; filename: string; size: number }> {
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const response = await fetch("/api/upload", {
-      method: "POST",
-      body: formData,
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || "Upload failed");
-    }
-
-    return response.json();
-  },
-
-  async submitProcessingJob(
-    blobUrl: string,
-    formData: RizzGPTFormData
-  ): Promise<{ jobId: string }> {
-    const jobId = crypto.randomUUID();
-
-    // Trigger background processing (fire and forget)
-    fetch("/api/process-rizz", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ blobUrl, formData, jobId }),
-    }).catch(console.error);
-
-    return { jobId };
-  },
-
-  async checkJobStatus(jobId: string): Promise<{
-    status: "processing" | "completed" | "failed" | "error";
-    result?: GeneratedResponse;
-    error?: string;
-    jobId: string;
-    message?: string;
-  }> {
-    const response = await fetch(`/api/job-status/${jobId}`);
-    if (!response.ok) {
-      throw new Error("Failed to check job status");
-    }
-    return response.json();
-  },
-
+export class ApiService {
   async generateRizz(
     formData: RizzGPTFormData,
     file: File
   ): Promise<GeneratedResponse> {
-    // 1. Upload file to blob storage
-    const { url: blobUrl } = await this.uploadFile(file);
+    // Generate unique job ID
+    const jobId = crypto.randomUUID();
 
-    // 2. Submit processing job
-    const { jobId } = await this.submitProcessingJob(blobUrl, formData);
+    // 1. Upload file using client upload with job processing triggered on completion
+    const blob = await this.uploadFileClient(file, formData, jobId);
 
-    // 3. Poll for completion
+    // 2. Check if we're on localhost and trigger manual job processing if needed
+    const isLocalhost =
+      typeof window !== "undefined" &&
+      (window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1" ||
+        window.location.hostname.includes("localhost"));
+
+    if (isLocalhost) {
+      console.log("🔧 Localhost detected - manually triggering job processing");
+
+      // Wait a moment for potential onUploadCompleted, then trigger manually
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      try {
+        await this.triggerJobManually(blob.url, formData, jobId);
+      } catch (error) {
+        console.error("Failed to trigger job manually:", error);
+        // Continue anyway, maybe onUploadCompleted worked
+      }
+    }
+
+    // 3. Poll for job completion (processing starts automatically after upload)
     return new Promise((resolve, reject) => {
       let pollCount = 0;
       const maxPolls = 150; // 5 minutes max (2 second intervals)
@@ -92,18 +65,66 @@ export const api = {
       // Start polling immediately
       poll();
     });
-  },
+  }
 
-  // Legacy method for backward compatibility (will be removed)
-  async generateRizzLegacy(formData: RizzGPTFormData, file: File) {
-    const data = new FormData();
-    data.append("formData", JSON.stringify(formData));
-    data.append("file", file);
+  /**
+   * Upload file using client-side upload with automatic job processing
+   */
+  private async uploadFileClient(
+    file: File,
+    formData: RizzGPTFormData,
+    jobId: string
+  ): Promise<any> {
+    // Generate unique filename
+    const timestamp = Date.now();
+    const randomId = Math.random().toString(36).substring(2);
+    const extension = file.name.split(".").pop() || "bin";
+    const pathname = `uploads/${timestamp}-${randomId}.${extension}`;
 
-    const response = await fetch("/api/generate-rizz", {
-      method: "POST",
-      body: data,
+    // Upload directly to Vercel Blob with job processing payload
+    const blob = await upload(pathname, file, {
+      access: "public",
+      handleUploadUrl: "/api/upload-token",
+      clientPayload: JSON.stringify({ formData, jobId }),
     });
-    return response.json() as Promise<GeneratedResponse>;
-  },
-};
+
+    console.log("File uploaded successfully:", blob.url);
+    return blob;
+  }
+
+  /**
+   * Manually trigger job processing (fallback for localhost development)
+   */
+  private async triggerJobManually(
+    blobUrl: string,
+    formData: RizzGPTFormData,
+    jobId: string
+  ): Promise<void> {
+    const response = await fetch("/api/trigger-job", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ blobUrl, formData, jobId }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Failed to trigger job manually");
+    }
+
+    console.log("Job triggered manually successfully");
+  }
+
+  private async checkJobStatus(jobId: string): Promise<{
+    status: "processing" | "completed" | "failed" | "error";
+    result?: GeneratedResponse;
+    error?: string;
+    jobId: string;
+    message?: string;
+  }> {
+    const response = await fetch(`/api/job-status/${jobId}`);
+    if (!response.ok) {
+      throw new Error("Failed to check job status");
+    }
+    return response.json();
+  }
+}

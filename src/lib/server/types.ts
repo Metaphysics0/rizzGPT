@@ -24,14 +24,6 @@ export interface JobStatus {
   processedAt?: string;
 }
 
-export interface IJobProcessingService {
-  processJob(
-    jobId: string,
-    blobUrl: string,
-    formData: RizzGPTFormData
-  ): Promise<void>;
-}
-
 // File validation types
 export interface FileValidation {
   isValid: boolean;

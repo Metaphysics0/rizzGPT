@@ -1,5 +1,6 @@
 import { BLOB_READ_WRITE_TOKEN } from "$env/static/private";
 import { list, put } from "@vercel/blob";
+import { type HandleUploadBody, handleUpload } from "@vercel/blob/client";
 import type {
   FileValidation,
   JobResult,
@@ -193,6 +194,66 @@ export class BlobStorageService {
     }
 
     return { isValid: true };
+  }
+
+  /**
+   * Handles client upload requests - generates tokens and processes completed uploads
+   */
+  async handleClientUpload(
+    request: Request,
+    body: HandleUploadBody,
+    onUploadCompleted?: (body: {
+      blob: any;
+      tokenPayload?: string;
+    }) => Promise<void>
+  ) {
+    return handleUpload({
+      body,
+      request,
+      token: BLOB_READ_WRITE_TOKEN,
+      onBeforeGenerateToken: async (pathname, clientPayload) => {
+        // Extract filename from pathname for validation
+        const filename = pathname.split("/").pop() || "";
+        const extension = filename.split(".").pop()?.toLowerCase() || "";
+
+        // Create a mock file object for validation
+        const mockFile = {
+          name: filename,
+          type: this.getContentTypeFromExtension(extension),
+          size: 0, // We'll validate size server-side during upload
+        } as File;
+
+        const validation = this.validateFile(mockFile);
+        if (!validation.isValid) {
+          throw new Error(validation.error);
+        }
+
+        return {
+          addRandomSuffix: true,
+          allowedContentTypes: [...ALLOWED_FILE_TYPES] as string[],
+          maximumSizeInBytes: MAX_FILE_SIZE,
+          tokenPayload: clientPayload || "",
+        };
+      },
+      onUploadCompleted: onUploadCompleted || (async () => {}),
+    });
+  }
+
+  /**
+   * Gets content type from file extension
+   */
+  private getContentTypeFromExtension(extension: string): string {
+    const typeMap: Record<string, string> = {
+      jpg: "image/jpeg",
+      jpeg: "image/jpeg",
+      png: "image/png",
+      webp: "image/webp",
+      mp4: "video/mp4",
+      mov: "video/quicktime",
+      avi: "video/x-msvideo",
+    };
+
+    return typeMap[extension] || "application/octet-stream";
   }
 
   /**
