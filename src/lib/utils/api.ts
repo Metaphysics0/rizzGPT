@@ -83,7 +83,10 @@ export class ApiService {
       // Handle connection close
       eventSource.addEventListener("close", (event) => {
         console.log("SSE connection closed by server");
-        eventSource.close();
+        if (!isResolved) {
+          clearTimeout(timeout);
+          eventSource.close();
+        }
       });
 
       // Handle errors

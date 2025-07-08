@@ -6,6 +6,7 @@ import type { JobStatus } from "../types";
 interface SSEConnection {
   jobId: string;
   controller: ReadableStreamDefaultController;
+  heartbeatInterval?: NodeJS.Timeout;
   cleanup: () => void;
 }
 
@@ -27,10 +28,25 @@ export class SSEManagerService {
       start: (controller) => {
         console.log(`Starting SSE stream for job ${jobId}`);
 
+        // Set up heartbeat to keep connection alive
+        const heartbeat = setInterval(() => {
+          try {
+            this.sendMessage(controller, {
+              type: "heartbeat",
+              data: { timestamp: new Date().toISOString() },
+            });
+          } catch (error) {
+            console.log(`Heartbeat failed for job ${jobId}, cleaning up`);
+            clearInterval(heartbeat);
+            this.removeConnection(jobId, controller);
+          }
+        }, 30000); // Every 30 seconds
+
         // Add this connection to our tracking
         const connection: SSEConnection = {
           jobId,
           controller,
+          heartbeatInterval: heartbeat,
           cleanup: () => this.removeConnection(jobId, controller),
         };
 
@@ -45,20 +61,6 @@ export class SSEManagerService {
             message: "Job processing started...",
           },
         });
-
-        // Set up heartbeat to keep connection alive
-        const heartbeat = setInterval(() => {
-          try {
-            this.sendMessage(controller, {
-              type: "heartbeat",
-              data: { timestamp: new Date().toISOString() },
-            });
-          } catch (error) {
-            console.log(`Heartbeat failed for job ${jobId}, cleaning up`);
-            clearInterval(heartbeat);
-            this.removeConnection(jobId, controller);
-          }
-        }, 30000); // Every 30 seconds
 
         // Clean up on close
         controller.enqueue(`retry: 5000\n\n`); // Retry after 5 seconds if disconnected
@@ -94,22 +96,21 @@ export class SSEManagerService {
           data: status,
         });
 
-        // If job is completed or failed, close the connection after a delay
+        // If job is completed or failed, send close message and let frontend handle disconnection
         if (status.status === "completed" || status.status === "failed") {
-          setTimeout(() => {
-            try {
-              this.sendMessage(connection.controller, {
-                type: "close",
-                data: { message: "Job finished, closing connection" },
-              });
-              connection.controller.close();
-            } catch (error) {
-              console.log(
-                `Error closing connection ${index} for job ${jobId}:`,
-                error
-              );
-            }
-          }, 1000); // 1 second delay to ensure message is received
+          // Send close message immediately, but don't force-close the controller
+          // The frontend will close the EventSource when it receives this
+          try {
+            this.sendMessage(connection.controller, {
+              type: "close",
+              data: { message: "Job finished, connection will close" },
+            });
+          } catch (error) {
+            console.log(
+              `Error sending close message to connection ${index} for job ${jobId}:`,
+              error
+            );
+          }
         }
       } catch (error) {
         console.log(
@@ -186,6 +187,11 @@ export class SSEManagerService {
     this.connections.forEach((connections, jobId) => {
       connections.forEach((connection) => {
         try {
+          // Clear heartbeat interval
+          if (connection.heartbeatInterval) {
+            clearInterval(connection.heartbeatInterval);
+          }
+
           this.sendMessage(connection.controller, {
             type: "error",
             data: { message: "Server shutting down" },
@@ -233,11 +239,29 @@ export class SSEManagerService {
         (conn) => conn.controller === controller
       );
       if (index > -1) {
+        const connection = connections[index];
+
+        // Clean up heartbeat interval
+        if (connection.heartbeatInterval) {
+          clearInterval(connection.heartbeatInterval);
+          console.log(`Cleared heartbeat interval for job ${jobId}`);
+        }
+
         connections.splice(index, 1);
         console.log(
           `Removed connection for job ${jobId}. Remaining: ${connections.length}`
         );
       }
+    } else {
+      // If controller is null, clean up all connections for this job
+      connections.forEach((connection) => {
+        if (connection.heartbeatInterval) {
+          clearInterval(connection.heartbeatInterval);
+          console.log(
+            `Cleared heartbeat interval for job ${jobId} (bulk cleanup)`
+          );
+        }
+      });
     }
 
     // Remove job entry if no connections left
@@ -259,13 +283,23 @@ export class SSEManagerService {
       data: any;
     }
   ): void {
-    const timestamp = new Date().toISOString();
-    const formattedMessage = `event: ${message.type}\ndata: ${JSON.stringify({
-      ...message.data,
-      timestamp,
-    })}\n\n`;
+    // Check if controller is still open before trying to send
+    try {
+      const timestamp = new Date().toISOString();
+      const formattedMessage = `event: ${message.type}\ndata: ${JSON.stringify({
+        ...message.data,
+        timestamp,
+      })}\n\n`;
 
-    controller.enqueue(formattedMessage);
+      controller.enqueue(formattedMessage);
+    } catch (error) {
+      // Controller is likely closed, throw error to be handled by caller
+      throw new Error(
+        `Controller closed: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
+    }
   }
 }
 
