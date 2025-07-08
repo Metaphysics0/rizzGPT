@@ -94,7 +94,7 @@
               {/if}
             </p>
             <p class="mb-4 text-sm text-gray-500">
-              Supported formats: JPG, PNG, MP4, MOV (max 15MB)
+              Supported formats: JPG, PNG, MP4, MOV (max 50MB)
             </p>
           </div>
 
@@ -123,7 +123,8 @@
           <span class="font-medium text-blue-800">💡 Pro tip:</span>
           <span class="text-blue-700">
             For best results, make sure the conversation is clearly visible and
-            well-lit. The AI will extract and analyze your messages! ✨
+            well-lit. Large files will upload instantly and then process in the
+            background! ✨
           </span>
         </div>
       </div>

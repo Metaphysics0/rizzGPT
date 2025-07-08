@@ -1,4 +1,4 @@
-import { GeminiService } from "$lib/server/gemini.service";
+import { GeminiService } from "$lib/server/services/gemini.service";
 import type { RizzGPTFormData } from "$lib/types";
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
