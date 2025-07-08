@@ -1,10 +1,9 @@
-import { GeminiService } from "$lib/server/gemini.service";
+import { JobProcessingService } from "$lib/server/services/job-processing.service";
 import type { RizzGPTFormData } from "$lib/types";
 import { json } from "@sveltejs/kit";
-import { put } from "@vercel/blob";
 import type { RequestHandler } from "./$types";
 
-export const POST = (async ({ request, fetch }) => {
+export const POST = (async ({ request }) => {
   try {
     const { blobUrl, formData, jobId } = (await request.json()) as {
       blobUrl: string;
@@ -16,93 +15,26 @@ export const POST = (async ({ request, fetch }) => {
       return json({ error: "Missing required parameters" }, { status: 400 });
     }
 
-    console.log(`Processing job ${jobId} for blob: ${blobUrl}`);
-
-    // Download file from blob storage
-    const fileResponse = await fetch(blobUrl);
-    if (!fileResponse.ok) {
-      throw new Error(
-        `Failed to download file from blob: ${fileResponse.statusText}`
-      );
-    }
-
-    const arrayBuffer = await fileResponse.arrayBuffer();
-    const contentType =
-      fileResponse.headers.get("content-type") || "image/jpeg";
-
-    // Extract original filename from URL or use default
-    const urlPath = new URL(blobUrl).pathname;
-    const filename = urlPath.split("/").pop() || "uploaded-file";
-
-    const file = new File([arrayBuffer], filename, {
-      type: contentType,
-    });
-
-    // Process with Gemini
-    const geminiService = new GeminiService();
-    const response = await geminiService.generateRizz({
-      rizzGPTFormData: formData,
-      file,
-    });
-
-    // Store successful result in blob with jobId
-    const resultBlob = await put(
-      `results/${jobId}.json`,
-      JSON.stringify({
-        success: true,
-        data: response,
-        processedAt: new Date().toISOString(),
-      }),
-      { access: "public" }
-    );
-
-    console.log(
-      `Job ${jobId} completed successfully, result stored at: ${resultBlob.url}`
-    );
+    // Use job processing service to handle the processing
+    const jobService = new JobProcessingService();
+    await jobService.processJobSafe(jobId, blobUrl, formData);
 
     return json({
       success: true,
-      resultUrl: resultBlob.url,
       jobId,
+      message: "Job processing started",
     });
   } catch (error) {
-    console.error("Processing error:", error);
-
-    try {
-      // Store error result for the job
-      const { jobId } = await request.json();
-      const errorResult = {
+    console.error("Process endpoint error:", error);
+    return json(
+      {
         success: false,
-        error: error instanceof Error ? error.message : "Processing failed",
-        processedAt: new Date().toISOString(),
-      };
-
-      const errorBlob = await put(
-        `results/${jobId}.json`,
-        JSON.stringify(errorResult),
-        { access: "public" }
-      );
-
-      console.log(`Job ${jobId} failed, error stored at: ${errorBlob.url}`);
-
-      return json(
-        {
-          success: false,
-          error: errorResult.error,
-          resultUrl: errorBlob.url,
-          jobId,
-        },
-        { status: 500 }
-      );
-    } catch (storeError) {
-      console.error("Failed to store error result:", storeError);
-      return json(
-        {
-          success: false,
-          error: "Processing failed and unable to store error result",
-        },
-        { status: 500 }
-      );
-    }
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to start job processing",
+      },
+      { status: 500 }
+    );
   }
 }) satisfies RequestHandler;

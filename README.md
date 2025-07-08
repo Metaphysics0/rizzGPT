@@ -9,11 +9,23 @@ A web application that helps you generate better responses for dating conversati
 - Support for large file uploads (up to 50MB)
 - Async background processing for better performance
 - Modern serverless architecture with Vercel
+- Service-based architecture for maintainability and scalability
 
 ## Architecture
 
-The app uses a modern async architecture optimized for Vercel's serverless platform:
+The app uses a modern async architecture optimized for Vercel's serverless platform with clean separation of concerns:
 
+### Service Layer
+- **BlobStorageService**: Handles all file uploads, storage, and retrieval operations
+- **JobProcessingService**: Manages background job processing with Gemini AI
+- **GeminiService**: Focused AI processing with Google Gemini
+
+### API Layer
+- **Thin Controllers**: Minimal logic, delegating to services
+- **Clear Separation**: Controllers handle HTTP concerns, services handle business logic
+- **Type Safety**: Strong TypeScript interfaces for all service contracts
+
+### Flow
 1. **Direct Upload**: Files are uploaded directly to Vercel Blob storage, bypassing function payload limits
 2. **Background Processing**: AI processing happens asynchronously in the background
 3. **Real-time Updates**: Frontend polls for completion and updates the UI when ready
@@ -64,6 +76,35 @@ pnpm lint
 pnpm format
 ```
 
+## Project Structure
+
+```
+src/
+├── lib/
+│   ├── services/                    # Business logic services
+│   │   ├── blob-storage.service.ts  # File upload/storage operations
+│   │   ├── job-processing.service.ts # Background job processing
+│   │   ├── types.ts                 # Service interfaces & types
+│   │   └── index.ts                 # Service exports
+│   ├── server/
+│   │   └── gemini.service.ts        # AI processing service
+│   └── ...
+├── routes/
+│   └── api/
+│       ├── upload/                  # File upload endpoint
+│       ├── process-rizz/           # Job processing endpoint
+│       └── job-status/[jobId]/     # Status checking endpoint
+└── ...
+```
+
+## Service Architecture Benefits
+
+- **Maintainability**: Clear separation of concerns with dedicated services
+- **Testability**: Services can be easily unit tested in isolation
+- **Reusability**: Services can be used across multiple endpoints
+- **Scalability**: Services can be easily extended or swapped out
+- **Type Safety**: Strong interfaces ensure reliable service contracts
+
 ## Deployment
 
 This app is designed to deploy on Vercel:
@@ -89,6 +130,7 @@ The app will automatically handle:
 - **Backend**: SvelteKit API routes, Vercel serverless functions
 - **AI**: Google Gemini 2.5 Flash
 - **Storage**: Vercel Blob
+- **Architecture**: Service-based with dependency injection
 - **Deployment**: Vercel
 - **Package Manager**: pnpm
 
