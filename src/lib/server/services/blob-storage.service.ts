@@ -1,3 +1,4 @@
+import { BLOB_READ_WRITE_TOKEN } from "$env/static/private";
 import { list, put } from "@vercel/blob";
 import type {
   FileValidation,
@@ -8,6 +9,12 @@ import type {
 import { ALLOWED_FILE_TYPES, MAX_FILE_SIZE } from "../types";
 
 export class BlobStorageService {
+  constructor() {
+    if (!BLOB_READ_WRITE_TOKEN) {
+      throw new Error("BLOB_READ_WRITE_TOKEN is not set");
+    }
+  }
+
   /**
    * Uploads a file to Vercel Blob storage
    */
@@ -25,6 +32,7 @@ export class BlobStorageService {
       // Upload to blob storage
       const blob = await put(uniqueFilename, file, {
         access: "public",
+        token: BLOB_READ_WRITE_TOKEN,
       });
 
       return {
@@ -47,7 +55,10 @@ export class BlobStorageService {
       const resultBlob = await put(
         `results/${jobId}.json`,
         JSON.stringify(result),
-        { access: "public" }
+        {
+          access: "public",
+          token: BLOB_READ_WRITE_TOKEN,
+        }
       );
 
       console.log(`Job ${jobId} result stored at: ${resultBlob.url}`);
@@ -60,17 +71,32 @@ export class BlobStorageService {
 
   /**
    * Retrieves job processing result from blob storage
+   * Note: Vercel Blob automatically adds hashes to filenames, so we search by prefix
    */
   async getJobResult(jobId: string): Promise<JobStatus> {
     try {
-      // List blobs to find our result file
+      console.log(`Searching for job result with jobId: ${jobId}`);
+
+      // Search for files that start with our jobId pattern
+      // Vercel Blob adds hashes to filenames, so we search by prefix
       const { blobs } = await list({
-        prefix: `results/${jobId}.json`,
-        limit: 1,
+        prefix: `results/${jobId}`,
+        limit: 10, // Get a few results to find the right one
+        token: BLOB_READ_WRITE_TOKEN,
       });
 
-      if (blobs.length === 0) {
-        // Job result not found, still processing
+      console.log(`Found ${blobs.length} blobs with prefix results/${jobId}`);
+      blobs.forEach((blob) => console.log(`Blob: ${blob.pathname}`));
+
+      // Find the JSON result file for this jobId
+      const resultBlob = blobs.find(
+        (blob) =>
+          blob.pathname.startsWith(`results/${jobId}`) &&
+          blob.pathname.endsWith(".json")
+      );
+
+      if (!resultBlob) {
+        console.log(`No result blob found for job ${jobId}, still processing`);
         return {
           status: "processing",
           jobId,
@@ -78,15 +104,17 @@ export class BlobStorageService {
         };
       }
 
+      console.log(`Found result blob for job ${jobId}: ${resultBlob.url}`);
+
       // Fetch the result from the blob
-      const resultUrl = blobs[0].url;
-      const response = await fetch(resultUrl);
+      const response = await fetch(resultBlob.url);
 
       if (!response.ok) {
         throw new Error(`Failed to fetch result: ${response.statusText}`);
       }
 
       const result: JobResult = await response.json();
+      console.log(`Job ${jobId} result:`, result);
 
       if (result.success) {
         return {
