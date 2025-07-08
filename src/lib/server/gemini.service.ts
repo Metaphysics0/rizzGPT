@@ -82,19 +82,31 @@ export class GeminiService {
   private getGenerateRizzPrompt(formData: RizzGPTFormData) {
     const { source, duration, objective, notes } = formData;
 
-    // Convert objective ID to human-readable label
+    // Check if user has provided any meaningful relationship context
+    const hasContext = Boolean(
+      source?.trim() || objective?.trim() || notes?.trim()
+    );
+
+    // Convert objective ID to human-readable label if provided
     const objectiveData = getObjectiveById(objective);
     const objectiveLabel = objectiveData?.label || objective;
 
-    return `
-${RIZZ_GPT_GLOBAL_CONTEXT_PROMPT}
-
+    let contextSection = "";
+    if (hasContext) {
+      contextSection = `
 User's Context:
 - Dating App/Platform: ${source || "Unknown"}
 - Communication Duration: ${duration}% on a scale from 'just started' to 'long established'.
 - Relationship Objective: ${objectiveLabel}
 - Additional Notes from user: ${notes || "None"}
 
+`;
+    }
+
+    return `
+${RIZZ_GPT_GLOBAL_CONTEXT_PROMPT}
+
+${contextSection}
 Based on the conversation in the image, provide a brief analysis of the current conversation vibe and an explanation of why your suggested responses are a good fit. Then, provide 3 distinct response options for me to send next. Make the responses flirty, funny, or romantic, depending on the context. Keep them concise and natural-sounding.
 
 Return the response as a valid JSON object with two keys: "explanation" (a string) and "responses" (an array of 3 strings).
