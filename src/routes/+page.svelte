@@ -13,9 +13,14 @@
   import GeneratedResponse from "$lib/ui/GeneratedResponse.svelte";
   import Header from "$lib/ui/Header.svelte";
   import { api } from "$lib/utils/api";
+  import Icon from "@iconify/svelte";
+  import { slide } from "svelte/transition";
 
   // Check if we can generate response (only upload required now)
   $: canGenerateResponse = $uploadedFile && !$isGeneratingResponse;
+
+  // State for relationship context accordion
+  let isRelationshipContextOpen = false;
 
   async function handleGenerateResponse() {
     if (!$uploadedFile) return;
@@ -67,10 +72,29 @@
       <div
         class="rounded-2xl border border-white/20 bg-white/70 p-6 shadow-lg backdrop-blur-sm"
       >
-        <h2 class="mb-4 text-lg font-semibold text-gray-700">
-          2. Relationship Context <span class="text-gray-400">(optional)</span>
-        </h2>
-        <RelationshipForm />
+        <button
+          type="button"
+          on:click={() =>
+            (isRelationshipContextOpen = !isRelationshipContextOpen)}
+          class="flex w-full items-center justify-between text-left focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 rounded-lg p-2 -m-2"
+        >
+          <h2 class="text-lg font-semibold text-gray-700">
+            2. Relationship Context <span class="text-gray-400">(optional)</span
+            >
+          </h2>
+          <Icon
+            icon="heroicons:chevron-down"
+            class="h-5 w-5 text-gray-500 transition-transform duration-200 {isRelationshipContextOpen
+              ? 'rotate-180'
+              : ''}"
+          />
+        </button>
+
+        {#if isRelationshipContextOpen}
+          <div transition:slide={{ duration: 300 }} class="mt-4">
+            <RelationshipForm />
+          </div>
+        {/if}
       </div>
 
       <!-- AI Response Section -->
