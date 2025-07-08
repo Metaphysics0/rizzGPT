@@ -1,5 +1,6 @@
 import { GEMINI_API_KEY } from "$env/static/private";
 import { getObjectiveById } from "$lib/constants/relationship-objectives.constant";
+import { RIZZ_GPT_GLOBAL_CONTEXT_PROMPT } from "$lib/constants/rizz-gpt-global-context.prompt";
 import type { GeneratedResponse, RizzGPTFormData } from "$lib/types";
 import { Buffer } from "node:buffer";
 import { type GenerateContentResponse, GoogleGenAI } from "@google/genai";
@@ -9,7 +10,11 @@ export class GeminiService {
   private readonly GEMINI_FLASH_MODEL = "gemini-2.5-flash-preview-04-17";
 
   constructor() {
-    this.client = new GoogleGenAI({ apiKey: GEMINI_API_KEY || "" });
+    if (!GEMINI_API_KEY) {
+      throw new Error("GEMINI_API_KEY is not set");
+    }
+
+    this.client = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
   }
 
   async generateRizz({
@@ -19,28 +24,22 @@ export class GeminiService {
     rizzGPTFormData: RizzGPTFormData;
     file: File;
   }): Promise<GeneratedResponse> {
-    const imagePart = await this.fileToGenerativePart(file);
-    const prompt = this.getGenerateRizzPrompt(rizzGPTFormData);
-
-    const response: GenerateContentResponse =
-      await this.client.models.generateContent({
-        model: this.GEMINI_FLASH_MODEL,
-        contents: { parts: [imagePart, { text: prompt }] },
-        config: {
-          responseMimeType: "application/json",
-          temperature: 0.8,
-          topP: 0.95,
-        },
-      });
-
-    let jsonStr = response.text?.trim() || "";
-    const fenceRegex = /^```(\w*)?\s*\n?(.*?)\n?\s*```$/s;
-    const match = jsonStr.match(fenceRegex);
-    if (match?.[2]) {
-      jsonStr = match[2].trim();
-    }
-
     try {
+      const imagePart = await this.fileToGenerativePart(file);
+      const prompt = this.getGenerateRizzPrompt(rizzGPTFormData);
+
+      const response: GenerateContentResponse =
+        await this.client.models.generateContent({
+          model: this.GEMINI_FLASH_MODEL,
+          contents: { parts: [imagePart, { text: prompt }] },
+          config: {
+            responseMimeType: "application/json",
+            temperature: 0.8,
+            topP: 0.95,
+          },
+        });
+
+      const jsonStr = this.formatJsonResponseForGemini(response);
       const parsedData = JSON.parse(jsonStr) as GeneratedResponse;
       if (
         !parsedData.responses ||
@@ -53,7 +52,6 @@ export class GeminiService {
       return parsedData;
     } catch (e) {
       console.error("Failed to parse JSON response:", e);
-      console.error("Raw response text:", jsonStr);
       throw new Error(
         "AI returned an invalid response format. Please try again."
       );
@@ -72,6 +70,15 @@ export class GeminiService {
     };
   }
 
+  private formatJsonResponseForGemini(response: GenerateContentResponse) {
+    const text = response.text?.trim() || "";
+    const fenceRegex = /^```(\w*)?\s*\n?(.*?)\n?\s*```$/s;
+    const match = text.match(fenceRegex);
+    if (match?.[2]) return match[2].trim();
+
+    return text;
+  }
+
   private getGenerateRizzPrompt(formData: RizzGPTFormData) {
     const { source, duration, objective, notes } = formData;
 
@@ -80,9 +87,7 @@ export class GeminiService {
     const objectiveLabel = objectiveData?.label || objective;
 
     return `
-You are RizzGPT, a witty and charming AI wingman for dating apps. Your goal is to help users craft the perfect response to keep conversations engaging, fun, and aligned with their dating objectives. 
-Analyze the provided conversation screenshot/video and the user's context, then generate 3 unique, clever, and context-aware responses.
-In the screenshot, messages on the right are from the user, and messages on the left are from their match. The last message is likely from the match.
+${RIZZ_GPT_GLOBAL_CONTEXT_PROMPT}
 
 User's Context:
 - Dating App/Platform: ${source || "Unknown"}

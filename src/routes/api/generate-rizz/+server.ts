@@ -5,9 +5,9 @@ import type { RequestHandler } from "./$types";
 
 export const POST = (async ({ request }) => {
   try {
-    const formData = await request.formData();
-    const { rizzGPTFormData, file } = validateFormData(formData);
-
+    const { rizzGPTFormData, file } = await getAndValidateFormDataFromRequest(
+      request
+    );
     const response = await new GeminiService().generateRizz({
       rizzGPTFormData,
       file,
@@ -24,7 +24,8 @@ export const POST = (async ({ request }) => {
   }
 }) satisfies RequestHandler;
 
-function validateFormData(formData: FormData) {
+async function getAndValidateFormDataFromRequest(request: Request) {
+  const formData = await request.formData();
   const formDataJson = formData.get("formData");
   const file = formData.get("file");
 
