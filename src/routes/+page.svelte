@@ -2,17 +2,16 @@
   import {
     generatedResponse,
     isGeneratingResponse,
-    isStep1Complete,
-    isStep2Complete,
     relationshipDetails,
     responseError,
     selectedApp,
     uploadedFile,
   } from "$lib/stores/form.store";
   import type { RizzGPTFormData } from "$lib/types";
+  import ImageInput from "$lib/ui/Form/ImageInput.svelte";
+  import RelationshipForm from "$lib/ui/Form/RelationshipContext.svelte";
   import GeneratedResponse from "$lib/ui/GeneratedResponse.svelte";
-  import ImageInput from "$lib/ui/ImageInput.svelte";
-  import RelationshipForm from "$lib/ui/RelationshipForm.svelte";
+  import Header from "$lib/ui/Header.svelte";
   import { api } from "$lib/utils/api";
 
   // Check if we can generate response (only upload required now)
@@ -51,22 +50,9 @@
   class="min-h-screen bg-gradient-to-br from-pink-100 via-purple-50 to-yellow-100 p-4 md:p-8"
 >
   <div class="mx-auto max-w-4xl space-y-8">
-    <div class="mx-auto mb-12 max-w-2xl text-center">
-      <h1 class="text-4xl font-bold md:text-5xl">
-        💕 <span
-          class="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"
-        >
-          RizzGPT
-        </span>
-      </h1>
-      <p class="mt-4 text-lg font-medium text-gray-600 md:text-xl">
-        Get the perfect response for bae 💕
-      </p>
-      <p class="mt-2 text-sm text-gray-500">Your AI wingman for dating apps</p>
-    </div>
+    <Header />
 
     <div class="space-y-6">
-      <!-- Step 1: Upload Conversation (Required) -->
       <div
         class="rounded-2xl border border-white/20 bg-white/70 p-6 shadow-lg backdrop-blur-sm"
       >
@@ -78,7 +64,6 @@
         <ImageInput />
       </div>
 
-      <!-- Step 2: Relationship Context (Optional) -->
       <div
         class="rounded-2xl border border-white/20 bg-white/70 p-6 shadow-lg backdrop-blur-sm"
       >
