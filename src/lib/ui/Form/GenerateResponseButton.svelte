@@ -4,7 +4,6 @@
     isGeneratingResponse,
     relationshipDetails,
     responseError,
-    selectedApp,
     uploadedFile,
   } from "$lib/stores/form.store";
   import type { RizzGPTFormData } from "$lib/types";
@@ -21,7 +20,6 @@
 
     try {
       const formData: RizzGPTFormData = {
-        source: $selectedApp || undefined,
         duration: $relationshipDetails.duration,
         objective: $relationshipDetails.objective,
         notes: $relationshipDetails.additionalNotes || "",
