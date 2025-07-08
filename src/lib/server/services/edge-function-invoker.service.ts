@@ -1,8 +1,5 @@
 import type { RizzGPTFormData } from "$lib/types";
 
-/**
- * Service for invoking Edge Functions for background processing
- */
 export class EdgeFunctionInvokerService {
   private readonly baseUrl: string;
 
@@ -13,9 +10,6 @@ export class EdgeFunctionInvokerService {
       : "http://localhost:5173";
   }
 
-  /**
-   * Invokes the background job processing Edge Function
-   */
   async invokeBackgroundJob(
     jobId: string,
     blobUrl: string,
@@ -31,7 +25,6 @@ export class EdgeFunctionInvokerService {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          // Include authorization headers if needed
           ...(process.env.VERCEL_INTERNAL_TOKEN && {
             Authorization: `Bearer ${process.env.VERCEL_INTERNAL_TOKEN}`,
           }),

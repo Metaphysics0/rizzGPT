@@ -7,7 +7,7 @@
     uploadedFile,
   } from "$lib/stores/form.store";
   import type { RizzGPTFormData } from "$lib/types";
-  import { api } from "$lib/utils/api";
+  import { ApiService } from "$lib/utils/api";
 
   $: canGenerateResponse = $uploadedFile && !$isGeneratingResponse;
 
@@ -25,7 +25,10 @@
         notes: $relationshipDetails.additionalNotes || "",
       };
 
-      const response = await api.generateRizz(formData, $uploadedFile);
+      const response = await new ApiService().generateRizz(
+        formData,
+        $uploadedFile
+      );
       generatedResponse.set(response);
     } catch (error) {
       responseError.set(
