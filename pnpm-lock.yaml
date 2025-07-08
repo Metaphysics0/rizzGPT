@@ -14,6 +14,9 @@ importers:
       '@vercel/blob':
         specifier: ^0.15.1
         version: 0.15.1
+      '@vercel/functions':
+        specifier: ^1.6.0
+        version: 1.6.0
     devDependencies:
       '@biomejs/biome':
         specifier: 2.0.6
@@ -578,6 +581,15 @@ packages:
   '@vercel/blob@0.15.1':
     resolution: {integrity: sha512-Wo7VU9/tM8kkv7krvxGoDeu/Li0h7PYR/TB1TEiyJZzACruA0jWqj44OGokJQCYN3ZvV5tXHpTAN6pImIBCrUw==}
     engines: {node: '>=16.14'}
+
+  '@vercel/functions@1.6.0':
+    resolution: {integrity: sha512-R6FKQrYT5MZs5IE1SqeCJWxMuBdHawFcCZboKKw8p7s+6/mcd55Gx6tWmyKnQTyrSEA04NH73Tc9CbqpEle8RA==}
+    engines: {node: '>= 16'}
+    peerDependencies:
+      '@aws-sdk/credential-provider-web-identity': '*'
+    peerDependenciesMeta:
+      '@aws-sdk/credential-provider-web-identity':
+        optional: true
 
   abab@2.0.6:
     resolution: {integrity: sha512-j2afSsaIENvHZN2B8GOpF566vZ5WVk5opAiMTvWgaQT8DkbOqsTfvNAvHoRGU2zzP8cPoqys+xHTRDWW8L+/BA==}
@@ -1732,6 +1744,8 @@ snapshots:
       - canvas
       - supports-color
       - utf-8-validate
+
+  '@vercel/functions@1.6.0': {}
 
   abab@2.0.6: {}
 

@@ -137,3 +137,81 @@ The app will automatically handle:
 ## License
 
 MIT License
+
+## 🏗️ **NEW: Edge Function Background Processing Architecture**
+
+We've modernized the processing pipeline to use **Vercel Edge Functions** for true background processing:
+
+### **How It Works**
+
+1. **Client Upload**: Files are uploaded directly to Vercel Blob Storage
+2. **Edge Function Trigger**: Background processing starts immediately via Edge Function
+3. **Background Processing**: Edge Function uses `waitUntil()` to process jobs asynchronously
+4. **Real-time Updates**: Frontend polls for job status while processing happens in background
+
+### **Key Benefits**
+
+- ✅ **True Background Processing**: Jobs run independently of HTTP request/response cycles
+- ✅ **No Timeouts**: Edge Functions can process indefinitely (respond within 25s, continue processing)
+- ✅ **Vercel Native**: Uses Vercel's Edge Runtime - no external dependencies
+- ✅ **Scalable**: Automatic scaling with Vercel's infrastructure
+- ✅ **Reliable**: Built-in retry logic and error handling
+
+### **Architecture**
+
+```
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│   File Upload   │───▶│  Vercel Blob     │    │  Edge Function  │
+│   (Frontend)    │    │  Storage         │    │  (Background)   │
+└─────────────────┘    └──────────────────┘    └─────────────────┘
+         │                       │                       │
+         │                       │                       ▼
+         │                       │              ┌─────────────────┐
+         │                       │              │  Gemini AI      │
+         │                       │              │  Processing     │
+         │                       │              └─────────────────┘
+         │                       │                       │
+         │                       │                       ▼
+         │                       │              ┌─────────────────┐
+         │              ┌────────▼──────────────▼─────────────────┐
+         │              │     Result Storage (Blob)              │
+         │              └─────────────────────────────────────────┘
+         │                       │
+         ▼                       │
+┌─────────────────┐              │
+│  Status Polling │◀─────────────┘
+│  (Frontend)     │
+└─────────────────┘
+```
+
+### **Edge Function Configuration**
+
+The `/api/process-job` endpoint is configured as an Edge Function:
+
+```typescript
+// Configure this function to use Edge Runtime for background processing
+export const config = {
+  runtime: 'edge'
+};
+
+export const POST = async ({ request }) => {
+  // Start background processing using waitUntil
+  const processingPromise = processJobInBackground(jobId, blobUrl, formData);
+  
+  // Mark the promise as a background task
+  waitUntil(processingPromise);
+
+  // Return immediately while processing continues in background
+  return json({ success: true, jobId });
+};
+```
+
+### **Environment Variables**
+
+```bash
+# Required for Google Gemini AI
+GEMINI_API_KEY=your-gemini-api-key
+
+# Required for Vercel Blob storage operations
+BLOB_READ_WRITE_TOKEN=your-vercel-blob-token
+```

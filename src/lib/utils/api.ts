@@ -26,12 +26,19 @@ export const api = {
   ): Promise<{ jobId: string }> {
     const jobId = crypto.randomUUID();
 
-    // Trigger background processing (fire and forget)
-    fetch("/api/process-rizz", {
+    // Trigger background processing using Edge Function
+    const response = await fetch("/api/process-job", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ blobUrl, formData, jobId }),
-    }).catch(console.error);
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(
+        errorData.error || "Failed to start background processing"
+      );
+    }
 
     return { jobId };
   },
