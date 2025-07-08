@@ -41,8 +41,8 @@ function validateFormData(formData: FormData) {
       formDataJson.toString()
     ) as RizzGPTFormData;
 
-    if (!parsedFormData.source || !parsedFormData.objective) {
-      throw new Error("Missing required fields: source and objective");
+    if (!parsedFormData.objective) {
+      throw new Error("Missing required field: objective");
     }
 
     return {

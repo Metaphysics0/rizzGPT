@@ -1,10 +1,7 @@
 import type { SupportedApps } from "$lib/constants/supported-apps.constant";
 import type { GeneratedResponse } from "$lib/types";
-import { derived, writable } from "svelte/store";
+import { writable } from "svelte/store";
 
-export const selectedApp = writable<SupportedApps | null>(
-  "other" as SupportedApps
-);
 export const relationshipDetails = writable<{
   duration: number;
   objective: string;
@@ -13,11 +10,7 @@ export const relationshipDetails = writable<{
 
 export const uploadedFile = writable<File | null>(null);
 
-export const isStep1Complete = derived(
-  uploadedFile,
-  ($uploadedFile) => !!$uploadedFile
-);
-export const isStep2Complete = writable<boolean>(true);
+export const selectedApp = writable<SupportedApps | undefined>(undefined);
 
 export const isGeneratingResponse = writable<boolean>(false);
 export const generatedResponse = writable<GeneratedResponse | null>(null);

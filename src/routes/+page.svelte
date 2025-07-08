@@ -18,7 +18,7 @@
   $: canGenerateResponse = $uploadedFile && !$isGeneratingResponse;
 
   async function handleGenerateResponse() {
-    if (!$uploadedFile || !$selectedApp) return;
+    if (!$uploadedFile) return;
 
     isGeneratingResponse.set(true);
     responseError.set(null);
@@ -26,7 +26,7 @@
 
     try {
       const formData: RizzGPTFormData = {
-        source: $selectedApp,
+        source: $selectedApp || undefined,
         duration: $relationshipDetails.duration,
         objective: $relationshipDetails.objective,
         notes: $relationshipDetails.additionalNotes || "",

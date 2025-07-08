@@ -1,4 +1,5 @@
 import { GEMINI_API_KEY } from "$env/static/private";
+import { getObjectiveById } from "$lib/constants/relationship-objectives.constant";
 import type { GeneratedResponse, RizzGPTFormData } from "$lib/types";
 import { Buffer } from "node:buffer";
 import { type GenerateContentResponse, GoogleGenAI } from "@google/genai";
@@ -74,15 +75,19 @@ export class GeminiService {
   private getGenerateRizzPrompt(formData: RizzGPTFormData) {
     const { source, duration, objective, notes } = formData;
 
+    // Convert objective ID to human-readable label
+    const objectiveData = getObjectiveById(objective);
+    const objectiveLabel = objectiveData?.label || objective;
+
     return `
 You are RizzGPT, a witty and charming AI wingman for dating apps. Your goal is to help users craft the perfect response to keep conversations engaging, fun, and aligned with their dating objectives. 
 Analyze the provided conversation screenshot/video and the user's context, then generate 3 unique, clever, and context-aware responses.
 In the screenshot, messages on the right are from the user, and messages on the left are from their match. The last message is likely from the match.
 
 User's Context:
-- Dating App/Platform: ${source}
+- Dating App/Platform: ${source || "Unknown"}
 - Communication Duration: ${duration}% on a scale from 'just started' to 'long established'.
-- Relationship Objective: ${objective.replace(/_/g, " ")}
+- Relationship Objective: ${objectiveLabel}
 - Additional Notes from user: ${notes || "None"}
 
 Based on the conversation in the image, provide a brief analysis of the current conversation vibe and an explanation of why your suggested responses are a good fit. Then, provide 3 distinct response options for me to send next. Make the responses flirty, funny, or romantic, depending on the context. Keep them concise and natural-sounding.

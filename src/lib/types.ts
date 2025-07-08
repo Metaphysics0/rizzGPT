@@ -1,5 +1,7 @@
+import type { SupportedApps } from "./constants/supported-apps.constant";
+
 export interface RizzGPTFormData {
-  source: string;
+  source?: SupportedApps;
   duration: number;
   objective: string;
   notes: string;

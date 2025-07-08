@@ -1,5 +1,8 @@
 <script lang="ts">
-  import { relationshipObjectives } from "$lib/constants/relationship-objectives.constant";
+  import {
+    type RelationshipObjective,
+    relationshipObjectives,
+  } from "$lib/constants/relationship-objectives.constant";
   import { relationshipDetails } from "$lib/stores/form.store";
 
   function getDurationLabel(duration: number): string {
@@ -8,20 +11,6 @@
     if (duration <= 50) return "Been chatting a while";
     if (duration <= 75) return "Getting to know each other";
     return "Long established conversation";
-  }
-
-  function getObjectiveEmoji(objective: string): string {
-    if (objective.includes("New Friends")) return "😊";
-    if (objective.includes("Long-term partner")) return "💑";
-    if (objective.includes("Short-term fun")) return "🎉";
-    if (objective.includes("Long-term, open to short")) return "😄";
-    if (objective.includes("Short-term, open to long")) return "😊";
-    if (objective.includes("Still figuring")) return "🤔";
-    return "💕";
-  }
-
-  function getObjectiveLabel(objective: string): string {
-    return objective.replace(/[^\w\s,'-]/g, "").trim();
   }
 </script>
 
@@ -69,7 +58,7 @@
 						group relative flex cursor-pointer items-center gap-3 rounded-xl border-2
 						border-gray-200 bg-white p-4 text-sm transition-all duration-200
 						hover:scale-105 hover:border-gray-300 hover:shadow-md
-						{$relationshipDetails.objective === objective
+						{$relationshipDetails.objective === objective.id
             ? 'border-purple-400 bg-purple-50 ring-2 shadow-lg ring-purple-200'
             : ''}
 					"
@@ -77,17 +66,17 @@
           <input
             type="radio"
             name="objective"
-            value={objective}
+            value={objective.id}
             bind:group={$relationshipDetails.objective}
             class="sr-only"
           />
           <div
             class="flex h-7 w-7 items-center justify-center rounded-lg text-lg"
           >
-            {getObjectiveEmoji(objective)}
+            {objective.emoji}
           </div>
           <span class="font-medium text-gray-700 group-hover:text-gray-900">
-            {getObjectiveLabel(objective)}
+            {objective.label}
           </span>
         </label>
       {/each}
