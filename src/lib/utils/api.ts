@@ -1,17 +1,39 @@
 import type { GeneratedResponse, RizzGPTFormData } from "$lib/types";
+import { upload } from "@vercel/blob/client";
 
 export class ApiService {
   async generateRizz(
     formData: RizzGPTFormData,
     file: File
   ): Promise<GeneratedResponse> {
-    // 1. Upload file to blob storage
-    const { url: blobUrl } = await this.uploadFile(file);
+    // Generate unique job ID
+    const jobId = crypto.randomUUID();
 
-    // 2. Submit processing job
-    const { jobId } = await this.submitProcessingJob(blobUrl, formData);
+    // 1. Upload file using client upload with job processing triggered on completion
+    const blob = await this.uploadFileClient(file, formData, jobId);
 
-    // 3. Poll for completion
+    // 2. Check if we're on localhost and trigger manual job processing if needed
+    const isLocalhost =
+      typeof window !== "undefined" &&
+      (window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1" ||
+        window.location.hostname.includes("localhost"));
+
+    if (isLocalhost) {
+      console.log("🔧 Localhost detected - manually triggering job processing");
+
+      // Wait a moment for potential onUploadCompleted, then trigger manually
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      try {
+        await this.triggerJobManually(blob.url, formData, jobId);
+      } catch (error) {
+        console.error("Failed to trigger job manually:", error);
+        // Continue anyway, maybe onUploadCompleted worked
+      }
+    }
+
+    // 3. Poll for job completion (processing starts automatically after upload)
     return new Promise((resolve, reject) => {
       let pollCount = 0;
       const maxPolls = 150; // 5 minutes max (2 second intervals)
@@ -44,33 +66,41 @@ export class ApiService {
       poll();
     });
   }
-  private async uploadFile(
-    file: File
-  ): Promise<{ url: string; filename: string; size: number }> {
-    const formData = new FormData();
-    formData.append("file", file);
 
-    const response = await fetch("/api/upload", {
-      method: "POST",
-      body: formData,
+  /**
+   * Upload file using client-side upload with automatic job processing
+   */
+  private async uploadFileClient(
+    file: File,
+    formData: RizzGPTFormData,
+    jobId: string
+  ): Promise<any> {
+    // Generate unique filename
+    const timestamp = Date.now();
+    const randomId = Math.random().toString(36).substring(2);
+    const extension = file.name.split(".").pop() || "bin";
+    const pathname = `uploads/${timestamp}-${randomId}.${extension}`;
+
+    // Upload directly to Vercel Blob with job processing payload
+    const blob = await upload(pathname, file, {
+      access: "public",
+      handleUploadUrl: "/api/upload-token",
+      clientPayload: JSON.stringify({ formData, jobId }),
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || "Upload failed");
-    }
-
-    return response.json();
+    console.log("File uploaded successfully:", blob.url);
+    return blob;
   }
 
-  private async submitProcessingJob(
+  /**
+   * Manually trigger job processing (fallback for localhost development)
+   */
+  private async triggerJobManually(
     blobUrl: string,
-    formData: RizzGPTFormData
-  ): Promise<{ jobId: string }> {
-    const jobId = crypto.randomUUID();
-
-    // Trigger background processing using Edge Function
-    const response = await fetch("/api/process-job", {
+    formData: RizzGPTFormData,
+    jobId: string
+  ): Promise<void> {
+    const response = await fetch("/api/trigger-job", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ blobUrl, formData, jobId }),
@@ -78,12 +108,10 @@ export class ApiService {
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(
-        errorData.error || "Failed to start background processing"
-      );
+      throw new Error(errorData.error || "Failed to trigger job manually");
     }
 
-    return { jobId };
+    console.log("Job triggered manually successfully");
   }
 
   private async checkJobStatus(jobId: string): Promise<{

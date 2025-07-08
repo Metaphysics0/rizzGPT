@@ -1,7 +1,7 @@
 import type { RizzGPTFormData } from "$lib/types";
 import type { JobResult } from "../types";
 import { BlobStorageService } from "./blob-storage.service";
-import type { GeminiService } from "./gemini.service";
+import { GeminiService } from "./gemini.service";
 
 export class JobProcessingService {
   private blobService: BlobStorageService;
