@@ -33,37 +33,75 @@ export class ApiService {
       }
     }
 
-    // 3. Poll for job completion (processing starts automatically after upload)
+    // 3. Listen for job completion using Server-Sent Events
     return new Promise((resolve, reject) => {
-      let pollCount = 0;
-      const maxPolls = 150; // 5 minutes max (2 second intervals)
+      const eventSource = new EventSource(`/api/job-status-stream/${jobId}`);
+      let isResolved = false;
 
-      const poll = async () => {
+      // Set up timeout (5 minutes max)
+      const timeout = setTimeout(() => {
+        if (!isResolved) {
+          eventSource.close();
+          reject(new Error("Processing timeout. Please try again."));
+        }
+      }, 5 * 60 * 1000); // 5 minutes
+
+      // Handle status updates
+      eventSource.addEventListener("status", (event) => {
         try {
-          pollCount++;
+          const data = JSON.parse(event.data);
+          console.log("Job status update:", data);
 
-          if (pollCount > maxPolls) {
-            reject(new Error("Processing timeout. Please try again."));
-            return;
+          if (data.status === "completed" && data.result) {
+            isResolved = true;
+            clearTimeout(timeout);
+            eventSource.close();
+            resolve(data.result);
+          } else if (data.status === "failed" || data.status === "error") {
+            isResolved = true;
+            clearTimeout(timeout);
+            eventSource.close();
+            reject(new Error(data.error || "Processing failed"));
           }
-
-          const { status, result, error } = await this.checkJobStatus(jobId);
-
-          if (status === "completed" && result) {
-            resolve(result);
-          } else if (status === "failed" || status === "error") {
-            reject(new Error(error || "Processing failed"));
-          } else {
-            // Still processing, poll again
-            setTimeout(poll, 2000);
-          }
+          // If still processing, just wait for next update
         } catch (error) {
-          reject(error);
+          console.error("Error parsing SSE data:", error);
+        }
+      });
+
+      // Handle progress updates (optional - for future UI improvements)
+      eventSource.addEventListener("progress", (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          console.log("Job progress:", data);
+          // Could emit this to a store for UI updates
+        } catch (error) {
+          console.error("Error parsing progress data:", error);
+        }
+      });
+
+      // Handle connection close
+      eventSource.addEventListener("close", (event) => {
+        console.log("SSE connection closed by server");
+        eventSource.close();
+      });
+
+      // Handle errors
+      eventSource.onerror = (error) => {
+        console.error("SSE connection error:", error);
+        if (!isResolved) {
+          // Try fallback to polling once
+          console.log("SSE failed, falling back to polling...");
+          eventSource.close();
+          clearTimeout(timeout);
+          this.fallbackToPoll(jobId).then(resolve).catch(reject);
         }
       };
 
-      // Start polling immediately
-      poll();
+      // Handle heartbeat (keep connection alive)
+      eventSource.addEventListener("heartbeat", (event) => {
+        console.log("SSE heartbeat received");
+      });
     });
   }
 
@@ -126,5 +164,44 @@ export class ApiService {
       throw new Error("Failed to check job status");
     }
     return response.json();
+  }
+
+  /**
+   * Fallback polling method when SSE fails
+   */
+  private async fallbackToPoll(jobId: string): Promise<GeneratedResponse> {
+    console.log("Using fallback polling for job:", jobId);
+
+    return new Promise((resolve, reject) => {
+      let pollCount = 0;
+      const maxPolls = 150; // 5 minutes max (2 second intervals)
+
+      const poll = async () => {
+        try {
+          pollCount++;
+
+          if (pollCount > maxPolls) {
+            reject(new Error("Processing timeout. Please try again."));
+            return;
+          }
+
+          const { status, result, error } = await this.checkJobStatus(jobId);
+
+          if (status === "completed" && result) {
+            resolve(result);
+          } else if (status === "failed" || status === "error") {
+            reject(new Error(error || "Processing failed"));
+          } else {
+            // Still processing, poll again
+            setTimeout(poll, 2000);
+          }
+        } catch (error) {
+          reject(error);
+        }
+      };
+
+      // Start polling immediately
+      poll();
+    });
   }
 }

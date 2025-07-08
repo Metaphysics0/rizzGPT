@@ -2,6 +2,7 @@ import type { RizzGPTFormData } from "$lib/types";
 import type { JobResult } from "../types";
 import { BlobStorageService } from "./blob-storage.service";
 import { GeminiService } from "./gemini.service";
+import { sseManager } from "./sse-manager.service";
 
 export class JobProcessingService {
   private blobService: BlobStorageService;
@@ -23,8 +24,25 @@ export class JobProcessingService {
     console.log(`Starting job ${jobId} processing for blob: ${blobUrl}`);
 
     try {
+      // Send initial processing status via SSE
+      sseManager.sendJobUpdate(jobId, {
+        status: "processing",
+        jobId,
+        message: "Starting job processing...",
+      });
+
+      // Send progress update for file download
+      sseManager.sendJobProgress(jobId, 10, "Downloading file from storage...");
+
       // Download file from blob storage
       const file = await this.blobService.downloadFileFromBlob(blobUrl);
+
+      // Send progress update for AI processing
+      sseManager.sendJobProgress(
+        jobId,
+        25,
+        "File downloaded, starting AI processing..."
+      );
 
       // Process with Gemini
       const response = await this.geminiService.generateRizz({
@@ -32,7 +50,14 @@ export class JobProcessingService {
         file,
       });
 
-      // Store successful result
+      // Send progress update for storing results
+      sseManager.sendJobProgress(
+        jobId,
+        90,
+        "AI processing complete, storing results..."
+      );
+
+      // Store successful result (keep for fallback/history)
       const successResult: JobResult = {
         success: true,
         data: response,
@@ -40,11 +65,20 @@ export class JobProcessingService {
       };
 
       await this.blobService.storeJobResult(jobId, successResult);
+
+      // Send completion status via SSE
+      sseManager.sendJobUpdate(jobId, {
+        status: "completed",
+        result: response,
+        jobId,
+        processedAt: successResult.processedAt,
+      });
+
       console.log(`Job ${jobId} completed successfully`);
     } catch (error) {
       console.error(`Job ${jobId} processing failed:`, error);
 
-      // Store error result
+      // Store error result (keep for fallback/history)
       const errorResult: JobResult = {
         success: false,
         error: error instanceof Error ? error.message : "Processing failed",
@@ -56,9 +90,19 @@ export class JobProcessingService {
         console.log(`Job ${jobId} error stored`);
       } catch (storeError) {
         console.error(`Failed to store error for job ${jobId}:`, storeError);
-        // Re-throw the original error since we couldn't even store the error result
-        throw error;
+        // Continue to send SSE error even if storage fails
       }
+
+      // Send error status via SSE
+      sseManager.sendJobUpdate(jobId, {
+        status: "failed",
+        error: error instanceof Error ? error.message : "Processing failed",
+        jobId,
+        processedAt: errorResult.processedAt,
+      });
+
+      // Re-throw the original error
+      throw error;
     }
   }
 
