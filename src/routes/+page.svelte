@@ -1,135 +1,27 @@
 <script lang="ts">
-  import {
-    generatedResponse,
-    isGeneratingResponse,
-    relationshipDetails,
-    responseError,
-    selectedApp,
-    uploadedFile,
-  } from "$lib/stores/form.store";
-  import type { RizzGPTFormData } from "$lib/types";
+  import GenerateResponseButton from "$lib/ui/Form/GenerateResponseButton.svelte";
   import ImageInput from "$lib/ui/Form/ImageInput.svelte";
   import RelationshipForm from "$lib/ui/Form/RelationshipContext.svelte";
   import GeneratedResponse from "$lib/ui/GeneratedResponse.svelte";
   import Header from "$lib/ui/Header.svelte";
-  import { api } from "$lib/utils/api";
-  import Icon from "@iconify/svelte";
-  import { slide } from "svelte/transition";
-
-  // Check if we can generate response (only upload required now)
-  $: canGenerateResponse = $uploadedFile && !$isGeneratingResponse;
-
-  // State for relationship context accordion
-  let isRelationshipContextOpen = false;
-
-  async function handleGenerateResponse() {
-    if (!$uploadedFile) return;
-
-    isGeneratingResponse.set(true);
-    responseError.set(null);
-    generatedResponse.set(null);
-
-    try {
-      const formData: RizzGPTFormData = {
-        source: $selectedApp || undefined,
-        duration: $relationshipDetails.duration,
-        objective: $relationshipDetails.objective,
-        notes: $relationshipDetails.additionalNotes || "",
-      };
-
-      const response = await api.generateRizz(formData, $uploadedFile);
-      generatedResponse.set(response);
-    } catch (error) {
-      responseError.set(
-        error instanceof Error
-          ? error.message
-          : "An error occurred while generating response"
-      );
-    } finally {
-      isGeneratingResponse.set(false);
-    }
-  }
 </script>
 
 <div
   class="min-h-screen bg-gradient-to-br from-pink-100 via-purple-50 to-yellow-100 p-4 md:p-8"
 >
   <div class="mx-auto max-w-4xl space-y-8">
-    <Header />
+    <div class="mx-auto mb-12 max-w-2xl text-center">
+      <Header />
+    </div>
 
     <div class="space-y-6">
-      <div
-        class="rounded-2xl border border-white/20 bg-white/70 p-6 shadow-lg backdrop-blur-sm"
-      >
-        <h2 class="mb-4 text-lg font-semibold text-gray-700">
-          1. Upload Conversation (Image or Video) <span class="text-red-500"
-            >*</span
-          >
-        </h2>
-        <ImageInput />
-      </div>
-
-      <div
-        class="rounded-2xl border border-white/20 bg-white/70 p-6 shadow-lg backdrop-blur-sm"
-      >
-        <button
-          type="button"
-          on:click={() =>
-            (isRelationshipContextOpen = !isRelationshipContextOpen)}
-          class="flex w-full items-center justify-between text-left focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 rounded-lg p-2 -m-2"
-        >
-          <h2 class="text-lg font-semibold text-gray-700">
-            2. Relationship Context <span class="text-gray-400">(optional)</span
-            >
-          </h2>
-          <Icon
-            icon="heroicons:chevron-down"
-            class="h-5 w-5 text-gray-500 transition-transform duration-200 {isRelationshipContextOpen
-              ? 'rotate-180'
-              : ''}"
-          />
-        </button>
-
-        {#if isRelationshipContextOpen}
-          <div transition:slide={{ duration: 300 }} class="mt-4">
-            <RelationshipForm />
-          </div>
-        {/if}
-      </div>
-
-      <!-- AI Response Section -->
-      {#if $generatedResponse || $responseError}
-        <div
-          class="rounded-2xl border border-white/20 bg-white/70 p-6 shadow-lg backdrop-blur-sm"
-        >
-          <h2 class="mb-4 text-lg font-semibold text-gray-700">AI Response</h2>
-          <GeneratedResponse />
-        </div>
-      {/if}
+      <ImageInput />
+      <RelationshipForm />
+      <GeneratedResponse />
     </div>
 
     <div class="flex justify-center pt-4">
-      <button
-        disabled={!canGenerateResponse}
-        on:click={handleGenerateResponse}
-        class="
-					rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 px-8 py-3 font-medium
-					text-white shadow-lg transition-all duration-200
-					hover:scale-105 hover:from-purple-700 hover:to-pink-700 hover:shadow-xl
-					disabled:transform-none disabled:cursor-not-allowed disabled:opacity-50
-				"
-      >
-        {#if $isGeneratingResponse}
-          <span class="flex items-center gap-2">
-            <div
-              class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"
-            ></div>
-            Generating...
-          </span>
-        {:else}
-          Generate Response
-        {/if}
-      </button>
+      <GenerateResponseButton />
     </div>
   </div>
 </div>
