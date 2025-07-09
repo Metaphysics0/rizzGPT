@@ -1,5 +1,6 @@
 import type { GeneratedResponse, RizzGPTFormData } from "$lib/types";
 import { upload } from "@vercel/blob/client";
+import { isLocalHost } from "./is-local-host.util";
 
 export class ApiService {
   async generateRizz(
@@ -7,16 +8,9 @@ export class ApiService {
     file: File
   ): Promise<GeneratedResponse> {
     const jobId = crypto.randomUUID();
-
     const blob = await this.uploadFileClient(file, formData, jobId);
 
-    const isLocalhost =
-      typeof window !== "undefined" &&
-      (window.location.hostname === "localhost" ||
-        window.location.hostname === "127.0.0.1" ||
-        window.location.hostname.includes("localhost"));
-
-    if (isLocalhost) {
+    if (isLocalHost()) {
       console.log("🔧 Localhost detected - manually triggering job processing");
 
       // Wait a moment for potential onUploadCompleted, then trigger manually

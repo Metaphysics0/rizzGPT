@@ -1,5 +1,9 @@
 import { requireAuth } from "$lib/server/auth";
 import { DatabaseService } from "$lib/server/services/database.service";
+import {
+  unknownErrorResponse,
+  userIsNotFoundErrorResponse,
+} from "$lib/server/utils/api-response.util";
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 
@@ -8,10 +12,7 @@ export const GET = (async ({ params, request }) => {
   try {
     const authResult = await requireAuth(request);
     if (authResult.error || !authResult.dbUser) {
-      return (
-        authResult.error ||
-        json({ error: "Database user not found" }, { status: 401 })
-      );
+      return authResult.error || userIsNotFoundErrorResponse();
     }
 
     const { id } = params;
@@ -55,10 +56,7 @@ export const PUT = (async ({ params, request }) => {
   try {
     const authResult = await requireAuth(request);
     if (authResult.error || !authResult.dbUser) {
-      return (
-        authResult.error ||
-        json({ error: "Database user not found" }, { status: 401 })
-      );
+      return authResult.error || userIsNotFoundErrorResponse();
     }
 
     const { id } = params;
@@ -89,16 +87,7 @@ export const PUT = (async ({ params, request }) => {
     });
   } catch (error) {
     console.error("Error updating conversation:", error);
-    return json(
-      {
-        success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to update conversation",
-      },
-      { status: 500 }
-    );
+    return unknownErrorResponse(error, "Failed to update conversation");
   }
 }) satisfies RequestHandler;
 
@@ -107,10 +96,7 @@ export const DELETE = (async ({ params, request }) => {
   try {
     const authResult = await requireAuth(request);
     if (authResult.error || !authResult.dbUser) {
-      return (
-        authResult.error ||
-        json({ error: "Database user not found" }, { status: 401 })
-      );
+      return authResult.error || userIsNotFoundErrorResponse();
     }
 
     const { id } = params;
@@ -143,15 +129,6 @@ export const DELETE = (async ({ params, request }) => {
     });
   } catch (error) {
     console.error("Error deleting conversation:", error);
-    return json(
-      {
-        success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to delete conversation",
-      },
-      { status: 500 }
-    );
+    return unknownErrorResponse(error, "Failed to delete conversation");
   }
 }) satisfies RequestHandler;

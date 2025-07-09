@@ -1,5 +1,6 @@
 import { requireAuth } from "$lib/server/auth";
 import { JobProcessingService } from "$lib/server/services/job-processing.service";
+import { unknownErrorResponse } from "$lib/server/utils/api-response.util";
 import type { RizzGPTFormData } from "$lib/types";
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
@@ -46,16 +47,7 @@ export const POST = (async ({ request }) => {
     });
   } catch (error) {
     console.error("Manual job trigger error:", error);
-    return json(
-      {
-        success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to trigger job processing",
-      },
-      { status: 500 }
-    );
+    return unknownErrorResponse(error, "Failed to trigger job processing");
   }
 }) satisfies RequestHandler;
 

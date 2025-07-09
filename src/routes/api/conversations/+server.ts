@@ -1,5 +1,9 @@
 import { requireAuth } from "$lib/server/auth";
 import { DatabaseService } from "$lib/server/services/database.service";
+import {
+  unknownErrorResponse,
+  userIsNotFoundErrorResponse,
+} from "$lib/server/utils/api-response.util";
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 
@@ -8,10 +12,7 @@ export const GET = (async ({ request }) => {
   try {
     const authResult = await requireAuth(request);
     if (authResult.error || !authResult.dbUser) {
-      return (
-        authResult.error ||
-        json({ error: "Database user not found" }, { status: 401 })
-      );
+      return authResult.error || userIsNotFoundErrorResponse();
     }
 
     const dbService = new DatabaseService();
@@ -43,10 +44,7 @@ export const POST = (async ({ request }) => {
   try {
     const authResult = await requireAuth(request);
     if (authResult.error || !authResult.dbUser) {
-      return (
-        authResult.error ||
-        json({ error: "Database user not found" }, { status: 401 })
-      );
+      return authResult.error || userIsNotFoundErrorResponse();
     }
 
     const {
@@ -84,15 +82,6 @@ export const POST = (async ({ request }) => {
     });
   } catch (error) {
     console.error("Error creating conversation:", error);
-    return json(
-      {
-        success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to create conversation",
-      },
-      { status: 500 }
-    );
+    return unknownErrorResponse(error, "Failed to create conversation");
   }
 }) satisfies RequestHandler;

@@ -1,6 +1,7 @@
 import { requireAuth } from "$lib/server/auth";
 import { BlobStorageService } from "$lib/server/services/blob-storage.service";
 import { JobProcessingService } from "$lib/server/services/job-processing.service";
+import { unknownErrorResponse } from "$lib/server/utils/api-response.util";
 import { json } from "@sveltejs/kit";
 import type { HandleUploadBody } from "@vercel/blob/client";
 import type { RequestHandler } from "./$types";
@@ -56,15 +57,7 @@ export const POST = (async ({ request }) => {
     return json(response);
   } catch (error) {
     console.error("Upload token endpoint error:", error);
-    return json(
-      {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Upload token generation failed",
-      },
-      { status: 500 }
-    );
+    return unknownErrorResponse(error, "Upload token generation failed");
   }
 }) satisfies RequestHandler;
 
