@@ -1,4 +1,4 @@
-import { EdgeFunctionEndpoints } from "$lib/constants/edge-function-endpoints.constant";
+import { EdgeFunctionEndpoints } from "$lib/constants/edge-function-endpoints.enum";
 import type { GeneratedResponse, RizzGPTFormData } from "$lib/types";
 
 export class ApiService {

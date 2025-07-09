@@ -1,7 +1,10 @@
 import { BlobStorageService } from "$lib/server/services/blob-storage.service";
 import { GeminiService } from "$lib/server/services/gemini.service";
+import {
+  jsonSuccessResponse,
+  unknownErrorResponse,
+} from "$lib/server/utils/api-response.util";
 import type { RizzGPTFormData } from "$lib/types";
-import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 
 export const POST = (async ({ request }) => {
@@ -17,14 +20,8 @@ export const POST = (async ({ request }) => {
       file,
     });
 
-    return json({
-      success: true,
-      data: response,
-    });
+    return jsonSuccessResponse(response);
   } catch (error) {
-    return json({
-      success: false,
-      error: error instanceof Error ? error.message : "Processing failed",
-    });
+    return unknownErrorResponse(error, "Processing failed");
   }
 }) satisfies RequestHandler;

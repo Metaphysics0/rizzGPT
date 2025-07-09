@@ -1,5 +1,9 @@
 import { json } from "@sveltejs/kit";
 
+export function jsonSuccessResponse(data: any): Response {
+  return json({ success: true, data });
+}
+
 export function unknownErrorResponse(
   error: unknown,
   fallbackMessage?: string
