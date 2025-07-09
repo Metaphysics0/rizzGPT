@@ -76,10 +76,7 @@ export const POST = (async ({ request }) => {
       matchName,
     });
 
-    return json({
-      success: true,
-      conversation,
-    });
+    return json({ success: true, conversation });
   } catch (error) {
     console.error("Error creating conversation:", error);
     return unknownErrorResponse(error, "Failed to create conversation");
