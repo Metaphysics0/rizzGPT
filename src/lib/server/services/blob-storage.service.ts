@@ -7,7 +7,7 @@ import type {
   JobStatus,
   UploadResult,
 } from "../types";
-import { ALLOWED_FILE_TYPES, MAX_FILE_SIZE } from "../types";
+import { MAX_FILE_SIZE } from "../types";
 
 export class BlobStorageService {
   constructor() {
@@ -16,12 +16,21 @@ export class BlobStorageService {
     }
   }
 
+  private readonly ALLOWED_FILE_TYPES_FOR_CLIENT_UPLOAD = [
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "video/mp4",
+    "video/quicktime",
+    "video/x-msvideo",
+  ];
+
   async uploadFile(file: File): Promise<UploadResult> {
     try {
       const { isValid, error } = this.validateFile(file);
       if (!isValid) throw new Error(error);
 
-      const uniqueFilename = this.generateUniqueFilename(file.name);
+      const uniqueFilename = this.generateUniqueFilename("uploads", file.name);
 
       const blob = await put(uniqueFilename, file, {
         access: "public",
@@ -167,13 +176,13 @@ export class BlobStorageService {
       request,
       token: BLOB_READ_WRITE_TOKEN,
       onBeforeGenerateToken: async (pathname, clientPayload) => {
-        if (!this.isPathnameValidForFileUpload(pathname)) {
+        if (!this.isFileTypeValidForClientUpload(pathname)) {
           throw new Error("Invalid file type");
         }
 
         return {
           addRandomSuffix: true,
-          allowedContentTypes: [...ALLOWED_FILE_TYPES],
+          allowedContentTypes: this.ALLOWED_FILE_TYPES_FOR_CLIENT_UPLOAD,
           maximumSizeInBytes: MAX_FILE_SIZE,
           tokenPayload: clientPayload || "",
         };
@@ -202,7 +211,7 @@ export class BlobStorageService {
     return { isValid: true };
   }
 
-  private isPathnameValidForFileUpload(pathname: string): boolean {
+  private isFileTypeValidForClientUpload(pathname: string): boolean {
     const filename = pathname.split("/").pop() || "";
     const extension = filename.split(".").pop()?.toLowerCase() || "";
     const fileType = this.getContentTypeFromExtension(extension);
@@ -210,9 +219,7 @@ export class BlobStorageService {
   }
 
   private isFileTypeAllowed(fileType: string): boolean {
-    return ALLOWED_FILE_TYPES.includes(
-      fileType as (typeof ALLOWED_FILE_TYPES)[number]
-    );
+    return this.ALLOWED_FILE_TYPES_FOR_CLIENT_UPLOAD.includes(fileType);
   }
 
   private getContentTypeFromExtension(extension: string): string {
@@ -229,10 +236,13 @@ export class BlobStorageService {
     return typeMap[extension] || "application/octet-stream";
   }
 
-  private generateUniqueFilename(originalFilename: string): string {
+  private generateUniqueFilename(
+    directory: string,
+    originalFilename: string
+  ): string {
     const timestamp = Date.now();
     const randomId = Math.random().toString(36).substring(2);
     const extension = originalFilename.split(".").pop() || "bin";
-    return `uploads/${timestamp}-${randomId}.${extension}`;
+    return `${directory}/${timestamp}-${randomId}.${extension}`;
   }
 }

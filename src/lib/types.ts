@@ -7,6 +7,7 @@ export interface RizzGPTFormData {
 export interface GeneratedResponse {
   explanation: string;
   responses: string[];
+  matchName: string;
 }
 
 export interface Option {
