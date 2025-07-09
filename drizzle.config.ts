@@ -1,4 +1,4 @@
-import { type Config } from "drizzle-kit";
+import type { Config } from "drizzle-kit";
 
 export default {
   schema: "./src/lib/server/database/schema/*",
@@ -7,4 +7,4 @@ export default {
   dbCredentials: {
     url: process.env.DATABASE_URL!,
   },
-} satisfies Config; 
+} satisfies Config;
