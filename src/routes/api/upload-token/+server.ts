@@ -1,3 +1,4 @@
+import { requireAuth } from "$lib/server/auth";
 import { BlobStorageService } from "$lib/server/services/blob-storage.service";
 import { JobProcessingService } from "$lib/server/services/job-processing.service";
 import { json } from "@sveltejs/kit";
@@ -12,6 +13,12 @@ export const config = {
 
 export const POST = (async ({ request }) => {
   try {
+    // Check authentication
+    const authResult = await requireAuth(request);
+    if (authResult.error) {
+      return authResult.error;
+    }
+
     const body = (await request.json()) as HandleUploadBody;
 
     if (!body) {

@@ -1,3 +1,4 @@
+import { requireAuth } from "$lib/server/auth";
 import { JobProcessingService } from "$lib/server/services/job-processing.service";
 import type { RizzGPTFormData } from "$lib/types";
 import { json } from "@sveltejs/kit";
@@ -11,6 +12,12 @@ export const config = {
 
 export const POST = (async ({ request }) => {
   try {
+    // Check authentication
+    const authResult = await requireAuth(request);
+    if (authResult.error) {
+      return authResult.error;
+    }
+
     const { blobUrl, formData, jobId } = (await request.json()) as {
       blobUrl: string;
       formData: RizzGPTFormData;
