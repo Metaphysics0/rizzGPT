@@ -2,17 +2,10 @@ import { requireAuth } from "$lib/server/auth";
 import { JobProcessingService } from "$lib/server/services/job-processing.service";
 import type { RizzGPTFormData } from "$lib/types";
 import { json } from "@sveltejs/kit";
-import { waitUntil } from "@vercel/functions";
 import type { RequestHandler } from "./$types";
-
-// Configure this function to use Edge Runtime for background processing
-export const config = {
-  runtime: "edge",
-};
 
 export const POST = (async ({ request }) => {
   try {
-    // Check authentication
     const authResult = await requireAuth(request);
     if (authResult.error) {
       return authResult.error;
@@ -28,18 +21,15 @@ export const POST = (async ({ request }) => {
       return json({ error: "Missing required parameters" }, { status: 400 });
     }
 
-    // Start background processing using waitUntil
+    // Start background processing
     // This allows the function to respond immediately while processing continues
     const processingPromise = processJobInBackground(jobId, blobUrl, formData);
 
-    // Mark the promise as a background task
-    // Use Vercel's waitUntil to run background processing
-    try {
-      waitUntil(processingPromise);
-    } catch {
-      // Fallback for non-edge environments (development)
-      processingPromise.catch(console.error);
-    }
+    // Since we're not using edge runtime, we'll handle background processing differently
+    // The promise will complete independently after the response is sent
+    processingPromise.catch((error) => {
+      console.error(`Background job ${jobId} failed:`, error);
+    });
 
     // Return immediately while processing continues in background
     return json({
@@ -48,7 +38,7 @@ export const POST = (async ({ request }) => {
       message: "Background processing started",
     });
   } catch (error) {
-    console.error("Edge function error:", error);
+    console.error("Function error:", error);
     return json(
       {
         success: false,

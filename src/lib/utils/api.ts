@@ -6,13 +6,10 @@ export class ApiService {
     formData: RizzGPTFormData,
     file: File
   ): Promise<GeneratedResponse> {
-    // Generate unique job ID
     const jobId = crypto.randomUUID();
 
-    // 1. Upload file using client upload with job processing triggered on completion
     const blob = await this.uploadFileClient(file, formData, jobId);
 
-    // 2. Check if we're on localhost and trigger manual job processing if needed
     const isLocalhost =
       typeof window !== "undefined" &&
       (window.location.hostname === "localhost" ||
