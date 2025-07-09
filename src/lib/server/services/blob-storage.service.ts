@@ -76,25 +76,13 @@ export class BlobStorageService {
    */
   async getJobResult(jobId: string): Promise<JobStatus> {
     try {
-      console.log(`Searching for job result with jobId: ${jobId}`);
-
-      // Search for files that start with our jobId pattern
-      // Vercel Blob adds hashes to filenames, so we search by prefix
       const { blobs } = await list({
         prefix: `results/${jobId}`,
-        limit: 10, // Get a few results to find the right one
+        limit: 1,
         token: BLOB_READ_WRITE_TOKEN,
       });
 
-      console.log(`Found ${blobs.length} blobs with prefix results/${jobId}`);
-      blobs.forEach((blob) => console.log(`Blob: ${blob.pathname}`));
-
-      // Find the JSON result file for this jobId
-      const resultBlob = blobs.find(
-        (blob) =>
-          blob.pathname.startsWith(`results/${jobId}`) &&
-          blob.pathname.endsWith(".json")
-      );
+      const resultBlob = blobs[0];
 
       if (!resultBlob) {
         console.log(`No result blob found for job ${jobId}, still processing`);
@@ -124,14 +112,14 @@ export class BlobStorageService {
           jobId,
           processedAt: result.processedAt,
         };
-      } else {
-        return {
-          status: "failed",
-          error: result.error,
-          jobId,
-          processedAt: result.processedAt,
-        };
       }
+
+      return {
+        status: "failed",
+        error: result.error,
+        jobId,
+        processedAt: result.processedAt,
+      };
     } catch (error) {
       console.log(`Job ${jobId} result not ready:`, error);
       return {
@@ -171,11 +159,7 @@ export class BlobStorageService {
     }
   }
 
-  /**
-   * Validates a file before upload
-   */
   private validateFile(file: File): FileValidation {
-    // Check file size
     if (file.size > MAX_FILE_SIZE) {
       return {
         isValid: false,
@@ -185,8 +169,7 @@ export class BlobStorageService {
       };
     }
 
-    // Check file type
-    if (!ALLOWED_FILE_TYPES.includes(file.type as any)) {
+    if (!this.isFileTypeAllowed(file.type)) {
       return {
         isValid: false,
         error: "Invalid file type. Only images and videos are allowed.",
@@ -194,6 +177,12 @@ export class BlobStorageService {
     }
 
     return { isValid: true };
+  }
+
+  private isFileTypeAllowed(fileType: string): boolean {
+    return ALLOWED_FILE_TYPES.includes(
+      fileType as (typeof ALLOWED_FILE_TYPES)[number]
+    );
   }
 
   /**
@@ -215,22 +204,15 @@ export class BlobStorageService {
         // Extract filename from pathname for validation
         const filename = pathname.split("/").pop() || "";
         const extension = filename.split(".").pop()?.toLowerCase() || "";
+        const fileType = this.getContentTypeFromExtension(extension);
 
-        // Create a mock file object for validation
-        const mockFile = {
-          name: filename,
-          type: this.getContentTypeFromExtension(extension),
-          size: 0, // We'll validate size server-side during upload
-        } as File;
-
-        const validation = this.validateFile(mockFile);
-        if (!validation.isValid) {
-          throw new Error(validation.error);
+        if (!this.isFileTypeAllowed(fileType)) {
+          throw new Error("Invalid file type");
         }
 
         return {
           addRandomSuffix: true,
-          allowedContentTypes: [...ALLOWED_FILE_TYPES] as string[],
+          allowedContentTypes: [...ALLOWED_FILE_TYPES],
           maximumSizeInBytes: MAX_FILE_SIZE,
           tokenPayload: clientPayload || "",
         };
