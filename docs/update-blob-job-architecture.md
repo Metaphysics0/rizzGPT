@@ -33,6 +33,6 @@ await db.jobs.update(jobId, {
 
 ## Recommendation 
 For a learning project on Vercel, I'd suggest:
-Short term: Add Vercel KV (Redis) for job status
-Medium term: Add a database (Vercel Postgres) for permanent storage
-Long term: Implement Server-Sent Events for real-time updates
+- Short term: Add Vercel KV (Redis) for job status
+- Medium term: Add a database (Vercel Postgres) for permanent storage
+- Long term: Implement Server-Sent Events for real-time updates
