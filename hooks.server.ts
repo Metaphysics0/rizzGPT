@@ -1,6 +1,9 @@
-import type { Handle } from "@sveltejs/kit";
+import { type Handler, sessionHooks } from "@kinde-oss/kinde-auth-sveltekit";
 
-export const handle: Handle = async ({ event, resolve }) => {
+export const handle: Handler = async ({ event, resolve }) => {
+  // Set up Kinde session hooks
+  sessionHooks({ event });
+
   // Suppress well-known Chrome DevTools requests
   if (
     event.url.pathname.startsWith(
