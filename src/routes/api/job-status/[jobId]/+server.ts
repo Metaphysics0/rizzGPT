@@ -1,9 +1,16 @@
+import { requireAuth } from "$lib/server/auth";
 import { BlobStorageService } from "$lib/server/services/blob-storage.service";
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 
-export const GET = (async ({ params }) => {
+export const GET = (async ({ params, request }) => {
   try {
+    // Check authentication
+    const authResult = await requireAuth(request);
+    if (authResult.error) {
+      return authResult.error;
+    }
+
     const { jobId } = params;
 
     if (!jobId) {

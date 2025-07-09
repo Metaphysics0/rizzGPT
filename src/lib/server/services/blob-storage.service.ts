@@ -16,21 +16,13 @@ export class BlobStorageService {
     }
   }
 
-  /**
-   * Uploads a file to Vercel Blob storage
-   */
   async uploadFile(file: File): Promise<UploadResult> {
     try {
-      // Validate file
-      const validation = this.validateFile(file);
-      if (!validation.isValid) {
-        throw new Error(validation.error);
-      }
+      const { isValid, error } = this.validateFile(file);
+      if (!isValid) throw new Error(error);
 
-      // Generate unique filename
       const uniqueFilename = this.generateUniqueFilename(file.name);
 
-      // Upload to blob storage
       const blob = await put(uniqueFilename, file, {
         access: "public",
         token: BLOB_READ_WRITE_TOKEN,
@@ -159,6 +151,37 @@ export class BlobStorageService {
     }
   }
 
+  /**
+   * Handles client upload requests - generates tokens and processes completed uploads
+   */
+  async handleClientUpload(
+    request: Request,
+    body: HandleUploadBody,
+    onUploadCompleted?: (body: {
+      blob: any;
+      tokenPayload?: string;
+    }) => Promise<void>
+  ) {
+    return handleUpload({
+      body,
+      request,
+      token: BLOB_READ_WRITE_TOKEN,
+      onBeforeGenerateToken: async (pathname, clientPayload) => {
+        if (!this.isPathnameValidForFileUpload(pathname)) {
+          throw new Error("Invalid file type");
+        }
+
+        return {
+          addRandomSuffix: true,
+          allowedContentTypes: [...ALLOWED_FILE_TYPES],
+          maximumSizeInBytes: MAX_FILE_SIZE,
+          tokenPayload: clientPayload || "",
+        };
+      },
+      onUploadCompleted: onUploadCompleted || (async () => {}),
+    });
+  }
+
   private validateFile(file: File): FileValidation {
     if (file.size > MAX_FILE_SIZE) {
       return {
@@ -179,51 +202,19 @@ export class BlobStorageService {
     return { isValid: true };
   }
 
+  private isPathnameValidForFileUpload(pathname: string): boolean {
+    const filename = pathname.split("/").pop() || "";
+    const extension = filename.split(".").pop()?.toLowerCase() || "";
+    const fileType = this.getContentTypeFromExtension(extension);
+    return this.isFileTypeAllowed(fileType);
+  }
+
   private isFileTypeAllowed(fileType: string): boolean {
     return ALLOWED_FILE_TYPES.includes(
       fileType as (typeof ALLOWED_FILE_TYPES)[number]
     );
   }
 
-  /**
-   * Handles client upload requests - generates tokens and processes completed uploads
-   */
-  async handleClientUpload(
-    request: Request,
-    body: HandleUploadBody,
-    onUploadCompleted?: (body: {
-      blob: any;
-      tokenPayload?: string;
-    }) => Promise<void>
-  ) {
-    return handleUpload({
-      body,
-      request,
-      token: BLOB_READ_WRITE_TOKEN,
-      onBeforeGenerateToken: async (pathname, clientPayload) => {
-        // Extract filename from pathname for validation
-        const filename = pathname.split("/").pop() || "";
-        const extension = filename.split(".").pop()?.toLowerCase() || "";
-        const fileType = this.getContentTypeFromExtension(extension);
-
-        if (!this.isFileTypeAllowed(fileType)) {
-          throw new Error("Invalid file type");
-        }
-
-        return {
-          addRandomSuffix: true,
-          allowedContentTypes: [...ALLOWED_FILE_TYPES],
-          maximumSizeInBytes: MAX_FILE_SIZE,
-          tokenPayload: clientPayload || "",
-        };
-      },
-      onUploadCompleted: onUploadCompleted || (async () => {}),
-    });
-  }
-
-  /**
-   * Gets content type from file extension
-   */
   private getContentTypeFromExtension(extension: string): string {
     const typeMap: Record<string, string> = {
       jpg: "image/jpeg",
@@ -238,9 +229,6 @@ export class BlobStorageService {
     return typeMap[extension] || "application/octet-stream";
   }
 
-  /**
-   * Generates a unique filename for uploads
-   */
   private generateUniqueFilename(originalFilename: string): string {
     const timestamp = Date.now();
     const randomId = Math.random().toString(36).substring(2);

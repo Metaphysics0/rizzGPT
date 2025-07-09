@@ -1,3 +1,4 @@
+import { requireAuth } from "$lib/server/auth";
 import { GeminiService } from "$lib/server/services/gemini.service";
 import type { RizzGPTFormData } from "$lib/types";
 import { json } from "@sveltejs/kit";
@@ -5,6 +6,12 @@ import type { RequestHandler } from "./$types";
 
 export const POST = (async ({ request }) => {
   try {
+    // Check authentication
+    const authResult = await requireAuth(request);
+    if (authResult.error) {
+      return authResult.error;
+    }
+
     const { rizzGPTFormData, file } = await getAndValidateFormDataFromRequest(
       request
     );
