@@ -1,7 +1,5 @@
 import { BLOB_READ_WRITE_TOKEN } from "$env/static/private";
-import { list, put } from "@vercel/blob";
 import { generateClientTokenFromReadWriteToken } from "@vercel/blob/client";
-import type { JobResult, JobStatus } from "../types";
 
 export class BlobStorageService {
   constructor() {
@@ -33,88 +31,6 @@ export class BlobStorageService {
       type: "blob.generate-client-token",
       clientToken,
     };
-  }
-
-  /**
-   * Stores job processing result in blob storage
-   */
-  async storeJobResult(jobId: string, result: JobResult): Promise<string> {
-    try {
-      const resultBlob = await put(
-        `results/${jobId}.json`,
-        JSON.stringify(result),
-        {
-          access: "public",
-          token: BLOB_READ_WRITE_TOKEN,
-        }
-      );
-
-      console.log(`Job ${jobId} result stored at: ${resultBlob.url}`);
-      return resultBlob.url;
-    } catch (error) {
-      console.error(`Failed to store result for job ${jobId}:`, error);
-      throw new Error("Failed to store job result");
-    }
-  }
-
-  /**
-   * Retrieves job processing result from blob storage
-   * Note: Vercel Blob automatically adds hashes to filenames, so we search by prefix
-   */
-  async getJobResult(jobId: string): Promise<JobStatus> {
-    try {
-      const { blobs } = await list({
-        prefix: `results/${jobId}`,
-        limit: 1,
-        token: BLOB_READ_WRITE_TOKEN,
-      });
-
-      const resultBlob = blobs[0];
-
-      if (!resultBlob) {
-        console.log(`No result blob found for job ${jobId}, still processing`);
-        return {
-          status: "processing",
-          jobId,
-          message: "Job is still being processed...",
-        };
-      }
-
-      console.log(`Found result blob for job ${jobId}: ${resultBlob.url}`);
-
-      // Fetch the result from the blob
-      const response = await fetch(resultBlob.url);
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch result: ${response.statusText}`);
-      }
-
-      const result: JobResult = await response.json();
-      console.log(`Job ${jobId} result:`, result);
-
-      if (result.success) {
-        return {
-          status: "completed",
-          result: result.data,
-          jobId,
-          processedAt: result.processedAt,
-        };
-      }
-
-      return {
-        status: "failed",
-        error: result.error,
-        jobId,
-        processedAt: result.processedAt,
-      };
-    } catch (error) {
-      console.log(`Job ${jobId} result not ready:`, error);
-      return {
-        status: "processing",
-        jobId,
-        message: "Job is still being processed...",
-      };
-    }
   }
 
   async downloadFileFromBlob(blobUrl: string): Promise<File> {

@@ -8,6 +8,7 @@
   } from "$lib/stores/form.store";
   import type { RizzGPTFormData } from "$lib/types";
   import { ApiService } from "$lib/utils/api";
+  import { uploadFileClient } from "$lib/utils/client-file-blob-upload.util";
 
   $: canGenerateResponse = $uploadedFile && !$isGeneratingResponse;
 
@@ -25,10 +26,9 @@
         notes: $relationshipDetails.additionalNotes || "",
       };
 
-      const response = await new ApiService().generateRizz(
-        formData,
-        $uploadedFile
-      );
+      const blobUrl = await uploadFileClient($uploadedFile);
+
+      const response = await new ApiService().generateRizz(formData, blobUrl);
       generatedResponse.set(response);
     } catch (error) {
       responseError.set(
