@@ -1,6 +1,7 @@
 <script lang="ts">
   import "../app.css";
-  let { children } = $props();
+  let { children, data } = $props();
+  $inspect(data).with(console.log);
 </script>
 
 {@render children()}
