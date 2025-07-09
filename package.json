@@ -11,20 +11,25 @@
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "format": "biome format --write .",
-    "lint": "biome check ."
+    "lint": "biome check .",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "db:migrate": "drizzle-kit migrate"
   },
   "devDependencies": {
-    "@sveltejs/adapter-node": "^2.0.0",
     "@biomejs/biome": "2.0.6",
     "@iconify/svelte": "^4.2.0",
     "@sveltejs/adapter-auto": "^4.0.0",
+    "@sveltejs/adapter-node": "^2.0.0",
     "@sveltejs/kit": "^2.16.0",
     "@sveltejs/vite-plugin-svelte": "^5.0.0",
     "@tailwindcss/vite": "^4.0.0",
-    "@types/node": "^24.0.10",
     "@types/express-session": "^1.18.2",
+    "@types/node": "^24.0.10",
     "@typescript-eslint/eslint-plugin": "^8.25.0",
     "@typescript-eslint/parser": "^8.25.0",
+    "drizzle-kit": "^0.31.4",
     "svelte": "^5.0.0",
     "svelte-check": "^4.0.0",
     "tailwindcss": "^4.0.0",
@@ -37,10 +42,12 @@
     ]
   },
   "dependencies": {
-    "@kinde-oss/kinde-auth-sveltekit": "2.0.0",
     "@google/genai": "^1.8.0",
+    "@kinde-oss/kinde-auth-sveltekit": "2.0.0",
+    "@neondatabase/serverless": "^1.0.1",
     "@vercel/blob": "^0.15.1",
-    "@vercel/functions": "^1.6.0"
+    "@vercel/functions": "^1.6.0",
+    "drizzle-orm": "^0.44.2"
   },
   "packageManager": "pnpm@10.12.4+sha512.5ea8b0deed94ed68691c9bad4c955492705c5eeb8a87ef86bc62c74a26b037b08ff9570f108b2e4dbd1dd1a9186fea925e527f141c648e85af45631074680184"
 }

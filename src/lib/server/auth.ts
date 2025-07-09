@@ -3,9 +3,12 @@ import {
   type SessionManager,
 } from "@kinde-oss/kinde-auth-sveltekit";
 import { json } from "@sveltejs/kit";
+import type { KindeUser } from "./database/types";
+import { DatabaseService } from "./services/database.service";
 
 /**
  * Check if the request is authenticated and return user info if valid
+ * Also syncs user data with the database
  */
 export async function requireAuth(request: Request) {
   try {
@@ -20,22 +23,36 @@ export async function requireAuth(request: Request) {
           { status: 401 }
         ),
         user: null,
+        dbUser: null,
       };
     }
 
-    const user = await kindeAuthClient.getUser(
+    const kindeUser = await kindeAuthClient.getUser(
       request as unknown as SessionManager
     );
 
+    // Sync user with database
+    let dbUser = null;
+    if (kindeUser) {
+      try {
+        const dbService = new DatabaseService();
+        dbUser = await dbService.upsertUserFromKinde(kindeUser as KindeUser);
+      } catch (dbError) {
+        console.error("Database user sync failed:", dbError);
+      }
+    }
+
     return {
       error: null,
-      user,
+      user: kindeUser,
+      dbUser,
     };
   } catch (error) {
     console.error("Authentication check failed:", error);
     return {
       error: json({ error: "Authentication check failed" }, { status: 500 }),
       user: null,
+      dbUser: null,
     };
   }
 }

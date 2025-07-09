@@ -41,6 +41,9 @@ GEMINI_API_KEY=your_gemini_api_key_here
 
 # Required for Vercel Blob storage
 BLOB_READ_WRITE_TOKEN=your_vercel_blob_token_here
+
+# Required for Neon PostgreSQL database
+DATABASE_URL=your_neon_database_url_here
 ```
 
 ### Getting Your API Keys
@@ -49,6 +52,12 @@ BLOB_READ_WRITE_TOKEN=your_vercel_blob_token_here
    - Go to [Google AI Studio](https://aistudio.google.com/app/apikey)
    - Create a new API key
    - Add it as `GEMINI_API_KEY` in your Vercel environment variables
+
+2. **Neon Database**:
+   - Sign up at [Neon](https://neon.tech/)
+   - Create a new project
+   - Copy the connection string from your dashboard
+   - Add it as `DATABASE_URL` in your environment variables
 
 2. **Vercel Blob Token**:
    - In your Vercel dashboard, go to Storage → Blob
@@ -128,6 +137,8 @@ The app will automatically handle:
 
 - **Frontend**: SvelteKit 2, TypeScript, Tailwind CSS
 - **Backend**: SvelteKit API routes, Vercel serverless functions
+- **Database**: Neon PostgreSQL with Drizzle ORM
+- **Authentication**: Kinde Auth (synced with database)
 - **AI**: Google Gemini 2.5 Flash
 - **Storage**: Vercel Blob
 - **Architecture**: Service-based with dependency injection
