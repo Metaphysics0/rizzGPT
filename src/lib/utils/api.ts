@@ -1,3 +1,4 @@
+import { EdgeFunctionEndpoints } from "$lib/constants/edge-function-endpoints.constant";
 import type { GeneratedResponse, RizzGPTFormData } from "$lib/types";
 
 export class ApiService {
@@ -5,7 +6,7 @@ export class ApiService {
     formData: RizzGPTFormData,
     blobUrl: string
   ): Promise<GeneratedResponse> {
-    const response = await fetch("/api/edge-functions/generate-rizz", {
+    const response = await fetch(EdgeFunctionEndpoints.GENERATE_RIZZ, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ blobUrl, formData }),

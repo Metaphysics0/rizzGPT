@@ -1,6 +1,6 @@
 import { upload } from "@vercel/blob/client";
 
-export async function uploadFileClient(file: File): Promise<string> {
+export async function triggerClientFileUpload(file: File): Promise<string> {
   const timestamp = Date.now();
   const randomId = Math.random().toString(36).substring(2);
   const extension = file.name.split(".").pop() || "bin";
