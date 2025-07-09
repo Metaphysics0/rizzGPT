@@ -1,13 +1,7 @@
 import { BLOB_READ_WRITE_TOKEN } from "$env/static/private";
 import { list, put } from "@vercel/blob";
-import { type HandleUploadBody, handleUpload } from "@vercel/blob/client";
-import type {
-  FileValidation,
-  JobResult,
-  JobStatus,
-  UploadResult,
-} from "../types";
-import { MAX_FILE_SIZE } from "../types";
+import { generateClientTokenFromReadWriteToken } from "@vercel/blob/client";
+import type { JobResult, JobStatus } from "../types";
 
 export class BlobStorageService {
   constructor() {
@@ -25,28 +19,20 @@ export class BlobStorageService {
     "video/x-msvideo",
   ];
 
-  async uploadFile(file: File): Promise<UploadResult> {
-    try {
-      const { isValid, error } = this.validateFile(file);
-      if (!isValid) throw new Error(error);
-
-      const uniqueFilename = this.generateUniqueFilename("uploads", file.name);
-
-      const blob = await put(uniqueFilename, file, {
-        access: "public",
-        token: BLOB_READ_WRITE_TOKEN,
-      });
-
-      return {
-        url: blob.url,
-        filename: file.name,
-        size: file.size,
-        uploadedAt: new Date().toISOString(),
-      };
-    } catch (error) {
-      console.error("Blob upload error:", error);
-      throw new Error(error instanceof Error ? error.message : "Upload failed");
+  async generateClientToken(pathname: string) {
+    if (!this.isFileTypeValidForClientUpload(pathname)) {
+      throw new Error("Invalid file type");
     }
+
+    const clientToken = await generateClientTokenFromReadWriteToken({
+      token: BLOB_READ_WRITE_TOKEN,
+      pathname,
+    });
+
+    return {
+      type: "blob.generate-client-token",
+      clientToken,
+    };
   }
 
   /**
@@ -131,9 +117,6 @@ export class BlobStorageService {
     }
   }
 
-  /**
-   * Downloads a file from blob storage and converts it to File object
-   */
   async downloadFileFromBlob(blobUrl: string): Promise<File> {
     try {
       const fileResponse = await fetch(blobUrl);
@@ -160,57 +143,6 @@ export class BlobStorageService {
     }
   }
 
-  /**
-   * Handles client upload requests - generates tokens and processes completed uploads
-   */
-  async handleClientUpload(
-    request: Request,
-    body: HandleUploadBody,
-    onUploadCompleted?: (body: {
-      blob: any;
-      tokenPayload?: string;
-    }) => Promise<void>
-  ) {
-    return handleUpload({
-      body,
-      request,
-      token: BLOB_READ_WRITE_TOKEN,
-      onBeforeGenerateToken: async (pathname, clientPayload) => {
-        if (!this.isFileTypeValidForClientUpload(pathname)) {
-          throw new Error("Invalid file type");
-        }
-
-        return {
-          addRandomSuffix: true,
-          allowedContentTypes: this.ALLOWED_FILE_TYPES_FOR_CLIENT_UPLOAD,
-          maximumSizeInBytes: MAX_FILE_SIZE,
-          tokenPayload: clientPayload || "",
-        };
-      },
-      onUploadCompleted: onUploadCompleted || (async () => {}),
-    });
-  }
-
-  private validateFile(file: File): FileValidation {
-    if (file.size > MAX_FILE_SIZE) {
-      return {
-        isValid: false,
-        error: `File too large. Maximum size is ${
-          MAX_FILE_SIZE / 1024 / 1024
-        }MB.`,
-      };
-    }
-
-    if (!this.isFileTypeAllowed(file.type)) {
-      return {
-        isValid: false,
-        error: "Invalid file type. Only images and videos are allowed.",
-      };
-    }
-
-    return { isValid: true };
-  }
-
   private isFileTypeValidForClientUpload(pathname: string): boolean {
     const filename = pathname.split("/").pop() || "";
     const extension = filename.split(".").pop()?.toLowerCase() || "";
@@ -234,15 +166,5 @@ export class BlobStorageService {
     };
 
     return typeMap[extension] || "application/octet-stream";
-  }
-
-  private generateUniqueFilename(
-    directory: string,
-    originalFilename: string
-  ): string {
-    const timestamp = Date.now();
-    const randomId = Math.random().toString(36).substring(2);
-    const extension = originalFilename.split(".").pop() || "bin";
-    return `${directory}/${timestamp}-${randomId}.${extension}`;
   }
 }

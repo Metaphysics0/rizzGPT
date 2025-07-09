@@ -20,3 +20,12 @@ export function userIsNotFoundErrorResponse(
     { status: 401 }
   );
 }
+
+export function unprocessableEntityResponse(
+  fallbackMessage?: string
+): Response {
+  return json(
+    { success: false, error: fallbackMessage || "Unprocessable entity" },
+    { status: 422 }
+  );
+}
