@@ -10,7 +10,6 @@ export async function load({ request }: RequestEvent) {
   );
 
   if (isAuthenticated) {
-    // Get user profile data when authenticated
     const user = await kindeAuthClient.getUser(
       request as unknown as SessionManager
     );

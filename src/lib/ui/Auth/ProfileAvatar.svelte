@@ -15,8 +15,6 @@
   let { isAuthenticated, user }: Props = $props();
   let isDropdownOpen = $state(false);
 
-  console.log("USER", user);
-
   // Function to get user initials for avatar fallback
   function getUserInitials(user: Props["user"]): string {
     if (!user) return "U";
