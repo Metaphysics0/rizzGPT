@@ -14,13 +14,19 @@ export async function load({ request }: RequestEvent) {
       request as unknown as SessionManager
     );
 
+    const token = await kindeAuthClient.getToken(
+      request as unknown as SessionManager
+    );
+
     return {
       isAuthenticated,
+      token,
       user,
     };
   } else {
     return {
       isAuthenticated,
+      token: null,
       user: null,
     };
   }

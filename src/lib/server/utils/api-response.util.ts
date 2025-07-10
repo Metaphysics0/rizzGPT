@@ -1,35 +1,36 @@
 import { json } from "@sveltejs/kit";
 
-export function jsonSuccessResponse(data: any): Response {
-  return json({ success: true, data });
+export function jsonSuccessResponse(data: any = {}, status = 200) {
+  return json({ success: true, data }, { status });
+}
+
+export function jsonErrorResponse(message: string, status = 400) {
+  return json({ success: false, error: message }, { status });
 }
 
 export function unknownErrorResponse(
   error: unknown,
-  fallbackMessage?: string
-): Response {
-  const errorMessage =
-    error instanceof Error
-      ? error.message
-      : fallbackMessage || "An unexpected error occurred";
-
-  return json({ success: false, error: errorMessage }, { status: 500 });
-}
-
-export function userIsNotFoundErrorResponse(
-  fallbackMessage?: string
-): Response {
+  message = "An error occurred"
+) {
+  console.error("Error details:", error);
   return json(
-    { success: false, error: fallbackMessage || "User not found" },
-    { status: 401 }
+    {
+      success: false,
+      error: message,
+      details: error instanceof Error ? error.message : "Unknown error",
+    },
+    { status: 500 }
   );
 }
 
-export function unprocessableEntityResponse(
-  fallbackMessage?: string
-): Response {
-  return json(
-    { success: false, error: fallbackMessage || "Unprocessable entity" },
-    { status: 422 }
+export function unprocessableEntityResponse(message: string) {
+  return json({ success: false, error: message }, { status: 422 });
+}
+
+export function missingRequiredParametersErrorResponse(
+  missingParameters: string[]
+) {
+  return unprocessableEntityResponse(
+    `Missing required parameters: ${missingParameters.join(", ")}`
   );
 }

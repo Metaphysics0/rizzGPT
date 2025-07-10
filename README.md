@@ -44,6 +44,19 @@ BLOB_READ_WRITE_TOKEN=your_vercel_blob_token_here
 
 # Required for Neon PostgreSQL database
 DATABASE_URL=your_neon_database_url_here
+
+# Required for Upstash QStash (background job processing)
+QSTASH_TOKEN=your_qstash_token_here
+QSTASH_CURRENT_SIGNING_KEY=your_current_signing_key_here
+QSTASH_NEXT_SIGNING_KEY=your_next_signing_key_here
+
+# Required for Kinde Authentication
+KINDE_CLIENT_ID=your_kinde_client_id_here
+KINDE_CLIENT_SECRET=your_kinde_client_secret_here
+KINDE_ISSUER_URL=your_kinde_issuer_url_here
+KINDE_SITE_URL=your_site_url_here
+KINDE_POST_LOGOUT_REDIRECT_URL=your_post_logout_url_here
+KINDE_POST_LOGIN_REDIRECT_URL=your_post_login_url_here
 ```
 
 ### Getting Your API Keys
@@ -59,11 +72,23 @@ DATABASE_URL=your_neon_database_url_here
    - Copy the connection string from your dashboard
    - Add it as `DATABASE_URL` in your environment variables
 
-2. **Vercel Blob Token**:
+3. **Vercel Blob Token**:
    - In your Vercel dashboard, go to Storage → Blob
    - Create a new blob store if you haven't already
    - Copy the `BLOB_READ_WRITE_TOKEN` from the connection string
    - Add it to your Vercel environment variables
+
+4. **Upstash QStash**:
+   - Sign up at [Upstash](https://upstash.com/)
+   - Create a new QStash instance
+   - Copy the `QSTASH_TOKEN`, `QSTASH_CURRENT_SIGNING_KEY`, and `QSTASH_NEXT_SIGNING_KEY` from your dashboard
+   - Add all three to your Vercel environment variables
+
+5. **Kinde Authentication**:
+   - Sign up at [Kinde](https://kinde.com/)
+   - Create a new application
+   - Copy the required values from your Kinde dashboard
+   - Set up your redirect URLs to match your deployment URL
 
 ## Development
 
