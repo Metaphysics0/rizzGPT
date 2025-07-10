@@ -17,6 +17,16 @@ export class BlobStorageService {
     "video/x-msvideo",
   ];
 
+  readonly typeMap: Record<string, string> = {
+    jpg: "image/jpeg",
+    jpeg: "image/jpeg",
+    png: "image/png",
+    webp: "image/webp",
+    mp4: "video/mp4",
+    mov: "video/quicktime",
+    avi: "video/x-msvideo",
+  };
+
   async generateClientToken(pathname: string) {
     if (!this.isFileTypeValidForClientUpload(pathname)) {
       throw new Error("Invalid file type");
@@ -71,16 +81,6 @@ export class BlobStorageService {
   }
 
   private getContentTypeFromExtension(extension: string): string {
-    const typeMap: Record<string, string> = {
-      jpg: "image/jpeg",
-      jpeg: "image/jpeg",
-      png: "image/png",
-      webp: "image/webp",
-      mp4: "video/mp4",
-      mov: "video/quicktime",
-      avi: "video/x-msvideo",
-    };
-
-    return typeMap[extension] || "application/octet-stream";
+    return this.typeMap[extension] || "application/octet-stream";
   }
 }

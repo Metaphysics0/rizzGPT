@@ -17,7 +17,7 @@ export const conversations = pgTable("conversations", {
   ).$type<RelationshipContext>(),
   matchName: text("match_name").notNull(),
   status: text()
-    .$type<"initial" | "refining" | "completed">()
+    .$type<"initial" | "processing" | "refining" | "completed">()
     .default("initial"),
   createdAt: timestamp("created_at", { withTimezone: true })
     .defaultNow()

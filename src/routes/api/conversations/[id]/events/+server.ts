@@ -1,0 +1,75 @@
+import { DatabaseService } from "$lib/server/services/database.service";
+import { ServerSentEventsService } from "$lib/server/services/server-sent-events.service";
+import { requireAuth } from "$lib/server/utils/require-auth.util";
+import type { RequestHandler } from "./$types";
+
+interface ConversationEventData {
+  id: string;
+  status: string;
+  rizzResponses: string[];
+  rizzResponseDescription: string;
+  matchName: string;
+  updatedAt: Date;
+}
+
+export const GET = (async ({ request, params }) => {
+  try {
+    const authResult = await requireAuth(request);
+    if (authResult.error) return authResult.error;
+
+    if (!authResult.dbUser) {
+      return new Response("Unauthorized", { status: 401 });
+    }
+
+    if (!params.id) {
+      return new Response("Conversation ID is required", { status: 400 });
+    }
+
+    const conversationId = params.id!;
+    const dbService = new DatabaseService();
+
+    const conversation = await dbService.getConversationById(conversationId);
+    if (!conversation || conversation.userId !== authResult.dbUser.id) {
+      return new Response("Conversation not found", { status: 404 });
+    }
+
+    const initialData: ConversationEventData = {
+      id: conversation.id,
+      status: conversation.status || "processing",
+      rizzResponses: conversation.rizzResponses,
+      rizzResponseDescription: conversation.rizzResponseDescription,
+      matchName: conversation.matchName,
+      updatedAt: conversation.updatedAt,
+    };
+
+    const dataFetcher = async (): Promise<ConversationEventData | null> => {
+      const updatedConversation = await dbService.getConversationById(
+        conversationId
+      );
+      if (!updatedConversation) return null;
+
+      return {
+        id: updatedConversation.id,
+        status: updatedConversation.status || "processing",
+        rizzResponses: updatedConversation.rizzResponses,
+        rizzResponseDescription: updatedConversation.rizzResponseDescription,
+        matchName: updatedConversation.matchName,
+        updatedAt: updatedConversation.updatedAt,
+      };
+    };
+
+    const sseService = new ServerSentEventsService();
+    return sseService.createEventStreamWithCleanup(
+      initialData,
+      dataFetcher,
+      request.signal,
+      {
+        pollIntervalMs: 2000,
+        closeOnCondition: (data) => data.status === "completed",
+      }
+    );
+  } catch (error) {
+    console.error("SSE endpoint error:", error);
+    return new Response("Internal server error", { status: 500 });
+  }
+}) satisfies RequestHandler;

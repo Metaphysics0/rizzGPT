@@ -1,6 +1,6 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
   import {
-    generatedResponse,
     isGeneratingResponse,
     relationshipDetails,
     responseError,
@@ -17,7 +17,6 @@
 
     isGeneratingResponse.set(true);
     responseError.set(null);
-    generatedResponse.set(null);
 
     try {
       const relationshipContext: RelationshipContext = {
@@ -27,11 +26,14 @@
       };
 
       const blobUrl = await triggerClientFileUpload($uploadedFile);
-      const response = await new ApiService().triggerGenerateRizz({
+      console.log("BLOB URL", blobUrl);
+
+      const { conversationId } = await new ApiService().triggerGenerateRizz({
         relationshipContext,
         blobUrl,
       });
-      generatedResponse.set(response);
+
+      await goto(`/conversations/${conversationId}`);
     } catch (error) {
       responseError.set(
         error instanceof Error
@@ -59,7 +61,7 @@
       <div
         class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"
       ></div>
-      Generating...
+      Starting...
     </span>
   {:else}
     Generate Response

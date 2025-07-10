@@ -41,7 +41,7 @@ export class QstashService {
   }: {
     body: Record<string, unknown>;
     userId: string;
-    url: EdgeFunctionEndpoints;
+    url: string;
     maxRetries?: number;
   }) {
     return this.client.publishJSON({

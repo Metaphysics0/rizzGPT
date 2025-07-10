@@ -1,10 +1,10 @@
 import { BlobStorageService } from "$lib/server/services/blob-storage.service";
 import {
-  jsonSuccessResponse,
   unknownErrorResponse,
   unprocessableEntityResponse,
 } from "$lib/server/utils/api-response.util";
 import { requireAuth } from "$lib/server/utils/require-auth.util";
+import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 
 export const POST = (async ({ request }) => {
@@ -18,11 +18,13 @@ export const POST = (async ({ request }) => {
 
     if (!body) return unprocessableEntityResponse("Request body is required");
 
+    console.log("GENERATING");
+
     const response = await new BlobStorageService().generateClientToken(
       body.payload.pathname
     );
 
-    return jsonSuccessResponse(response);
+    return json(response);
   } catch (error) {
     console.error("Upload token endpoint error:", error);
     return unknownErrorResponse(error, "Upload token generation failed");

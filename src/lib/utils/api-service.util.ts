@@ -1,8 +1,5 @@
-import {
-  EdgeFunctionEndpoints,
-  getEdgeFunctionEndpointUrl,
-} from "$lib/constants/edge-function-endpoints.enum";
-import type { GeneratedResponse, RelationshipContext } from "$lib/types";
+import { EdgeFunctionEndpoints } from "$lib/constants/edge-function-endpoints.enum";
+import type { RelationshipContext } from "$lib/types";
 
 export class ApiService {
   async triggerGenerateRizz({
@@ -11,17 +8,21 @@ export class ApiService {
   }: {
     relationshipContext: RelationshipContext;
     blobUrl: string;
-  }): Promise<GeneratedResponse> {
-    const response = await fetch(EdgeFunctionEndpoints.TRIGGER, {
+  }): Promise<{ conversationId: string }> {
+    const response = await fetch(EdgeFunctionEndpoints.TRIGGER_GENERATE_RIZZ, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        messageBody: { blobUrl, relationshipContext },
-        url: getEdgeFunctionEndpointUrl(EdgeFunctionEndpoints.GENERATE_RIZZ),
+        blobUrl,
+        relationshipContext,
       }),
     });
-    const { data } = await response.json();
 
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    const { data } = await response.json();
     return data;
   }
 }

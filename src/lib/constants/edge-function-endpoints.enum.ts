@@ -1,6 +1,7 @@
 export enum EdgeFunctionEndpoints {
   GENERATE_RIZZ = "/api/edge-functions/generate-rizz",
   TRIGGER = "/api/edge-functions/trigger",
+  TRIGGER_GENERATE_RIZZ = "/api/trigger-generate-rizz",
 }
 
 export function isEdgeFunctionEndpoint(url: string): boolean {

@@ -20,19 +20,21 @@ export const POST = (async ({ request }) => {
       return signatureValidation.error!;
     }
 
-    const { blobUrl, relationshipContext, userId } = JSON.parse(
+    const { blobUrl, relationshipContext, userId, conversationId } = JSON.parse(
       signatureValidation.body!
     ) as {
       blobUrl: string;
       relationshipContext: RelationshipContext;
       userId: string;
+      conversationId: string;
     };
 
-    if (!blobUrl || !relationshipContext || !userId) {
+    if (!blobUrl || !relationshipContext || !userId || !conversationId) {
       return missingRequiredParametersErrorResponse([
         "blobUrl",
         "relationshipContext",
         "userId",
+        "conversationId",
       ]);
     }
 
@@ -43,23 +45,34 @@ export const POST = (async ({ request }) => {
       return jsonErrorResponse("User not found in database", 401);
     }
 
-    const file = await new BlobStorageService().downloadFileFromBlob(blobUrl);
-    const generateRizzResponse = await new GeminiService().generateRizz({
-      relationshipContext,
-      file,
-    });
+    try {
+      const file = await new BlobStorageService().downloadFileFromBlob(blobUrl);
+      const generateRizzResponse = await new GeminiService().generateRizz({
+        relationshipContext,
+        file,
+      });
 
-    await dbService.createConversation({
-      userId: dbUser.id,
-      rizzResponses: generateRizzResponse.responses,
-      rizzResponseDescription: generateRizzResponse.explanation,
-      relationshipContext,
-      initialUploadedConversationBlobUrl: blobUrl,
-      matchName: generateRizzResponse.matchName,
-      status: "initial",
-    });
+      await dbService.updateConversation(conversationId, {
+        rizzResponses: generateRizzResponse.responses,
+        rizzResponseDescription: generateRizzResponse.explanation,
+        matchName: generateRizzResponse.matchName,
+        status: "completed",
+      });
 
-    return jsonSuccessResponse(generateRizzResponse);
+      return jsonSuccessResponse(generateRizzResponse);
+    } catch (processingError) {
+      await dbService.updateConversation(conversationId, {
+        rizzResponses: [],
+        rizzResponseDescription: `Error: ${
+          processingError instanceof Error
+            ? processingError.message
+            : "Processing failed"
+        }`,
+        matchName: "Error",
+        status: "completed",
+      });
+      throw processingError;
+    }
   } catch (error) {
     console.error("Generate rizz endpoint error:", error);
     return unknownErrorResponse(error, "Processing failed");
