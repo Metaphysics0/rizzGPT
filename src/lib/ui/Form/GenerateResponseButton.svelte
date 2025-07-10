@@ -7,7 +7,7 @@
     uploadedFile,
   } from "$lib/stores/form.store";
   import type { RizzGPTFormData } from "$lib/types";
-  import { ApiService } from "$lib/utils/api";
+  import { ApiService } from "$lib/utils/api-service.util";
   import { triggerClientFileUpload } from "$lib/utils/client-file-upload.util";
 
   $: canGenerateResponse = $uploadedFile && !$isGeneratingResponse;
@@ -20,15 +20,31 @@
     generatedResponse.set(null);
 
     try {
-      const formData: RizzGPTFormData = {
-        duration: $relationshipDetails.duration,
-        objective: $relationshipDetails.objective,
-        notes: $relationshipDetails.notes || "",
+      // const formData: RizzGPTFormData = {
+      //   duration: $relationshipDetails.duration,
+      //   objective: $relationshipDetails.objective,
+      //   notes: $relationshipDetails.notes || "",
+      // };
+
+      // const blobUrl = await triggerClientFileUpload($uploadedFile);
+
+      const { messageBody, url } = {
+        messageBody: {
+          blobUrl:
+            "https://l7g7ily341onx4gp.public.blob.vercel-storage.com/uploads/1752147070684-80z5jz1zw4c-lr4T6XKQCUAO38e5z4y4XQjaSR4zm7.mov",
+          formData: {
+            duration: 0,
+            objective: "",
+            notes: "",
+          },
+        },
+        url: "https://huge-ads-know.loca.lt/api/edge-functions/generate-rizz",
       };
 
-      const blobUrl = await triggerClientFileUpload($uploadedFile);
-
-      const response = await new ApiService().generateRizz(formData, blobUrl);
+      const response = await new ApiService().generateRizz(
+        messageBody.formData,
+        messageBody.blobUrl
+      );
       generatedResponse.set(response);
     } catch (error) {
       responseError.set(

@@ -1,7 +1,4 @@
-import {
-  EdgeFunctionEndpoints,
-  isEdgeFunctionEndpoint,
-} from "$lib/constants/edge-function-endpoints.enum";
+import { isEdgeFunctionEndpoint } from "$lib/constants/edge-function-endpoints.enum";
 import { requireAuth } from "$lib/server/auth";
 import { QstashService } from "$lib/server/services/qstash.service";
 import {
