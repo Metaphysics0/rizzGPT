@@ -1,11 +1,11 @@
 import { isEdgeFunctionEndpoint } from "$lib/constants/edge-function-endpoints.enum";
-import { requireAuth } from "$lib/server/auth";
 import { QstashService } from "$lib/server/services/qstash.service";
 import {
   jsonErrorResponse,
   jsonSuccessResponse,
   unknownErrorResponse,
 } from "$lib/server/utils/api-response.util";
+import { requireAuth } from "$lib/server/utils/require-auth.util";
 import type { RequestHandler } from "./$types";
 
 export const POST = (async ({ request }) => {

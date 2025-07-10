@@ -1,10 +1,10 @@
-import { requireAuth } from "$lib/server/auth";
 import { BlobStorageService } from "$lib/server/services/blob-storage.service";
 import {
   jsonSuccessResponse,
   unknownErrorResponse,
   unprocessableEntityResponse,
 } from "$lib/server/utils/api-response.util";
+import { requireAuth } from "$lib/server/utils/require-auth.util";
 import type { RequestHandler } from "./$types";
 
 export const POST = (async ({ request }) => {

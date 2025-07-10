@@ -3,9 +3,9 @@ import {
   type SessionManager,
 } from "@kinde-oss/kinde-auth-sveltekit";
 import { json } from "@sveltejs/kit";
-import type { KindeUser } from "./database/types";
-import { DatabaseService } from "./services/database.service";
-import { unknownErrorResponse } from "./utils/api-response.util";
+import type { KindeUser } from "../database/types";
+import { DatabaseService } from "../services/database.service";
+import { unknownErrorResponse } from "./api-response.util";
 
 /**
  * Check if the request is authenticated and return user info if valid
