@@ -13,12 +13,20 @@ export const POST = (async ({ request }) => {
     const authResult = await requireAuth(request);
     if (authResult.error) return authResult.error;
 
+    if (!authResult.dbUser) {
+      return jsonErrorResponse("User not found in database", 401);
+    }
+
     const { messageBody, url } = await request.json();
     if (!isEdgeFunctionEndpoint(url)) return jsonErrorResponse("Invalid URL");
 
-    await new QstashService().publish({ body: messageBody, url });
+    await new QstashService().publishWithAuth({
+      url,
+      body: messageBody,
+      userId: authResult.dbUser.id,
+    });
 
-    return jsonSuccessResponse();
+    return jsonSuccessResponse({});
   } catch (error) {
     console.error("Trigger endpoint error:", error);
     return unknownErrorResponse(error, "Trigger endpoint error");

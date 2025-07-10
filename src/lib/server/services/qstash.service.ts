@@ -26,11 +26,29 @@ export class QstashService {
     url,
     maxRetries = 3,
   }: {
-    body: any;
+    body: Record<string, unknown>;
     url: EdgeFunctionEndpoints;
     maxRetries?: number;
   }) {
     return this.client.publishJSON({ url, body, retries: maxRetries });
+  }
+
+  async publishWithAuth({
+    body,
+    userId,
+    url,
+    maxRetries = 3,
+  }: {
+    body: Record<string, unknown>;
+    userId: string;
+    url: EdgeFunctionEndpoints;
+    maxRetries?: number;
+  }) {
+    return this.client.publishJSON({
+      url,
+      body: { ...body, userId },
+      retries: maxRetries,
+    });
   }
 
   async validateSignatureFromRequest(request: Request): Promise<{

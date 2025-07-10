@@ -1,6 +1,6 @@
 import { json } from "@sveltejs/kit";
 
-export function jsonSuccessResponse(data: any = {}, status = 200) {
+export function jsonSuccessResponse(data: unknown, status = 200) {
   return json({ success: true, data }, { status });
 }
 

@@ -1,10 +1,10 @@
 import { requireAuth } from "$lib/server/auth";
 import { BlobStorageService } from "$lib/server/services/blob-storage.service";
 import {
+  jsonSuccessResponse,
   unknownErrorResponse,
   unprocessableEntityResponse,
 } from "$lib/server/utils/api-response.util";
-import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 
 export const POST = (async ({ request }) => {
@@ -22,7 +22,7 @@ export const POST = (async ({ request }) => {
       body.payload.pathname
     );
 
-    return json(response);
+    return jsonSuccessResponse(response);
   } catch (error) {
     console.error("Upload token endpoint error:", error);
     return unknownErrorResponse(error, "Upload token generation failed");

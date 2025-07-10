@@ -63,6 +63,16 @@ export class DatabaseService {
     return result[0] || null;
   }
 
+  async getUserById(userId: string): Promise<User | null> {
+    const result = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+
+    return result[0] || null;
+  }
+
   async createConversation(
     conversationData: Omit<NewConversation, "id" | "createdAt" | "updatedAt">
   ): Promise<Conversation> {

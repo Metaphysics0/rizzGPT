@@ -5,7 +5,7 @@ import {
 import type { GeneratedResponse, RizzGPTFormData } from "$lib/types";
 
 export class ApiService {
-  async generateRizz(
+  async triggerGenerateRizz(
     formData: RizzGPTFormData,
     blobUrl: string
   ): Promise<GeneratedResponse> {

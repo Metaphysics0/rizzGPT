@@ -9,25 +9,12 @@ export async function load({ request }: RequestEvent) {
     request as unknown as SessionManager
   );
 
-  if (isAuthenticated) {
-    const user = await kindeAuthClient.getUser(
-      request as unknown as SessionManager
-    );
-
-    const token = await kindeAuthClient.getToken(
-      request as unknown as SessionManager
-    );
-
-    return {
-      isAuthenticated,
-      token,
-      user,
-    };
-  } else {
-    return {
-      isAuthenticated,
-      token: null,
-      user: null,
-    };
+  if (!isAuthenticated) {
+    return { isAuthenticated, user: null };
   }
+
+  return {
+    isAuthenticated,
+    user: await kindeAuthClient.getUser(request as unknown as SessionManager),
+  };
 }

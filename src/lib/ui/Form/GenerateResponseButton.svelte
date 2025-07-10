@@ -41,7 +41,7 @@
         url: "https://huge-ads-know.loca.lt/api/edge-functions/generate-rizz",
       };
 
-      const response = await new ApiService().generateRizz(
+      const response = await new ApiService().triggerGenerateRizz(
         messageBody.formData,
         messageBody.blobUrl
       );
