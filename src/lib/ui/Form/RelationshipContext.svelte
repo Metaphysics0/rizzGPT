@@ -1,8 +1,5 @@
 <script lang="ts">
-  import {
-    type RelationshipObjective,
-    relationshipObjectives,
-  } from "$lib/constants/relationship-objectives.constant";
+  import { relationshipObjectives } from "$lib/constants/relationship-objectives.constant";
   import { relationshipDetails } from "$lib/stores/form.store";
   import FormStep from "./FormStep.svelte";
 
@@ -98,15 +95,12 @@
 
     <!-- Additional Notes Section -->
     <div>
-      <label
-        for="additionalNotes"
-        class="mb-3 block text-sm font-medium text-gray-700"
-      >
+      <label for="notes" class="mb-3 block text-sm font-medium text-gray-700">
         Additional Notes <span class="text-gray-400">(optional)</span>
       </label>
       <textarea
-        id="additionalNotes"
-        bind:value={$relationshipDetails.additionalNotes}
+        id="notes"
+        bind:value={$relationshipDetails.notes}
         placeholder="Add any additional context about your conversation, their personality, shared interests, or what kind of vibe you're going for..."
         class="
           w-full rounded-xl border-2 border-gray-200

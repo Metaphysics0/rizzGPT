@@ -23,7 +23,7 @@
       const formData: RizzGPTFormData = {
         duration: $relationshipDetails.duration,
         objective: $relationshipDetails.objective,
-        notes: $relationshipDetails.additionalNotes || "",
+        notes: $relationshipDetails.notes || "",
       };
 
       const blobUrl = await triggerClientFileUpload($uploadedFile);

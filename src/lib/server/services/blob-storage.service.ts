@@ -8,7 +8,7 @@ export class BlobStorageService {
     }
   }
 
-  private readonly ALLOWED_FILE_TYPES_FOR_CLIENT_UPLOAD = [
+  readonly ALLOWED_FILE_TYPES_FOR_CLIENT_UPLOAD = [
     "image/jpeg",
     "image/png",
     "image/webp",

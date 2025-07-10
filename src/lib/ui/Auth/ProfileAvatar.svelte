@@ -18,17 +18,14 @@
   // Function to get user initials for avatar fallback
   function getUserInitials(user: Props["user"]): string {
     if (!user) return "U";
-
     const firstName = user.given_name || "";
     const lastName = user.family_name || "";
 
-    if (firstName && lastName) {
+    if (firstName && lastName)
       return `${firstName[0]}${lastName[0]}`.toUpperCase();
-    } else if (firstName) {
-      return firstName[0].toUpperCase();
-    } else if (user.email) {
-      return user.email[0].toUpperCase();
-    }
+
+    if (firstName) return firstName[0].toUpperCase();
+    if (user.email) return user.email[0].toUpperCase();
 
     return "U";
   }
@@ -36,14 +33,11 @@
   // Function to get display name
   function getDisplayName(user: Props["user"]): string {
     if (!user) return "User";
-
-    if (user.given_name && user.family_name) {
+    if (user.given_name && user.family_name)
       return `${user.given_name} ${user.family_name}`;
-    } else if (user.given_name) {
-      return user.given_name;
-    } else if (user.email) {
-      return user.email.split("@")[0];
-    }
+
+    if (user.given_name) return user.given_name;
+    if (user.email) return user.email.split("@")[0];
 
     return "User";
   }
