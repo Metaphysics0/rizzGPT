@@ -5,8 +5,5 @@ import { defineConfig } from "vite";
 export default defineConfig(() => {
   return {
     plugins: [sveltekit(), tailwindcss()],
-    server: {
-      allowedHosts: ["huge-ads-know.loca.lt"],
-    },
   };
 });

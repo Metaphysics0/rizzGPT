@@ -251,3 +251,8 @@ GEMINI_API_KEY=your-gemini-api-key
 # Required for Vercel Blob storage operations
 BLOB_READ_WRITE_TOKEN=your-vercel-blob-token
 ```
+
+
+
+## Troubleshooting
+- in order for upstash to work, you need to run the project with localtunnel - `lt --port 5173`, then add it to the vite.config.ts
