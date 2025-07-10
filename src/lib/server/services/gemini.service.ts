@@ -1,6 +1,6 @@
 import { GEMINI_API_KEY } from "$env/static/private";
 import { getObjectiveById } from "$lib/constants/relationship-objectives.constant";
-import type { GeneratedResponse, RizzGPTFormData } from "$lib/types";
+import type { GeneratedResponse, RelationshipContext } from "$lib/types";
 import { Buffer } from "node:buffer";
 import { type GenerateContentResponse, GoogleGenAI } from "@google/genai";
 
@@ -17,15 +17,15 @@ export class GeminiService {
   }
 
   async generateRizz({
-    rizzGPTFormData,
+    relationshipContext,
     file,
   }: {
-    rizzGPTFormData: RizzGPTFormData;
+    relationshipContext: RelationshipContext;
     file: File;
   }): Promise<GeneratedResponse> {
     try {
       const imagePart = await this.fileToGenerativePart(file);
-      const prompt = this.getGenerateRizzPrompt(rizzGPTFormData);
+      const prompt = this.getGenerateRizzPrompt(relationshipContext);
 
       const response: GenerateContentResponse =
         await this.client.models.generateContent({
@@ -78,7 +78,7 @@ export class GeminiService {
     return text;
   }
 
-  private getGenerateRizzPrompt(formData: RizzGPTFormData) {
+  private getGenerateRizzPrompt(formData: RelationshipContext) {
     const { duration, objective, notes } = formData;
 
     // Check if user has provided any meaningful relationship context

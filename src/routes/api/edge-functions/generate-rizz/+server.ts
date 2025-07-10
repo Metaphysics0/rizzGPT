@@ -8,7 +8,7 @@ import {
   missingRequiredParametersErrorResponse,
   unknownErrorResponse,
 } from "$lib/server/utils/api-response.util";
-import type { RizzGPTFormData } from "$lib/types";
+import type { RelationshipContext } from "$lib/types";
 import type { RequestHandler } from "./$types";
 
 export const POST = (async ({ request }) => {
@@ -20,24 +20,22 @@ export const POST = (async ({ request }) => {
       return signatureValidation.error!;
     }
 
-    const { blobUrl, formData, userId } = JSON.parse(
+    const { blobUrl, relationshipContext, userId } = JSON.parse(
       signatureValidation.body!
     ) as {
       blobUrl: string;
-      formData: RizzGPTFormData;
+      relationshipContext: RelationshipContext;
       userId: string;
-      kindeUserId?: string;
     };
 
-    if (!blobUrl || !formData || !userId) {
+    if (!blobUrl || !relationshipContext || !userId) {
       return missingRequiredParametersErrorResponse([
         "blobUrl",
-        "formData",
+        "relationshipContext",
         "userId",
       ]);
     }
 
-    // 3. Validate user exists in database
     const dbService = new DatabaseService();
     const dbUser = await dbService.getUserById(userId);
 
@@ -47,16 +45,16 @@ export const POST = (async ({ request }) => {
 
     const file = await new BlobStorageService().downloadFileFromBlob(blobUrl);
     const generateRizzResponse = await new GeminiService().generateRizz({
-      rizzGPTFormData: formData,
+      relationshipContext,
       file,
     });
 
     await dbService.createConversation({
       userId: dbUser.id,
-      rizzResponses: [generateRizzResponse.responses[0]],
+      rizzResponses: generateRizzResponse.responses,
       rizzResponseDescription: generateRizzResponse.explanation,
+      relationshipContext,
       initialUploadedConversationBlobUrl: blobUrl,
-      relationshipContext: formData,
       matchName: generateRizzResponse.matchName,
       status: "initial",
     });

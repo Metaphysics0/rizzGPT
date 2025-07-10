@@ -1,7 +1,7 @@
-import type { GeneratedResponse, RizzGPTFormData } from "$lib/types";
+import type { GeneratedResponse, RelationshipContext } from "$lib/types";
 import { writable } from "svelte/store";
 
-export const relationshipDetails = writable<RizzGPTFormData>({
+export const relationshipDetails = writable<RelationshipContext>({
   duration: 0,
   objective: "",
   notes: "",

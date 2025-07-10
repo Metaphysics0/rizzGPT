@@ -1,4 +1,4 @@
-export interface RizzGPTFormData {
+export interface RelationshipContext {
   duration: number;
   objective: string;
   notes: string;

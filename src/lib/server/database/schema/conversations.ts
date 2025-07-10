@@ -1,4 +1,4 @@
-import type { RizzGPTFormData } from "$lib/types";
+import type { RelationshipContext } from "$lib/types";
 import { jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { users } from "./users";
 
@@ -12,7 +12,9 @@ export const conversations = pgTable("conversations", {
   initialUploadedConversationBlobUrl: text(
     "initial_uploaded_conversation_blob_url"
   ).notNull(),
-  relationshipContext: jsonb("relationship_context").$type<RizzGPTFormData>(),
+  relationshipContext: jsonb(
+    "relationship_context"
+  ).$type<RelationshipContext>(),
   matchName: text("match_name").notNull(),
   status: text()
     .$type<"initial" | "refining" | "completed">()
