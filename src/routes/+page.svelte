@@ -2,7 +2,7 @@
   import SignInView from "$lib/ui/Auth/SignInView.svelte";
   import GenerateResponseButton from "$lib/ui/Form/GenerateResponseButton.svelte";
   import ImageInput from "$lib/ui/Form/ImageInput.svelte";
-  import RelationshipForm from "$lib/ui/Form/RelationshipContext.svelte";
+  import RelationshipContext from "$lib/ui/Form/RelationshipContext.svelte";
   import GeneratedResponse from "$lib/ui/GeneratedResponse.svelte";
   import Header from "$lib/ui/Header.svelte";
   import type { PageData } from "./$types";
@@ -21,7 +21,7 @@
     {#if data.isAuthenticated}
       <div class="space-y-6">
         <ImageInput />
-        <RelationshipForm />
+        <RelationshipContext />
         <GeneratedResponse />
       </div>
 

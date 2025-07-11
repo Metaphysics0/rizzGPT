@@ -6,7 +6,7 @@ export default defineConfig(() => {
   return {
     plugins: [sveltekit(), tailwindcss()],
     server: {
-      allowedHosts: ["afraid-bushes-greet.loca.lt"],
+      allowedHosts: ["fast-ants-vanish.loca.lt"],
     },
   };
 });

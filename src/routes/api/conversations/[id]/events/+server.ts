@@ -1,5 +1,9 @@
 import { DatabaseService } from "$lib/server/services/database.service";
 import { ServerSentEventsService } from "$lib/server/services/server-sent-events.service";
+import {
+  jsonErrorResponse,
+  unknownErrorResponse,
+} from "$lib/server/utils/api-response.util";
 import { requireAuth } from "$lib/server/utils/require-auth.util";
 import type { RequestHandler } from "./$types";
 
@@ -18,11 +22,11 @@ export const GET = (async ({ request, params }) => {
     if (authResult.error) return authResult.error;
 
     if (!authResult.dbUser) {
-      return new Response("Unauthorized", { status: 401 });
+      return jsonErrorResponse("Unauthorized", 401);
     }
 
     if (!params.id) {
-      return new Response("Conversation ID is required", { status: 400 });
+      return jsonErrorResponse("Conversation ID is required", 400);
     }
 
     const conversationId = params.id!;
@@ -30,7 +34,7 @@ export const GET = (async ({ request, params }) => {
 
     const conversation = await dbService.getConversationById(conversationId);
     if (!conversation || conversation.userId !== authResult.dbUser.id) {
-      return new Response("Conversation not found", { status: 404 });
+      return jsonErrorResponse("Conversation not found", 404);
     }
 
     const initialData: ConversationEventData = {
@@ -70,6 +74,6 @@ export const GET = (async ({ request, params }) => {
     );
   } catch (error) {
     console.error("SSE endpoint error:", error);
-    return new Response("Internal server error", { status: 500 });
+    return unknownErrorResponse(error, "SSE endpoint error");
   }
 }) satisfies RequestHandler;

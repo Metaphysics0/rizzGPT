@@ -33,15 +33,14 @@ export const POST = (async ({ request }) => {
       relationshipContext,
     };
 
-    const conversationService = new ConversationGenerationService();
     const generateRizzUrl =
       new URL(request.url).origin + EdgeFunctionEndpoints.GENERATE_RIZZ;
-    console.log("url", generateRizzUrl);
 
-    const result = await conversationService.initiateConversationGeneration(
-      conversationRequest,
-      generateRizzUrl
-    );
+    const result =
+      await new ConversationGenerationService().initiateConversationGeneration(
+        conversationRequest,
+        generateRizzUrl
+      );
 
     return jsonSuccessResponse(result);
   } catch (error) {

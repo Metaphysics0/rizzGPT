@@ -12,10 +12,7 @@ export class ApiService {
     const response = await fetch(EdgeFunctionEndpoints.TRIGGER_GENERATE_RIZZ, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        blobUrl,
-        relationshipContext,
-      }),
+      body: JSON.stringify({ blobUrl, relationshipContext }),
     });
 
     if (!response.ok) {

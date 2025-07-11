@@ -26,7 +26,6 @@
       };
 
       const blobUrl = await triggerClientFileUpload($uploadedFile);
-      console.log("BLOB URL", blobUrl);
 
       const { conversationId } = await new ApiService().triggerGenerateRizz({
         relationshipContext,

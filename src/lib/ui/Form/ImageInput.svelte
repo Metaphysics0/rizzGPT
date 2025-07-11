@@ -35,7 +35,11 @@
   ];
 </script>
 
-<FormStep title="1. Upload Conversation (Image or Video)" required>
+<FormStep
+  title="1. Upload Conversation (Image or Video)"
+  required
+  collapsible={true}
+>
   <div class="flex h-max flex-col">
     {#if $imagePreview}
       <!-- Preview Section -->
