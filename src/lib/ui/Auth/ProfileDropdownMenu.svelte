@@ -50,6 +50,20 @@
     }
   }
 
+  const SIGNED_IN_MENU_ITEMS = [
+    {
+      label: "Conversations",
+      icon: "mdi:chat-outline",
+      href: "/conversations",
+      isDisabled: true,
+    },
+    {
+      label: "Sign Out",
+      icon: "mdi:logout",
+      href: "/api/auth/logout",
+    },
+  ];
+
   $effect(() => {
     if (isDropdownOpen) {
       document.addEventListener("click", handleClickOutside);
@@ -146,13 +160,18 @@
 
         <!-- Menu Items -->
         <div class="py-1">
-          <a
-            href="/api/auth/logout"
-            class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-red-50 hover:text-red-600"
-          >
-            <Icon icon="mdi:logout" class="h-4 w-4" />
-            Sign Out
-          </a>
+          {#each SIGNED_IN_MENU_ITEMS as item}
+            <a
+              href={item.href}
+              class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-red-50 hover:text-red-600 {item.isDisabled
+                ? 'cursor-not-allowed opacity-50 pointer-events-none'
+                : ''}"
+              class:disabled={item.isDisabled}
+            >
+              <Icon icon={item.icon} class="h-4 w-4" />
+              {item.label}
+            </a>
+          {/each}
         </div>
       {:else}
         <!-- Not Authenticated Menu -->
