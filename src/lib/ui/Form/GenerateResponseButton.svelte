@@ -9,6 +9,7 @@
   import type { RelationshipContext } from "$lib/types";
   import { ApiService } from "$lib/utils/api-service.util";
   import { triggerClientFileUpload } from "$lib/utils/client-file-upload.util";
+  import { getRelationshipContextForUpload } from "$lib/utils/get-relationship-context-for-upload.util";
 
   $: canGenerateResponse = $uploadedFile && !$isGeneratingResponse;
 
@@ -19,11 +20,8 @@
     responseError.set(null);
 
     try {
-      const relationshipContext: RelationshipContext = {
-        duration: $relationshipDetails.duration,
-        objective: $relationshipDetails.objective,
-        notes: $relationshipDetails.notes || "",
-      };
+      const relationshipContext =
+        getRelationshipContextForUpload($relationshipDetails);
 
       const blobUrl = await triggerClientFileUpload($uploadedFile);
 

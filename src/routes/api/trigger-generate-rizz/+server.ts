@@ -20,11 +20,8 @@ export const POST = (async ({ request }) => {
     }
 
     const { blobUrl, relationshipContext } = await request.json();
-    if (!blobUrl || !relationshipContext) {
-      return missingRequiredParametersErrorResponse([
-        "blobUrl",
-        "relationshipContext",
-      ]);
+    if (!blobUrl) {
+      return missingRequiredParametersErrorResponse(["blobUrl"]);
     }
 
     const conversationRequest: ConversationGenerationRequest = {
@@ -33,13 +30,13 @@ export const POST = (async ({ request }) => {
       relationshipContext,
     };
 
-    const generateRizzUrl =
+    const backgroundJobUrl =
       new URL(request.url).origin + EdgeFunctionEndpoints.GENERATE_RIZZ;
 
     const result =
       await new ConversationGenerationService().initiateConversationGeneration(
         conversationRequest,
-        generateRizzUrl
+        backgroundJobUrl
       );
 
     return jsonSuccessResponse(result);

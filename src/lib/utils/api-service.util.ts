@@ -6,7 +6,7 @@ export class ApiService {
     relationshipContext,
     blobUrl,
   }: {
-    relationshipContext: RelationshipContext;
+    relationshipContext: RelationshipContext | null;
     blobUrl: string;
   }): Promise<{ conversationId: string }> {
     const response = await fetch(EdgeFunctionEndpoints.TRIGGER_GENERATE_RIZZ, {
