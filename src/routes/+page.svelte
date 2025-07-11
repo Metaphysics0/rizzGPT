@@ -10,24 +10,18 @@
   export let data: PageData;
 </script>
 
-<div
-  class="min-h-screen bg-gradient-to-br from-pink-100 via-purple-50 to-yellow-100 p-4 md:p-8"
->
-  <div class="mx-auto max-w-4xl space-y-8">
-    <Header />
+<div class="mx-auto max-w-4xl space-y-8">
+  {#if data.isAuthenticated}
+    <div class="space-y-6">
+      <ImageInput />
+      <RelationshipContext />
+      <GeneratedResponse />
+    </div>
 
-    {#if data.isAuthenticated}
-      <div class="space-y-6">
-        <ImageInput />
-        <RelationshipContext />
-        <GeneratedResponse />
-      </div>
-
-      <div class="flex justify-center pt-4">
-        <GenerateResponseButton />
-      </div>
-    {:else}
-      <SignInView />
-    {/if}
-  </div>
+    <div class="flex justify-center pt-4">
+      <GenerateResponseButton />
+    </div>
+  {:else}
+    <SignInView />
+  {/if}
 </div>
