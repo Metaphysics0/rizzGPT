@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { db } from "../database/connection";
 import { conversationMessages, conversations, users } from "../database/schema";
 import type {
@@ -93,7 +93,7 @@ export class DatabaseService {
       .select()
       .from(conversations)
       .where(eq(conversations.userId, userId))
-      .orderBy(conversations.createdAt);
+      .orderBy(desc(conversations.createdAt));
   }
 
   async getConversationById(

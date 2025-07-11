@@ -55,7 +55,6 @@
       label: "Conversations",
       icon: "mdi:chat-outline",
       href: "/conversations",
-      isDisabled: true,
     },
     {
       label: "Sign Out",
@@ -77,7 +76,7 @@
 <div class="relative profile-dropdown">
   <button
     onclick={() => (isDropdownOpen = !isDropdownOpen)}
-    class="flex items-center gap-2 rounded-full bg-white/70 p-2 shadow-lg backdrop-blur-sm transition-all duration-200 hover:bg-white/80 hover:shadow-xl"
+    class="flex items-center gap-2 rounded-full bg-white/70 p-2 shadow-lg backdrop-blur-sm transition-all duration-200 hover:bg-white/80 hover:shadow-xl cursor-pointer"
     aria-label="Profile menu"
   >
     {#if isAuthenticated && user}
@@ -163,10 +162,7 @@
           {#each SIGNED_IN_MENU_ITEMS as item}
             <a
               href={item.href}
-              class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-red-50 hover:text-red-600 {item.isDisabled
-                ? 'cursor-not-allowed opacity-50 pointer-events-none'
-                : ''}"
-              class:disabled={item.isDisabled}
+              class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-red-50 hover:text-red-600"
             >
               <Icon icon={item.icon} class="h-4 w-4" />
               {item.label}
