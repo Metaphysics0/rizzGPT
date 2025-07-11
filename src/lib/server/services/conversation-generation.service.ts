@@ -1,5 +1,8 @@
+import { SHOULD_TRIGGER_BACKGROUND_JOB_LOCALLY_IF_IN_DEV_MODE } from "$env/static/private";
 import type { RelationshipContext } from "$lib/types";
 import type { Conversation } from "../database/types";
+import { GenerateRizzJobHandler } from "../job-handlers/generate-rizz/job-handler";
+import type { GenerateRizzJobPayload } from "../job-handlers/generate-rizz/job-payload.type";
 import { DatabaseService } from "./database.service";
 import { QstashService } from "./qstash.service";
 
@@ -57,6 +60,21 @@ export class ConversationGenerationService {
     request: ConversationGenerationRequest,
     backgroundJobUrl: string
   ): Promise<void> {
+    if (
+      SHOULD_TRIGGER_BACKGROUND_JOB_LOCALLY_IF_IN_DEV_MODE &&
+      process.env.NODE_ENV === "development"
+    ) {
+      console.log("Dev mode detected - Triggering background job locally");
+      const jobPayload: GenerateRizzJobPayload = {
+        conversationId: conversation.id,
+        blobUrl: request.blobUrl,
+        relationshipContext: request.relationshipContext,
+        userId: request.userId,
+      };
+      await new GenerateRizzJobHandler(jobPayload).call();
+      return;
+    }
+
     await this.qstashService.publishWithAuth({
       url: backgroundJobUrl,
       body: {
