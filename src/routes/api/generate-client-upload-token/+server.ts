@@ -4,6 +4,7 @@ import {
   unprocessableEntityResponse,
 } from "$lib/server/utils/api-response.util";
 import { requireAuth } from "$lib/server/utils/require-auth.util";
+import type { ClientFileUploadPayload } from "$lib/types";
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 
@@ -12,13 +13,11 @@ export const POST = (async ({ request }) => {
     const authResult = await requireAuth(request);
     if (authResult.error) return authResult.error;
 
-    const body = (await request.json()) as {
-      payload: { pathname: string; clientPayload: string; callbackUrl: string };
-    };
+    const body = (await request.json()) as { payload: ClientFileUploadPayload };
 
     if (!body) return unprocessableEntityResponse("Request body is required");
 
-    console.log("GENERATING");
+    console.log("BODY", body);
 
     const response = await new BlobStorageService().generateClientToken(
       body.payload.pathname

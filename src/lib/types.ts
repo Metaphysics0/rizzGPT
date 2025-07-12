@@ -21,3 +21,9 @@ export interface ObjectiveOption {
   name: string;
   emoji: string;
 }
+
+export interface ClientFileUploadPayload {
+  pathname: string;
+  clientPayload?: string;
+  callbackUrl: string;
+}

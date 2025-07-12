@@ -1,15 +1,10 @@
 import type { RelationshipContext } from "$lib/types";
+import { areAllObjectValuesEmpty } from "./object/are-all-object-values-empty.util";
 
 export function getRelationshipContextForUpload(
   relationshipContext: RelationshipContext
-): RelationshipContext | null {
-  if (
-    !relationshipContext.duration &&
-    !relationshipContext.objective &&
-    !relationshipContext.notes
-  ) {
-    return null;
-  }
+): RelationshipContext | undefined {
+  if (areAllObjectValuesEmpty(relationshipContext)) return;
 
   return {
     duration: relationshipContext.duration,

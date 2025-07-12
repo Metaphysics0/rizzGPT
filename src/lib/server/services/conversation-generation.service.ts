@@ -9,7 +9,7 @@ import { QstashService } from "./qstash.service";
 export interface ConversationGenerationRequest {
   userId: string;
   blobUrl: string;
-  relationshipContext: RelationshipContext;
+  relationshipContext?: RelationshipContext;
 }
 
 export interface ConversationGenerationResult {
@@ -49,7 +49,9 @@ export class ConversationGenerationService {
       rizzResponses: [],
       rizzResponseDescription: "Processing your conversation...",
       initialUploadedConversationBlobUrl: request.blobUrl,
-      relationshipContext: request.relationshipContext,
+      ...(request.relationshipContext && {
+        relationshipContext: request.relationshipContext,
+      }),
       matchName: "Processing...",
       status: "processing",
     });

@@ -20,7 +20,7 @@ export class GeminiService {
     relationshipContext,
     file,
   }: {
-    relationshipContext: RelationshipContext;
+    relationshipContext?: RelationshipContext;
     file: File;
   }): Promise<GeneratedResponse> {
     try {
@@ -78,7 +78,15 @@ export class GeminiService {
     return text;
   }
 
-  private getGenerateRizzPrompt(formData: RelationshipContext) {
+  private getGenerateRizzPrompt(formData?: RelationshipContext) {
+    // If no relationship context provided, skip the context section
+    if (!formData) {
+      return `
+${this.GLOBAL_CONTEXT}
+
+${this.RESPONSE_FORMAT}
+`;
+    }
     const { duration, objective, notes } = formData;
 
     // Check if user has provided any meaningful relationship context

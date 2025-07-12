@@ -17,15 +17,13 @@ export class GenerateRizzJobHandler {
   }
 
   async call() {
-    this.validateJobPayload();
-
+    this.ensureRequiredFieldsArePresent();
     const { blobUrl, relationshipContext, userId, conversationId } =
       this.jobPayload;
 
-    const dbUser = await this.dbService.getUserById(userId);
-    if (!dbUser) throw new Error("User not found in database");
-
     try {
+      const dbUser = await this.dbService.getUserById(userId);
+      if (!dbUser) throw new Error("User not found in database");
       const file = await this.blobStorageService.downloadFileFromBlob(blobUrl);
       const generateRizzResponse = await this.geminiService.generateRizz({
         relationshipContext,
@@ -56,12 +54,18 @@ export class GenerateRizzJobHandler {
     }
   }
 
-  private validateJobPayload() {
-    const { blobUrl, relationshipContext, userId, conversationId } =
-      this.jobPayload;
+  private ensureRequiredFieldsArePresent() {
+    const { blobUrl, userId, conversationId } = this.jobPayload;
+    const missingFields: string[] = [];
 
-    if (!blobUrl || !relationshipContext || !userId || !conversationId) {
-      throw new Error("Invalid job payload");
+    if (!blobUrl) missingFields.push("blobUrl");
+    if (!userId) missingFields.push("userId");
+    if (!conversationId) missingFields.push("conversationId");
+
+    if (missingFields.length > 0) {
+      throw new Error(
+        `Invalid job payload: ${missingFields.join(", ")} is required`
+      );
     }
   }
 }

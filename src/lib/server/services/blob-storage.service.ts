@@ -1,5 +1,8 @@
 import { BLOB_READ_WRITE_TOKEN } from "$env/static/private";
-import { generateClientTokenFromReadWriteToken } from "@vercel/blob/client";
+import {
+  generateClientTokenFromReadWriteToken,
+  handleUpload,
+} from "@vercel/blob/client";
 
 export class BlobStorageService {
   constructor() {
