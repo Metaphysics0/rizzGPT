@@ -5,6 +5,7 @@
   import AiAnalysis from "$lib/ui/GeneratedResponse/AIAnalysis.svelte";
   import RizzResponseItem from "$lib/ui/GeneratedResponse/RizzResponseItem.svelte";
   import ProcessingResponseSkeleton from "$lib/ui/loading-animations/ProcessingResponseSkeleton.svelte";
+  import MediaPreview from "$lib/ui/MediaPreview.svelte";
   import { connectToSSE } from "$lib/utils/connect-to-sse.util";
   import Icon from "@iconify/svelte";
   import { onDestroy, onMount } from "svelte";
@@ -105,6 +106,13 @@
       <Icon icon="heroicons:arrow-left" class="h-4 w-4" />
       Start New Conversation
     </button>
+
+    {#if conversation.initialUploadedConversationBlobUrl}
+      <MediaPreview
+        blobUrl={conversation.initialUploadedConversationBlobUrl}
+        title="Uploaded Conversation"
+      />
+    {/if}
 
     {#if isProcessing}
       <div class="rounded-xl border border-blue-200 bg-blue-50 p-4">
