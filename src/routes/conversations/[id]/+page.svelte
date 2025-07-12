@@ -1,6 +1,11 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { page } from "$app/state";
+  import { INITIAL_CONVERSATION_DESCRIPTION } from "$lib/constants/initial-conversation.constant";
+  import AiAnalysis from "$lib/ui/GeneratedResponse/AIAnalysis.svelte";
+  import RizzResponseItem from "$lib/ui/GeneratedResponse/RizzResponseItem.svelte";
+  import ProcessingResponseSkeleton from "$lib/ui/loading-animations/ProcessingResponseSkeleton.svelte";
+  import { connectToSSE } from "$lib/utils/connect-to-sse.util";
   import Icon from "@iconify/svelte";
   import { onDestroy, onMount } from "svelte";
   import type { PageData } from "./$types";
@@ -14,7 +19,12 @@
 
   onMount(() => {
     if (conversation?.status !== "completed") {
-      connectToSSE();
+      eventSource = connectToSSE({
+        eventSourceUrl: `/api/conversations/${page.params.id}/events`,
+        itemToUpdate: conversation,
+        isConnected,
+        error,
+      });
     }
   });
 
@@ -23,42 +33,6 @@
       eventSource.close();
     }
   });
-
-  function connectToSSE() {
-    const conversationId = page.params.id;
-    eventSource = new EventSource(
-      `/api/conversations/${conversationId}/events`
-    );
-
-    eventSource.onopen = () => {
-      isConnected = true;
-      error = null;
-    };
-
-    eventSource.onmessage = (event) => {
-      try {
-        const updatedData = JSON.parse(event.data);
-        conversation = { ...conversation, ...updatedData };
-      } catch (e) {
-        console.error("Failed to parse SSE data:", e);
-      }
-    };
-
-    eventSource.onerror = () => {
-      isConnected = false;
-      error = "Connection lost. Retrying...";
-
-      setTimeout(() => {
-        if (eventSource?.readyState === EventSource.CLOSED) {
-          connectToSSE();
-        }
-      }, 3000);
-    };
-  }
-
-  function copyToClipboard(text: string) {
-    navigator.clipboard.writeText(text);
-  }
 
   function goBack() {
     goto("/");
@@ -148,16 +122,8 @@
           </div>
         </div>
 
-        {#if conversation.rizzResponseDescription && conversation.rizzResponseDescription !== "Processing your conversation..."}
-          <div class="mb-6 rounded-xl border border-blue-200 bg-blue-50 p-4">
-            <div class="mb-3 flex items-center gap-2">
-              <Icon icon="mdi:brain" class="h-5 w-5 text-blue-600" />
-              <span class="font-medium text-blue-800">AI Analysis</span>
-            </div>
-            <p class="text-sm text-blue-700">
-              {conversation.rizzResponseDescription}
-            </p>
-          </div>
+        {#if conversation.rizzResponseDescription && conversation.rizzResponseDescription !== INITIAL_CONVERSATION_DESCRIPTION}
+          <AiAnalysis {conversation} />
         {/if}
 
         {#if hasResponses}
@@ -170,33 +136,7 @@
             </h3>
 
             {#each conversation.rizzResponses as response, index}
-              <div
-                class="group relative rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-all hover:border-purple-300 hover:shadow-md"
-              >
-                <div class="flex items-start justify-between gap-3">
-                  <div class="flex-1">
-                    <div class="mb-2 flex items-center gap-2">
-                      <span
-                        class="flex h-6 w-6 items-center justify-center rounded-full bg-purple-100 text-sm font-medium text-purple-600"
-                      >
-                        {index + 1}
-                      </span>
-                      <span class="text-sm font-medium text-gray-500"
-                        >Option {index + 1}</span
-                      >
-                    </div>
-                    <p class="text-gray-800">{response}</p>
-                  </div>
-
-                  <button
-                    onclick={() => copyToClipboard(response)}
-                    class="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-50 text-gray-600 opacity-0 transition-all hover:bg-purple-100 hover:text-purple-600 group-hover:opacity-100"
-                    title="Copy to clipboard"
-                  >
-                    <Icon icon="mdi:content-copy" class="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
+              <RizzResponseItem {index} {response} />
             {/each}
           </div>
 
@@ -216,15 +156,7 @@
             </div>
           </div>
         {:else if isProcessing}
-          <div class="space-y-4">
-            <div class="animate-pulse space-y-3">
-              <div class="h-4 bg-gray-200 rounded w-3/4"></div>
-              <div class="h-4 bg-gray-200 rounded w-1/2"></div>
-              <div class="h-16 bg-gray-200 rounded"></div>
-              <div class="h-16 bg-gray-200 rounded"></div>
-              <div class="h-16 bg-gray-200 rounded"></div>
-            </div>
-          </div>
+          <ProcessingResponseSkeleton />
         {/if}
       </div>
     {:else}

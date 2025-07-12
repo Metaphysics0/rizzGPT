@@ -2,11 +2,10 @@
   import { goto } from "$app/navigation";
   import {
     isGeneratingResponse,
-    relationshipDetails,
+    relationshipContextForm,
     responseError,
     uploadedFile,
   } from "$lib/stores/form.store";
-  import type { RelationshipContext } from "$lib/types";
   import { ApiService } from "$lib/utils/api-service.util";
   import { triggerClientFileUpload } from "$lib/utils/client-file-upload.util";
   import { getRelationshipContextForUpload } from "$lib/utils/get-relationship-context-for-upload.util";
@@ -20,8 +19,9 @@
     responseError.set(null);
 
     try {
-      const relationshipContext =
-        getRelationshipContextForUpload($relationshipDetails);
+      const relationshipContext = getRelationshipContextForUpload(
+        $relationshipContextForm
+      );
 
       const blobUrl = await triggerClientFileUpload($uploadedFile);
 

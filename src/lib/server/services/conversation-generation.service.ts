@@ -1,4 +1,5 @@
 import { SHOULD_TRIGGER_BACKGROUND_JOB_LOCALLY_IF_IN_DEV_MODE } from "$env/static/private";
+import { INITIAL_CONVERSATION_DESCRIPTION } from "$lib/constants/initial-conversation.constant";
 import type { RelationshipContext } from "$lib/types";
 import type { Conversation } from "../database/types";
 import { GenerateRizzJobHandler } from "../job-handlers/generate-rizz/job-handler";
@@ -47,7 +48,7 @@ export class ConversationGenerationService {
     return await this.databaseService.createConversation({
       userId: request.userId,
       rizzResponses: [],
-      rizzResponseDescription: "Processing your conversation...",
+      rizzResponseDescription: INITIAL_CONVERSATION_DESCRIPTION,
       initialUploadedConversationBlobUrl: request.blobUrl,
       ...(request.relationshipContext && {
         relationshipContext: request.relationshipContext,

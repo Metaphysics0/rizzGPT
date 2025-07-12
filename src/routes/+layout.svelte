@@ -1,7 +1,7 @@
 <script lang="ts">
   import "../app.css";
   import ProfileDropdownMenu from "$lib/ui/Auth/ProfileDropdownMenu.svelte";
-  import Header from "$lib/ui/Header.svelte";
+  import Header from "$lib/ui/Layout/Header.svelte";
 
   let { children, data } = $props();
 </script>

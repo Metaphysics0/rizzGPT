@@ -1,7 +1,7 @@
 import type { GeneratedResponse, RelationshipContext } from "$lib/types";
 import { writable } from "svelte/store";
 
-export const relationshipDetails = writable<RelationshipContext>({
+export const relationshipContextForm = writable<RelationshipContext>({
   duration: 0,
   objective: "",
   notes: "",
