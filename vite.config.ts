@@ -5,5 +5,8 @@ import { defineConfig } from "vite";
 export default defineConfig(() => {
   return {
     plugins: [sveltekit(), tailwindcss()],
+    server: {
+      allowedHosts: ["fast-ants-vanish.loca.lt"],
+    },
   };
 });

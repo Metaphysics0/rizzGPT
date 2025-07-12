@@ -1,10 +1,13 @@
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { db } from "../database/connection";
-import { conversations, users } from "../database/schema";
+import { conversationMessages, conversations, users } from "../database/schema";
 import type {
   Conversation,
+  ConversationMessage,
+  ConversationWithMessages,
   KindeUser,
   NewConversation,
+  NewConversationMessage,
   NewUser,
   User,
 } from "../database/types";
@@ -60,6 +63,16 @@ export class DatabaseService {
     return result[0] || null;
   }
 
+  async getUserById(userId: string): Promise<User | null> {
+    const result = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+
+    return result[0] || null;
+  }
+
   async createConversation(
     conversationData: Omit<NewConversation, "id" | "createdAt" | "updatedAt">
   ): Promise<Conversation> {
@@ -80,7 +93,7 @@ export class DatabaseService {
       .select()
       .from(conversations)
       .where(eq(conversations.userId, userId))
-      .orderBy(conversations.createdAt);
+      .orderBy(desc(conversations.createdAt));
   }
 
   async getConversationById(
@@ -118,5 +131,68 @@ export class DatabaseService {
       .returning();
 
     return result.length > 0;
+  }
+
+  // Conversation Messages Methods
+  async addMessageToConversation(
+    messageData: Omit<NewConversationMessage, "id" | "createdAt">
+  ): Promise<ConversationMessage> {
+    const [newMessage] = await db
+      .insert(conversationMessages)
+      .values({
+        ...messageData,
+        createdAt: new Date(),
+      })
+      .returning();
+
+    return newMessage;
+  }
+
+  async getConversationWithMessages(
+    conversationId: string
+  ): Promise<ConversationWithMessages | null> {
+    // Get the conversation
+    const conversation = await this.getConversationById(conversationId);
+    if (!conversation) return null;
+
+    // Get all messages for this conversation
+    const messages = await db
+      .select()
+      .from(conversationMessages)
+      .where(eq(conversationMessages.conversationId, conversationId))
+      .orderBy(conversationMessages.messageOrder);
+
+    return {
+      ...conversation,
+      messages,
+    };
+  }
+
+  async getMessagesForConversation(
+    conversationId: string
+  ): Promise<ConversationMessage[]> {
+    return await db
+      .select()
+      .from(conversationMessages)
+      .where(eq(conversationMessages.conversationId, conversationId))
+      .orderBy(conversationMessages.messageOrder);
+  }
+
+  async getNextMessageOrder(conversationId: string): Promise<number> {
+    const lastMessage = await db
+      .select()
+      .from(conversationMessages)
+      .where(eq(conversationMessages.conversationId, conversationId))
+      .orderBy(conversationMessages.messageOrder)
+      .limit(1);
+
+    return lastMessage.length > 0 ? lastMessage[0].messageOrder + 1 : 1;
+  }
+
+  async updateConversationStatus(
+    conversationId: string,
+    status: "initial" | "refining" | "completed"
+  ): Promise<Conversation | null> {
+    return await this.updateConversation(conversationId, { status });
   }
 }

@@ -15,22 +15,17 @@
   let { isAuthenticated, user }: Props = $props();
   let isDropdownOpen = $state(false);
 
-  console.log("USER", user);
-
   // Function to get user initials for avatar fallback
   function getUserInitials(user: Props["user"]): string {
     if (!user) return "U";
-
     const firstName = user.given_name || "";
     const lastName = user.family_name || "";
 
-    if (firstName && lastName) {
+    if (firstName && lastName)
       return `${firstName[0]}${lastName[0]}`.toUpperCase();
-    } else if (firstName) {
-      return firstName[0].toUpperCase();
-    } else if (user.email) {
-      return user.email[0].toUpperCase();
-    }
+
+    if (firstName) return firstName[0].toUpperCase();
+    if (user.email) return user.email[0].toUpperCase();
 
     return "U";
   }
@@ -38,14 +33,11 @@
   // Function to get display name
   function getDisplayName(user: Props["user"]): string {
     if (!user) return "User";
-
-    if (user.given_name && user.family_name) {
+    if (user.given_name && user.family_name)
       return `${user.given_name} ${user.family_name}`;
-    } else if (user.given_name) {
-      return user.given_name;
-    } else if (user.email) {
-      return user.email.split("@")[0];
-    }
+
+    if (user.given_name) return user.given_name;
+    if (user.email) return user.email.split("@")[0];
 
     return "User";
   }
@@ -57,6 +49,19 @@
       isDropdownOpen = false;
     }
   }
+
+  const SIGNED_IN_MENU_ITEMS = [
+    {
+      label: "Conversations",
+      icon: "mdi:chat-outline",
+      href: "/conversations",
+    },
+    {
+      label: "Sign Out",
+      icon: "mdi:logout",
+      href: "/api/auth/logout",
+    },
+  ];
 
   $effect(() => {
     if (isDropdownOpen) {
@@ -71,7 +76,7 @@
 <div class="relative profile-dropdown">
   <button
     onclick={() => (isDropdownOpen = !isDropdownOpen)}
-    class="flex items-center gap-2 rounded-full bg-white/70 p-2 shadow-lg backdrop-blur-sm transition-all duration-200 hover:bg-white/80 hover:shadow-xl"
+    class="flex items-center gap-2 rounded-full bg-white/70 p-2 shadow-lg backdrop-blur-sm transition-all duration-200 hover:bg-white/80 hover:shadow-xl cursor-pointer"
     aria-label="Profile menu"
   >
     {#if isAuthenticated && user}
@@ -154,13 +159,15 @@
 
         <!-- Menu Items -->
         <div class="py-1">
-          <a
-            href="/api/auth/logout"
-            class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-red-50 hover:text-red-600"
-          >
-            <Icon icon="mdi:logout" class="h-4 w-4" />
-            Sign Out
-          </a>
+          {#each SIGNED_IN_MENU_ITEMS as item}
+            <a
+              href={item.href}
+              class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-red-50 hover:text-red-600"
+            >
+              <Icon icon={item.icon} class="h-4 w-4" />
+              {item.label}
+            </a>
+          {/each}
         </div>
       {:else}
         <!-- Not Authenticated Menu -->

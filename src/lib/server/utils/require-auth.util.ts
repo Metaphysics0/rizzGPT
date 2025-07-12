@@ -3,8 +3,9 @@ import {
   type SessionManager,
 } from "@kinde-oss/kinde-auth-sveltekit";
 import { json } from "@sveltejs/kit";
-import type { KindeUser } from "./database/types";
-import { DatabaseService } from "./services/database.service";
+import type { KindeUser } from "../database/types";
+import { DatabaseService } from "../services/database.service";
+import { unknownErrorResponse } from "./api-response.util";
 
 /**
  * Check if the request is authenticated and return user info if valid
@@ -50,7 +51,7 @@ export async function requireAuth(request: Request) {
   } catch (error) {
     console.error("Authentication check failed:", error);
     return {
-      error: json({ error: "Authentication check failed" }, { status: 500 }),
+      error: unknownErrorResponse(error, "Authentication check failed"),
       user: null,
       dbUser: null,
     };

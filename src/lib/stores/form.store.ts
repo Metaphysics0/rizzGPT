@@ -1,11 +1,11 @@
-import type { GeneratedResponse } from "$lib/types";
+import type { GeneratedResponse, RelationshipContext } from "$lib/types";
 import { writable } from "svelte/store";
 
-export const relationshipDetails = writable<{
-  duration: number;
-  objective: string;
-  additionalNotes?: string;
-}>({ duration: 0, objective: "", additionalNotes: "" });
+export const relationshipDetails = writable<RelationshipContext>({
+  duration: 0,
+  objective: "",
+  notes: "",
+});
 
 export const uploadedFile = writable<File | null>(null);
 

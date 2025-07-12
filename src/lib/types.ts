@@ -1,4 +1,4 @@
-export interface RizzGPTFormData {
+export interface RelationshipContext {
   duration: number;
   objective: string;
   notes: string;
@@ -7,6 +7,7 @@ export interface RizzGPTFormData {
 export interface GeneratedResponse {
   explanation: string;
   responses: string[];
+  matchName: string;
 }
 
 export interface Option {
@@ -19,4 +20,10 @@ export interface ObjectiveOption {
   id: string;
   name: string;
   emoji: string;
+}
+
+export interface ClientFileUploadPayload {
+  pathname: string;
+  clientPayload?: string;
+  callbackUrl: string;
 }

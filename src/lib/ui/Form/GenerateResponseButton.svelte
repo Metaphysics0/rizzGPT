@@ -1,13 +1,15 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
   import {
-    generatedResponse,
     isGeneratingResponse,
     relationshipDetails,
     responseError,
     uploadedFile,
   } from "$lib/stores/form.store";
-  import type { RizzGPTFormData } from "$lib/types";
-  import { ApiService } from "$lib/utils/api";
+  import type { RelationshipContext } from "$lib/types";
+  import { ApiService } from "$lib/utils/api-service.util";
+  import { triggerClientFileUpload } from "$lib/utils/client-file-upload.util";
+  import { getRelationshipContextForUpload } from "$lib/utils/get-relationship-context-for-upload.util";
 
   $: canGenerateResponse = $uploadedFile && !$isGeneratingResponse;
 
@@ -16,20 +18,19 @@
 
     isGeneratingResponse.set(true);
     responseError.set(null);
-    generatedResponse.set(null);
 
     try {
-      const formData: RizzGPTFormData = {
-        duration: $relationshipDetails.duration,
-        objective: $relationshipDetails.objective,
-        notes: $relationshipDetails.additionalNotes || "",
-      };
+      const relationshipContext =
+        getRelationshipContextForUpload($relationshipDetails);
 
-      const response = await new ApiService().generateRizz(
-        formData,
-        $uploadedFile
-      );
-      generatedResponse.set(response);
+      const blobUrl = await triggerClientFileUpload($uploadedFile);
+
+      const { conversationId } = await new ApiService().triggerGenerateRizz({
+        relationshipContext,
+        blobUrl,
+      });
+
+      await goto(`/conversations/${conversationId}`);
     } catch (error) {
       responseError.set(
         error instanceof Error
@@ -57,7 +58,7 @@
       <div
         class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"
       ></div>
-      Generating...
+      Starting...
     </span>
   {:else}
     Generate Response
