@@ -1,7 +1,6 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import { page } from "$app/stores";
-  import Header from "$lib/ui/Header.svelte";
+  import { page } from "$app/state";
   import Icon from "@iconify/svelte";
   import { onDestroy, onMount } from "svelte";
   import type { PageData } from "./$types";
@@ -26,7 +25,7 @@
   });
 
   function connectToSSE() {
-    const conversationId = $page.params.id;
+    const conversationId = page.params.id;
     eventSource = new EventSource(
       `/api/conversations/${conversationId}/events`
     );
@@ -84,17 +83,13 @@
   class="min-h-screen bg-gradient-to-br from-pink-100 via-purple-50 to-yellow-100 p-4 md:p-8"
 >
   <div class="mx-auto max-w-4xl space-y-8">
-    <div class="mx-auto mb-12 max-w-2xl text-center pt-8">
-      <Header />
-
-      <button
-        onclick={goBack}
-        class="mt-4 inline-flex items-center gap-2 rounded-lg px-4 py-2 text-purple-600 hover:bg-purple-50 transition-colors"
-      >
-        <Icon icon="heroicons:arrow-left" class="h-4 w-4" />
-        Start New Conversation
-      </button>
-    </div>
+    <button
+      onclick={goBack}
+      class="mt-4 inline-flex items-center gap-2 rounded-lg px-4 py-2 text-purple-600 hover:bg-purple-50 transition-colors cursor-pointer"
+    >
+      <Icon icon="heroicons:arrow-left" class="h-4 w-4" />
+      Start New Conversation
+    </button>
 
     {#if isProcessing}
       <div class="rounded-xl border border-blue-200 bg-blue-50 p-4">

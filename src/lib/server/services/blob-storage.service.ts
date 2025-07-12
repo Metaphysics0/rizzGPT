@@ -1,8 +1,5 @@
 import { BLOB_READ_WRITE_TOKEN } from "$env/static/private";
-import {
-  generateClientTokenFromReadWriteToken,
-  handleUpload,
-} from "@vercel/blob/client";
+import { generateClientTokenFromReadWriteToken } from "@vercel/blob/client";
 
 export class BlobStorageService {
   constructor() {
@@ -11,7 +8,7 @@ export class BlobStorageService {
     }
   }
 
-  readonly ALLOWED_FILE_TYPES_FOR_CLIENT_UPLOAD = [
+  readonly ALLOWED_CONTENT_TYPES = [
     "image/jpeg",
     "image/png",
     "image/webp",
@@ -20,7 +17,7 @@ export class BlobStorageService {
     "video/x-msvideo",
   ];
 
-  readonly typeMap: Record<string, string> = {
+  readonly fileExtensionToContentTypeMap: Record<string, string> = {
     jpg: "image/jpeg",
     jpeg: "image/jpeg",
     png: "image/png",
@@ -31,9 +28,7 @@ export class BlobStorageService {
   };
 
   async generateClientToken(pathname: string) {
-    if (!this.isFileTypeValidForClientUpload(pathname)) {
-      throw new Error("Invalid file type");
-    }
+    this.ensureFileTypeIsValidForClientUpload(pathname);
 
     const clientToken = await generateClientTokenFromReadWriteToken({
       token: BLOB_READ_WRITE_TOKEN,
@@ -46,7 +41,7 @@ export class BlobStorageService {
     };
   }
 
-  async downloadFileFromBlob(blobUrl: string): Promise<File> {
+  async downloadFileFromBlobUrl(blobUrl: string): Promise<File> {
     try {
       const fileResponse = await fetch(blobUrl);
       if (!fileResponse.ok) {
@@ -63,27 +58,34 @@ export class BlobStorageService {
       const urlPath = new URL(blobUrl).pathname;
       const filename = urlPath.split("/").pop() || "uploaded-file";
 
-      return new File([arrayBuffer], filename, {
-        type: contentType,
-      });
+      return new File([arrayBuffer], filename, { type: contentType });
     } catch (error) {
       console.error("Failed to download file from blob:", error);
       throw new Error("Failed to download file from storage");
     }
   }
 
-  private isFileTypeValidForClientUpload(pathname: string): boolean {
+  private ensureFileTypeIsValidForClientUpload(pathname: string): void {
     const filename = pathname.split("/").pop() || "";
     const extension = filename.split(".").pop()?.toLowerCase() || "";
-    const fileType = this.getContentTypeFromExtension(extension);
-    return this.isFileTypeAllowed(fileType);
+    const contentType = this.getContentTypeFromFileExtension(extension);
+    if (!this.isContentTypeAllowed(contentType)) {
+      throw new Error(
+        `Invalid content type. Recieved ${contentType} but allowed ${this.ALLOWED_CONTENT_TYPES.join(
+          ", "
+        )}`
+      );
+    }
   }
 
-  private isFileTypeAllowed(fileType: string): boolean {
-    return this.ALLOWED_FILE_TYPES_FOR_CLIENT_UPLOAD.includes(fileType);
+  private isContentTypeAllowed(contentType: string): boolean {
+    return this.ALLOWED_CONTENT_TYPES.includes(contentType);
   }
 
-  private getContentTypeFromExtension(extension: string): string {
-    return this.typeMap[extension] || "application/octet-stream";
+  private getContentTypeFromFileExtension(extension: string): string {
+    return (
+      this.fileExtensionToContentTypeMap[extension] ||
+      "application/octet-stream"
+    );
   }
 }

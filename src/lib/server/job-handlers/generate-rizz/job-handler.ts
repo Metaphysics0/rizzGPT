@@ -24,7 +24,9 @@ export class GenerateRizzJobHandler {
     try {
       const dbUser = await this.dbService.getUserById(userId);
       if (!dbUser) throw new Error("User not found in database");
-      const file = await this.blobStorageService.downloadFileFromBlob(blobUrl);
+      const file = await this.blobStorageService.downloadFileFromBlobUrl(
+        blobUrl
+      );
       const generateRizzResponse = await this.geminiService.generateRizz({
         relationshipContext,
         file,
