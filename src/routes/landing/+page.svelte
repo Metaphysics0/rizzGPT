@@ -1,0 +1,21 @@
+<script lang="ts">
+  import CallToAction from "$lib/ui/LandingPage/CallToAction.svelte";
+  import DatingApps from "$lib/ui/LandingPage/DatingApps.svelte";
+  import Faq from "$lib/ui/LandingPage/FAQ.svelte";
+  import Hero from "$lib/ui/LandingPage/Hero.svelte";
+  import HowItWorks from "$lib/ui/LandingPage/HowItWorks.svelte";
+  import InteractiveDemo from "$lib/ui/LandingPage/InteractiveDemo.svelte";
+  import Pricing from "$lib/ui/LandingPage/Pricing.svelte";
+  import ProblemAndSolution from "$lib/ui/LandingPage/ProblemAndSolution.svelte";
+  import Testimonials from "$lib/ui/LandingPage/Testimonials.svelte";
+</script>
+
+<Hero />
+<ProblemAndSolution />
+<HowItWorks />
+<DatingApps />
+<Testimonials />
+<InteractiveDemo />
+<Pricing />
+<Faq />
+<CallToAction />
