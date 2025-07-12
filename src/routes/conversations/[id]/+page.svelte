@@ -16,21 +16,62 @@
   let eventSource: EventSource | null = null;
   let isConnected = $state(false);
   let error = $state<string | null>(null);
+  let reconnectAttempts = $state(0);
+  let maxReconnectAttempts = 3;
+
+  function connectToConversationSSE() {
+    if (eventSource) {
+      eventSource.close();
+    }
+
+    eventSource = connectToSSE({
+      eventSourceUrl: `/api/conversations/${page.params.id}/events`,
+      onDataUpdate: (data) => {
+        conversation = { ...conversation, ...data };
+        reconnectAttempts = 0; // Reset attempts on successful data
+      },
+      onConnectionChange: (connected) => {
+        isConnected = connected;
+      },
+      onError: (errorMessage) => {
+        error = errorMessage;
+
+        // Attempt to reconnect if connection is lost and we haven't exceeded max attempts
+        if (
+          !isConnected &&
+          reconnectAttempts < maxReconnectAttempts &&
+          conversation?.status !== "completed"
+        ) {
+          reconnectAttempts++;
+          setTimeout(() => {
+            if (conversation?.status !== "completed") {
+              connectToConversationSSE();
+            }
+          }, 3000 * reconnectAttempts); // Exponential backoff
+        }
+      },
+    });
+  }
 
   onMount(() => {
     if (conversation?.status !== "completed") {
-      eventSource = connectToSSE({
-        eventSourceUrl: `/api/conversations/${page.params.id}/events`,
-        itemToUpdate: conversation,
-        isConnected,
-        error,
-      });
+      connectToConversationSSE();
     }
   });
 
   onDestroy(() => {
     if (eventSource) {
       eventSource.close();
+    }
+  });
+
+  // Close connection when conversation is completed
+  $effect(() => {
+    if (conversation?.status === "completed" && eventSource) {
+      eventSource.close();
+      eventSource = null;
+      isConnected = false;
+      error = null;
     }
   });
 

@@ -1,34 +1,34 @@
 export function connectToSSE({
   eventSourceUrl,
-  itemToUpdate,
-  isConnected,
-  error,
+  onDataUpdate,
+  onConnectionChange,
+  onError,
 }: {
   eventSourceUrl: string;
-  itemToUpdate: any;
-  isConnected: boolean;
-  error: string | null;
+  onDataUpdate: (data: any) => void;
+  onConnectionChange: (isConnected: boolean) => void;
+  onError: (error: string | null) => void;
 }): EventSource {
   const eventSource = new EventSource(eventSourceUrl);
+
+  eventSource.onopen = () => {
+    onConnectionChange(true);
+    onError(null);
+  };
 
   eventSource.onmessage = (event) => {
     try {
       const updatedData = JSON.parse(event.data);
-      itemToUpdate = { ...itemToUpdate, ...updatedData };
+      onDataUpdate(updatedData);
     } catch (e) {
       console.error("Failed to parse SSE data:", e);
+      onError("Failed to parse server data");
     }
   };
 
   eventSource.onerror = () => {
-    isConnected = false;
-    error = "Connection lost. Retrying...";
-
-    setTimeout(() => {
-      if (eventSource?.readyState === EventSource.CLOSED) {
-        connectToSSE({ eventSourceUrl, itemToUpdate, isConnected, error });
-      }
-    }, 3000);
+    onConnectionChange(false);
+    onError("Connection lost. Retrying...");
   };
 
   return eventSource;
