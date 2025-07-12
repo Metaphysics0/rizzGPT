@@ -7,7 +7,7 @@
     uploadedFile,
   } from "$lib/stores/form.store";
   import { ApiService } from "$lib/utils/api-service.util";
-  import { triggerClientFileUpload } from "$lib/utils/client-file-upload.util";
+  import { triggerClientFileUpload } from "$lib/utils/file/client-file-upload.util";
   import { getRelationshipContextForUpload } from "$lib/utils/get-relationship-context-for-upload.util";
 
   $: canGenerateResponse = $uploadedFile && !$isGeneratingResponse;
