@@ -1,12 +1,8 @@
 <script lang="ts">
-  import Icon from "@iconify/svelte";
+  import CopyToClipboardButton from "$lib/ui/general/CopyToClipboardButton.svelte";
 
   export let index: number;
   export let response: string;
-
-  function copyToClipboard(response: string) {
-    navigator.clipboard.writeText(response);
-  }
 </script>
 
 <div
@@ -26,12 +22,6 @@
       <p class="text-gray-800">{response}</p>
     </div>
 
-    <button
-      onclick={() => copyToClipboard(response)}
-      class="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-50 text-gray-600 opacity-0 transition-all hover:bg-purple-100 hover:text-purple-600 group-hover:opacity-100"
-      title="Copy to clipboard"
-    >
-      <Icon icon="mdi:content-copy" class="h-4 w-4" />
-    </button>
+    <CopyToClipboardButton text={response} />
   </div>
 </div>

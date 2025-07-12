@@ -3,7 +3,7 @@
   import { page } from "$app/state";
   import { INITIAL_CONVERSATION_DESCRIPTION } from "$lib/constants/initial-conversation.constant";
   import AiAnalysis from "$lib/ui/GeneratedResponse/AIAnalysis.svelte";
-  import RizzResponseItem from "$lib/ui/GeneratedResponse/RizzResponseItem.svelte";
+  import GeneratedResponseItem from "$lib/ui/GeneratedResponse/GeneratedResponseItem.svelte";
   import ProcessingResponseSkeleton from "$lib/ui/loading-animations/ProcessingResponseSkeleton.svelte";
   import MediaPreview from "$lib/ui/MediaPreview.svelte";
   import { connectToSSE } from "$lib/utils/connect-to-sse.util";
@@ -185,7 +185,7 @@
             </h3>
 
             {#each conversation.rizzResponses as response, index}
-              <RizzResponseItem {index} {response} />
+              <GeneratedResponseItem {index} {response} />
             {/each}
           </div>
 
