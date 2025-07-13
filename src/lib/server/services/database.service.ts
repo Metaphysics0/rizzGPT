@@ -71,7 +71,7 @@ export class DatabaseService {
   async getConversationsForUser(
     userId: string
   ): Promise<ConversationsListItem[]> {
-    return await db
+    return db
       .select({
         id: conversations.id,
         matchName: conversations.matchName,
