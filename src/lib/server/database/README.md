@@ -80,7 +80,7 @@ import { DatabaseService } from "$lib/server/services/database.service";
 const dbService = new DatabaseService();
 
 // Sync user from Kinde
-const user = await dbService.upsertUserFromKinde(kindeUser);
+const user = await dbService.findOrCreateUserFromKinde(kindeUser);
 
 // Create conversation
 const conversation = await dbService.createConversation({

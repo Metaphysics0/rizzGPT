@@ -2,57 +2,23 @@ import {
   kindeAuthClient,
   type SessionManager,
 } from "@kinde-oss/kinde-auth-sveltekit";
-import { json } from "@sveltejs/kit";
 import type { KindeUser } from "../database/types";
 import { DatabaseService } from "../services/database.service";
 import { SubscriptionService } from "../services/subscription.service";
-import { unknownErrorResponse } from "./api-response.util";
+import { jsonErrorResponse, unknownErrorResponse } from "./api-response.util";
 
 export async function requireAuth(request: Request) {
   try {
     const isAuthenticated = await kindeAuthClient.isAuthenticated(
       request as unknown as SessionManager
     );
-
-    if (!isAuthenticated) {
-      return {
-        error: json(
-          { error: "Authentication required. Please sign in to continue." },
-          { status: 401 }
-        ),
-        user: null,
-        dbUser: null,
-      };
-    }
+    if (!isAuthenticated) return unauthenticatedResponse();
 
     const kindeUser = await kindeAuthClient.getUser(
       request as unknown as SessionManager
     );
 
-    // Sync user with database
-    let dbUser = null;
-    if (kindeUser) {
-      try {
-        const dbService = new DatabaseService();
-        const subscriptionService = new SubscriptionService();
-
-        // Upsert user in database
-        dbUser = await dbService.upsertUserFromKinde(kindeUser as KindeUser);
-        console.log("DB USER", dbUser);
-
-        // Check if user has a subscription, if not create a free trial
-        const existingSubscription =
-          await subscriptionService.getUserSubscription(dbUser.id);
-        console.log("EXISTING SUBSCRIPTION", existingSubscription);
-
-        if (!existingSubscription) {
-          console.log(`Creating free trial subscription for user ${dbUser.id}`);
-          await subscriptionService.createFreeTrialSubscription(dbUser.id);
-        }
-      } catch (dbError) {
-        console.error("Database user sync failed:", dbError);
-      }
-    }
+    const dbUser = await syncUserWithDatabase(kindeUser);
 
     return {
       error: null,
@@ -67,4 +33,39 @@ export async function requireAuth(request: Request) {
       dbUser: null,
     };
   }
+}
+
+async function syncUserWithDatabase(kindeUser?: KindeUser) {
+  if (!kindeUser) return null;
+
+  try {
+    const dbService = new DatabaseService();
+    const subscriptionService = new SubscriptionService();
+
+    const dbUser = await dbService.findOrCreateUserFromKinde(kindeUser);
+    const existingSubscription = await subscriptionService.getUserSubscription(
+      dbUser.id
+    );
+
+    if (!existingSubscription) {
+      console.log(`Creating free trial subscription for user ${dbUser.id}`);
+      await subscriptionService.createFreeTrialSubscription(dbUser.id);
+    }
+
+    return dbUser;
+  } catch (error) {
+    console.error("Database user sync failed:", error);
+    return null;
+  }
+}
+
+function unauthenticatedResponse() {
+  return {
+    error: jsonErrorResponse(
+      "Authentication required. Please sign in to continue.",
+      401
+    ),
+    user: null,
+    dbUser: null,
+  };
 }
