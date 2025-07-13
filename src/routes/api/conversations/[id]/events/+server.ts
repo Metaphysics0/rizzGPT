@@ -17,8 +17,7 @@ interface ConversationEventData {
 
 export const GET = (async ({ request, params, locals }) => {
   try {
-    // Authentication is handled by the hook, so we can directly access locals
-    const dbUser = locals.dbUser!; // Non-null assertion is safe due to hook
+    const dbUser = locals.dbUser!;
 
     if (!params.id) {
       return jsonErrorResponse("Conversation ID is required", 400);

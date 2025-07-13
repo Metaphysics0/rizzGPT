@@ -5,7 +5,6 @@ import {
 import type { ConversationGenerationRequest } from "$lib/server/services/conversation-generation.service";
 import { ConversationGenerationService } from "$lib/server/services/conversation-generation.service";
 import {
-  jsonErrorResponse,
   jsonSuccessResponse,
   missingRequiredParametersErrorResponse,
   unknownErrorResponse,
