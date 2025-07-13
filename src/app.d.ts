@@ -1,12 +1,21 @@
-// See https://svelte.dev/docs/kit/types#app.d.ts
-// for information about these interfaces
+import type { KindeUser } from "$lib/types";
+
 declare global {
   namespace App {
-    // interface Error {}
-    // interface Locals {}
-    // interface PageData {}
-    // interface PageState {}
-    // interface Platform {}
+    interface Locals {
+      user?: KindeUser | null;
+      dbUser?: {
+        id: string;
+        kindeId: string;
+        email: string;
+        givenName: string | null;
+        familyName: string | null;
+        picture: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+      } | null;
+      isAuthenticated: boolean;
+    }
   }
 }
 

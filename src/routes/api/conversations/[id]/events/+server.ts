@@ -4,7 +4,6 @@ import {
   jsonErrorResponse,
   unknownErrorResponse,
 } from "$lib/server/utils/api-response.util";
-import { requireAuth } from "$lib/server/utils/require-auth.util";
 import type { RequestHandler } from "./$types";
 
 interface ConversationEventData {
@@ -16,14 +15,9 @@ interface ConversationEventData {
   updatedAt: Date;
 }
 
-export const GET = (async ({ request, params }) => {
+export const GET = (async ({ request, params, locals }) => {
   try {
-    const authResult = await requireAuth(request);
-    if (authResult.error) return authResult.error;
-
-    if (!authResult.dbUser) {
-      return jsonErrorResponse("Unauthorized", 401);
-    }
+    const dbUser = locals.dbUser!;
 
     if (!params.id) {
       return jsonErrorResponse("Conversation ID is required", 400);
@@ -33,7 +27,7 @@ export const GET = (async ({ request, params }) => {
     const dbService = new DatabaseService();
 
     const conversation = await dbService.getConversationById(conversationId);
-    if (!conversation || conversation.userId !== authResult.dbUser.id) {
+    if (!conversation || conversation.userId !== dbUser.id) {
       return jsonErrorResponse("Conversation not found", 404);
     }
 

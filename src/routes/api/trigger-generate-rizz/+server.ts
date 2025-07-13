@@ -5,22 +5,15 @@ import {
 import type { ConversationGenerationRequest } from "$lib/server/services/conversation-generation.service";
 import { ConversationGenerationService } from "$lib/server/services/conversation-generation.service";
 import {
-  jsonErrorResponse,
   jsonSuccessResponse,
   missingRequiredParametersErrorResponse,
   unknownErrorResponse,
 } from "$lib/server/utils/api-response.util";
-import { requireAuth } from "$lib/server/utils/require-auth.util";
 import type { RequestHandler } from "./$types";
 
-export const POST = (async ({ request }) => {
+export const POST = (async ({ request, locals }) => {
   try {
-    const authResult = await requireAuth(request);
-    if (authResult.error) return authResult.error;
-
-    if (!authResult.dbUser) {
-      return jsonErrorResponse("User not found in database", 401);
-    }
+    const dbUser = locals.dbUser!;
 
     const { blobUrl, relationshipContext } = await request.json();
     if (!blobUrl) {
@@ -33,7 +26,7 @@ export const POST = (async ({ request }) => {
     );
 
     const conversationGenerationRequest: ConversationGenerationRequest = {
-      userId: authResult.dbUser.id,
+      userId: dbUser.id,
       blobUrl,
       relationshipContext,
     };
