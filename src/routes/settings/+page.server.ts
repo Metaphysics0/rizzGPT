@@ -9,14 +9,11 @@ export const load = (async ({ locals, setHeaders }) => {
   const subscriptionService = new SubscriptionService();
 
   // Get user's subscription and usage data
-  const [subscription, usageStats, allConversations] = await Promise.all([
+  const [subscription, usageStats, recentConversations] = await Promise.all([
     subscriptionService.getUserSubscription(locals.dbUser!.id),
     subscriptionService.getUsageStats(locals.dbUser!.id),
-    dbService.getConversationsForUser(locals.dbUser!.id),
+    dbService.getConversationsForUser(locals.dbUser!.id, 5),
   ]);
-
-  // Get recent 5 conversations for settings display
-  const recentConversations = allConversations.slice(0, 5);
 
   return {
     user: locals.user!,
