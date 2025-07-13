@@ -61,7 +61,7 @@
                   d="M5 13l4 4L19 7"
                 ></path>
               </svg>
-              50 AI-generated messages/week
+              30 AI-generated messages/week
             </li>
             <li class="flex items-center">
               <svg

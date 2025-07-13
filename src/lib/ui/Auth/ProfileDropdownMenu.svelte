@@ -44,9 +44,19 @@
 
   const MENU_ITEMS = [
     {
+      label: "Generate Rizz",
+      icon: "mdi:sparkles",
+      href: "/",
+    },
+    {
       label: "Conversations",
       icon: "mdi:chat-outline",
       href: "/conversations",
+    },
+    {
+      label: "Settings",
+      icon: "mdi:cog-outline",
+      href: "/settings",
     },
     {
       label: "Sign Out",
