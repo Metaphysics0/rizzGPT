@@ -21,37 +21,41 @@ export class ConversationGenerationService {
   private readonly databaseService: DatabaseService;
   private readonly qstashService: QstashService;
 
-  constructor() {
+  private conversationGenerationRequest: ConversationGenerationRequest;
+  private backgroundJobUrl: string;
+
+  constructor({
+    conversationGenerationRequest,
+    backgroundJobUrl,
+  }: {
+    conversationGenerationRequest: ConversationGenerationRequest;
+    backgroundJobUrl: string;
+  }) {
     this.databaseService = new DatabaseService();
     this.qstashService = new QstashService();
+    this.backgroundJobUrl = backgroundJobUrl;
+    this.conversationGenerationRequest = conversationGenerationRequest;
   }
 
-  async initiateConversationGeneration(
-    request: ConversationGenerationRequest,
-    backgroundJobUrl: string
-  ): Promise<ConversationGenerationResult> {
-    const conversation = await this.createInitialConversation(request);
-    await this.scheduleBackgroundProcessing(
-      conversation,
-      request,
-      backgroundJobUrl
-    );
+  async initiateConversationGeneration(): Promise<ConversationGenerationResult> {
+    const conversation = await this.createInitialConversation();
+    await this.scheduleBackgroundProcessing(conversation);
 
     return {
       conversationId: conversation.id,
     };
   }
 
-  private async createInitialConversation(
-    request: ConversationGenerationRequest
-  ): Promise<Conversation> {
+  private async createInitialConversation(): Promise<Conversation> {
     return await this.databaseService.createConversation({
-      userId: request.userId,
+      userId: this.conversationGenerationRequest.userId,
       rizzResponses: [],
       rizzResponseDescription: INITIAL_CONVERSATION_DESCRIPTION,
-      initialUploadedConversationBlobUrl: request.blobUrl,
-      ...(request.relationshipContext && {
-        relationshipContext: request.relationshipContext,
+      initialUploadedConversationBlobUrl:
+        this.conversationGenerationRequest.blobUrl,
+      ...(this.conversationGenerationRequest.relationshipContext && {
+        relationshipContext:
+          this.conversationGenerationRequest.relationshipContext,
       }),
       matchName: "Processing...",
       status: "processing",
@@ -59,33 +63,32 @@ export class ConversationGenerationService {
   }
 
   private async scheduleBackgroundProcessing(
-    conversation: Conversation,
-    request: ConversationGenerationRequest,
-    backgroundJobUrl: string
+    conversation: Conversation
   ): Promise<void> {
-    if (
-      SHOULD_TRIGGER_BACKGROUND_JOB_LOCALLY_IF_IN_DEV_MODE &&
-      process.env.NODE_ENV === "development"
-    ) {
+    const jobPayload: GenerateRizzJobPayload = {
+      conversationId: conversation.id,
+      blobUrl: this.conversationGenerationRequest.blobUrl,
+      relationshipContext:
+        this.conversationGenerationRequest.relationshipContext,
+      userId: this.conversationGenerationRequest.userId,
+    };
+
+    if (this.shouldTriggerBackgroundJobLocally) {
       console.log("Dev mode detected - Triggering background job locally");
-      const jobPayload: GenerateRizzJobPayload = {
-        conversationId: conversation.id,
-        blobUrl: request.blobUrl,
-        relationshipContext: request.relationshipContext,
-        userId: request.userId,
-      };
       await new GenerateRizzJobHandler(jobPayload).call();
       return;
     }
 
-    await this.qstashService.publishWithAuth({
-      url: backgroundJobUrl,
-      body: {
-        conversationId: conversation.id,
-        blobUrl: request.blobUrl,
-        relationshipContext: request.relationshipContext,
-      },
-      userId: request.userId,
+    await this.qstashService.publish<GenerateRizzJobPayload>({
+      url: this.backgroundJobUrl,
+      body: jobPayload,
     });
+  }
+
+  private get shouldTriggerBackgroundJobLocally(): boolean {
+    return (
+      SHOULD_TRIGGER_BACKGROUND_JOB_LOCALLY_IF_IN_DEV_MODE === "true" &&
+      process.env.NODE_ENV === "development"
+    );
   }
 }
