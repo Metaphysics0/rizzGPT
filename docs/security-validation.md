@@ -208,7 +208,7 @@ In production, ensure all environment variables are properly set in your deploym
 
 4. **"User not found in database"**
    - The user exists in Kinde but not in your database
-   - Check the `upsertUserFromKinde` function
+   - Check the `findOrCreateUserFromKinde` function
 
 ### Debug Tips
 

@@ -61,7 +61,7 @@
                   d="M5 13l4 4L19 7"
                 ></path>
               </svg>
-              50 AI-generated messages/week
+              30 AI-generated messages/week
             </li>
             <li class="flex items-center">
               <svg
@@ -297,9 +297,5 @@
         </div>
       </div>
     </div>
-
-    <p class="text-center mt-8 text-gray-600">
-      All plans include a 7-day free trial.
-    </p>
   </div>
 </section>

@@ -1,4 +1,9 @@
-import type { conversationMessages, conversations, users } from "./schema";
+import type {
+  conversationMessages,
+  conversations,
+  subscriptions,
+  users,
+} from "./schema";
 
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
@@ -8,6 +13,9 @@ export type NewConversation = typeof conversations.$inferInsert;
 
 export type ConversationMessage = typeof conversationMessages.$inferSelect;
 export type NewConversationMessage = typeof conversationMessages.$inferInsert;
+
+export type Subscription = typeof subscriptions.$inferSelect;
+export type NewSubscription = typeof subscriptions.$inferInsert;
 
 // Utility types for the conversation flow
 export type ConversationWithMessages = Conversation & {

@@ -4,7 +4,9 @@ import {
 } from "$lib/constants/edge-function-endpoints.enum";
 import type { ConversationGenerationRequest } from "$lib/server/services/conversation-generation.service";
 import { ConversationGenerationService } from "$lib/server/services/conversation-generation.service";
+import { SubscriptionService } from "$lib/server/services/subscription.service";
 import {
+  jsonErrorResponse,
   jsonSuccessResponse,
   missingRequiredParametersErrorResponse,
   unknownErrorResponse,
@@ -18,6 +20,18 @@ export const POST = (async ({ request, locals }) => {
     const { blobUrl, relationshipContext } = await request.json();
     if (!blobUrl) {
       return missingRequiredParametersErrorResponse(["blobUrl"]);
+    }
+
+    const subscriptionService = new SubscriptionService();
+    const canGenerate = await subscriptionService.canGenerateConversation(
+      dbUser.id
+    );
+
+    if (!canGenerate.allowed) {
+      return jsonErrorResponse(
+        canGenerate.reason || "Unable to generate conversation",
+        canGenerate.reason === "Usage limit reached" ? 403 : 402
+      );
     }
 
     const backgroundJobUrl = getServerSideEdgeFunctionUrl(
@@ -35,6 +49,12 @@ export const POST = (async ({ request, locals }) => {
       conversationGenerationRequest,
       backgroundJobUrl,
     }).initiateConversationGeneration();
+
+    // Increment usage count after successful conversation creation
+    await subscriptionService.incrementConversationUsage(
+      dbUser.id,
+      result.conversationId
+    );
 
     return jsonSuccessResponse(result);
   } catch (error) {

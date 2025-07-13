@@ -14,7 +14,10 @@ import type {
 } from "../database/types";
 
 export class DatabaseService {
-  async upsertUserFromKinde(kindeUser: KindeUser): Promise<User> {
+  async findOrCreateUserFromKinde(kindeUser: KindeUser): Promise<User> {
+    const existingUser = await this.getUserByKindeId(kindeUser.id);
+    if (existingUser) return existingUser;
+
     const userData: NewUser = {
       id: crypto.randomUUID(),
       kindeId: kindeUser.id,
@@ -26,42 +29,18 @@ export class DatabaseService {
       updatedAt: new Date(),
     };
 
-    const existingUsers = await db
-      .select()
-      .from(users)
-      .where(eq(users.kindeId, kindeUser.id))
-      .limit(1);
-
-    if (existingUsers.length > 0) {
-      // Update existing user
-      const [updatedUser] = await db
-        .update(users)
-        .set({
-          email: kindeUser.email,
-          givenName: kindeUser.given_name || null,
-          familyName: kindeUser.family_name || null,
-          picture: kindeUser.picture || null,
-          updatedAt: new Date(),
-        })
-        .where(eq(users.kindeId, kindeUser.id))
-        .returning();
-
-      return updatedUser;
-    } else {
-      // Create new user
-      const [newUser] = await db.insert(users).values(userData).returning();
-      return newUser;
-    }
+    const [newUser] = await db.insert(users).values(userData).returning();
+    return newUser;
   }
 
   async getUserByKindeId(kindeId: string): Promise<User | null> {
-    const result = await db
+    const [result] = await db
       .select()
       .from(users)
       .where(eq(users.kindeId, kindeId))
       .limit(1);
 
-    return result[0] || null;
+    return result;
   }
 
   async getUserById(userId: string): Promise<User | null> {
