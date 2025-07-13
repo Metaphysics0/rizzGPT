@@ -1,21 +1,15 @@
 <script lang="ts">
+  import type { KindeUser } from "$lib/types";
   import Icon from "@iconify/svelte";
 
   interface Props {
     isAuthenticated: boolean;
-    user?: {
-      id: string;
-      email: string;
-      given_name?: string;
-      family_name?: string;
-      picture?: string | null;
-    } | null;
+    user?: KindeUser | null;
   }
 
   let { isAuthenticated, user }: Props = $props();
   let isDropdownOpen = $state(false);
 
-  // Function to get user initials for avatar fallback
   function getUserInitials(user: Props["user"]): string {
     if (!user) return "U";
     const firstName = user.given_name || "";
@@ -30,7 +24,6 @@
     return "U";
   }
 
-  // Function to get display name
   function getDisplayName(user: Props["user"]): string {
     if (!user) return "User";
     if (user.given_name && user.family_name)
@@ -42,7 +35,6 @@
     return "User";
   }
 
-  // Close dropdown when clicking outside
   function handleClickOutside(event: MouseEvent) {
     const target = event.target as Element;
     if (!target.closest(".profile-dropdown")) {
@@ -50,7 +42,7 @@
     }
   }
 
-  const SIGNED_IN_MENU_ITEMS = [
+  const MENU_ITEMS = [
     {
       label: "Conversations",
       icon: "mdi:chat-outline",
@@ -163,7 +155,7 @@
 
             <!-- Menu Items -->
             <div class="py-1">
-              {#each SIGNED_IN_MENU_ITEMS as item}
+              {#each MENU_ITEMS as item}
                 <a
                   href={item.href}
                   class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-red-50 hover:text-red-600"
