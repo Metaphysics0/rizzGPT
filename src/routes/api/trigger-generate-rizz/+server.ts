@@ -1,4 +1,7 @@
-import { EdgeFunctionEndpoints } from "$lib/constants/edge-function-endpoints.enum";
+import {
+  EdgeFunctionEndpoints,
+  getServerSideEdgeFunctionUrl,
+} from "$lib/constants/edge-function-endpoints.enum";
 import type { ConversationGenerationRequest } from "$lib/server/services/conversation-generation.service";
 import { ConversationGenerationService } from "$lib/server/services/conversation-generation.service";
 import {
@@ -24,20 +27,21 @@ export const POST = (async ({ request }) => {
       return missingRequiredParametersErrorResponse(["blobUrl"]);
     }
 
-    const conversationRequest: ConversationGenerationRequest = {
+    const backgroundJobUrl = getServerSideEdgeFunctionUrl(
+      request,
+      EdgeFunctionEndpoints.GENERATE_RIZZ
+    );
+
+    const conversationGenerationRequest: ConversationGenerationRequest = {
       userId: authResult.dbUser.id,
       blobUrl,
       relationshipContext,
     };
 
-    const backgroundJobUrl =
-      new URL(request.url).origin + EdgeFunctionEndpoints.GENERATE_RIZZ;
-
-    const result =
-      await new ConversationGenerationService().initiateConversationGeneration(
-        conversationRequest,
-        backgroundJobUrl
-      );
+    const result = await new ConversationGenerationService({
+      conversationGenerationRequest,
+      backgroundJobUrl,
+    }).initiateConversationGeneration();
 
     return jsonSuccessResponse(result);
   } catch (error) {

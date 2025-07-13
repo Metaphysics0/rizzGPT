@@ -3,8 +3,6 @@
   import GenerateResponseButton from "$lib/ui/Form/GenerateResponseButton.svelte";
   import ImageInput from "$lib/ui/Form/ImageInput.svelte";
   import RelationshipContext from "$lib/ui/Form/RelationshipContext.svelte";
-  import GeneratedResponse from "$lib/ui/GeneratedResponse.svelte";
-  import Header from "$lib/ui/Header.svelte";
   import type { PageData } from "./$types";
 
   export let data: PageData;
@@ -15,7 +13,6 @@
     <div class="space-y-6">
       <ImageInput />
       <RelationshipContext />
-      <GeneratedResponse />
     </div>
 
     <div class="flex justify-center pt-4">

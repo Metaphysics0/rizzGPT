@@ -21,32 +21,21 @@ export class QstashService {
     this.client = new Client({ token: QSTASH_TOKEN });
   }
 
-  async publish({
+  async publish<T>({
     body,
     url,
     maxRetries = 3,
   }: {
-    body: Record<string, unknown>;
-    url: EdgeFunctionEndpoints;
-    maxRetries?: number;
-  }) {
-    return this.client.publishJSON({ url, body, retries: maxRetries });
-  }
-
-  async publishWithAuth({
-    body,
-    userId,
-    url,
-    maxRetries = 3,
-  }: {
-    body: Record<string, unknown>;
-    userId: string;
+    body: T;
     url: string;
     maxRetries?: number;
   }) {
+    console.log(
+      `Publishing message to QStash ${JSON.stringify({ url, body })}`
+    );
     return this.client.publishJSON({
       url,
-      body: { ...body, userId },
+      body,
       retries: maxRetries,
     });
   }

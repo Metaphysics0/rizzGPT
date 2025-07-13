@@ -17,7 +17,12 @@ export const POST = (async ({ request }) => {
 
     if (!body) return unprocessableEntityResponse("Request body is required");
 
-    console.log("BODY", body);
+    console.log(
+      "Generating upload token for user",
+      authResult.user.id,
+      "for path",
+      body.payload.pathname
+    );
 
     const response = await new BlobStorageService().generateClientToken(
       body.payload.pathname

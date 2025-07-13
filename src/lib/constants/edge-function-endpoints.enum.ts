@@ -3,17 +3,9 @@ export enum EdgeFunctionEndpoints {
   TRIGGER_GENERATE_RIZZ = "/api/trigger-generate-rizz",
 }
 
-export function isEdgeFunctionEndpoint(url: string): boolean {
-  const endpoint = url.split("/api/").at(-1);
-  if (!endpoint) return false;
-
-  return Object.values(EdgeFunctionEndpoints).includes(
-    `/api/${endpoint}` as EdgeFunctionEndpoints
-  );
-}
-
-export function getEdgeFunctionEndpointUrl(
+export function getServerSideEdgeFunctionUrl(
+  request: Request,
   endpoint: EdgeFunctionEndpoints
 ): string {
-  return `https://${window.location.hostname}${endpoint}`;
+  return `https://${new URL(request.url).origin}${endpoint}`;
 }
