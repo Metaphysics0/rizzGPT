@@ -9,10 +9,6 @@
       <!-- Navigation Menu -->
       <div class="hidden md:flex items-center space-x-8">
         <a
-          href="/"
-          class="text-gray-700 hover:text-purple-600 transition-colors">Home</a
-        >
-        <a
           href="#how-it-works"
           class="text-gray-700 hover:text-purple-600 transition-colors"
           >How It Works</a
@@ -36,20 +32,16 @@
           href="#faqs"
           class="text-gray-700 hover:text-purple-600 transition-colors">FAQs</a
         >
-        <a
-          href="/blog"
-          class="text-gray-700 hover:text-purple-600 transition-colors">Blog</a
-        >
       </div>
 
       <!-- CTA Buttons -->
       <div class="flex items-center space-x-4">
         <a
-          href="/login"
+          href="/"
           class="text-gray-700 hover:text-purple-600 transition-colors">Login</a
         >
         <a
-          href="/get-started"
+          href="/"
           class="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-2 rounded-full font-semibold hover:shadow-lg transition-all duration-300 transform hover:scale-105"
         >
           Get Started FREE
