@@ -297,9 +297,5 @@
         </div>
       </div>
     </div>
-
-    <p class="text-center mt-8 text-gray-600">
-      All plans include a 7-day free trial.
-    </p>
   </div>
 </section>

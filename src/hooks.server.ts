@@ -35,6 +35,7 @@ function isAuthRequired(pathname: string): boolean {
     "/api/conversations/",
     "/api/trigger-generate-rizz",
     "/api/generate-client-upload-token",
+    "/api/subscription/",
   ];
 
   const protectedPageRoutes = ["/conversations"];
