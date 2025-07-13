@@ -1,3 +1,5 @@
+import type { Conversation } from "./server/database/types";
+
 export interface RelationshipContext {
   duration: number;
   objective: string;
@@ -15,3 +17,13 @@ export interface ClientFileUploadPayload {
   clientPayload?: string;
   callbackUrl: string;
 }
+
+export type ConversationsListItem = Pick<
+  Conversation,
+  | "id"
+  | "matchName"
+  | "createdAt"
+  | "updatedAt"
+  | "status"
+  | "rizzResponseDescription"
+>;

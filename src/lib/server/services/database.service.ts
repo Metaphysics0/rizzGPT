@@ -1,3 +1,4 @@
+import type { ConversationsListItem } from "$lib/types";
 import { desc, eq } from "drizzle-orm";
 import { db } from "../database/connection";
 import { conversationMessages, conversations, users } from "../database/schema";
@@ -90,17 +91,7 @@ export class DatabaseService {
 
   async getConversationsForUser(
     userId: string
-  ): Promise<
-    Pick<
-      Conversation,
-      | "id"
-      | "matchName"
-      | "createdAt"
-      | "updatedAt"
-      | "status"
-      | "rizzResponseDescription"
-    >[]
-  > {
+  ): Promise<ConversationsListItem[]> {
     return await db
       .select({
         id: conversations.id,
