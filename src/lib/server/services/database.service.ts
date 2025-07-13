@@ -1,3 +1,4 @@
+import type { ConversationsListItem } from "$lib/types";
 import { desc, eq } from "drizzle-orm";
 import { db } from "../database/connection";
 import { conversationMessages, conversations, users } from "../database/schema";
@@ -88,9 +89,18 @@ export class DatabaseService {
     return newConversation;
   }
 
-  async getConversationsForUser(userId: string): Promise<Conversation[]> {
+  async getConversationsForUser(
+    userId: string
+  ): Promise<ConversationsListItem[]> {
     return await db
-      .select()
+      .select({
+        id: conversations.id,
+        matchName: conversations.matchName,
+        createdAt: conversations.createdAt,
+        updatedAt: conversations.updatedAt,
+        rizzResponseDescription: conversations.rizzResponseDescription,
+        status: conversations.status,
+      })
       .from(conversations)
       .where(eq(conversations.userId, userId))
       .orderBy(desc(conversations.createdAt));

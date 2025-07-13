@@ -15,7 +15,11 @@ export type ConversationWithMessages = Conversation & {
 };
 
 export type ConversationRole = "user" | "assistant";
-export type ConversationStatus = "initial" | "refining" | "completed";
+export type ConversationStatus =
+  | "initial"
+  | "processing"
+  | "refining"
+  | "completed";
 
 // Kinde user interface (to match existing auth implementation)
 export interface KindeUser {

@@ -4,8 +4,8 @@
   import { INITIAL_CONVERSATION_DESCRIPTION } from "$lib/constants/initial-conversation.constant";
   import AiAnalysis from "$lib/ui/GeneratedResponse/AIAnalysis.svelte";
   import GeneratedResponseItem from "$lib/ui/GeneratedResponse/GeneratedResponseItem.svelte";
+  import MediaPreview from "$lib/ui/general/MediaPreview.svelte";
   import ProcessingResponseSkeleton from "$lib/ui/loading-animations/ProcessingResponseSkeleton.svelte";
-  import MediaPreview from "$lib/ui/MediaPreview.svelte";
   import { connectToSSE } from "$lib/utils/connect-to-sse.util";
   import Icon from "@iconify/svelte";
   import { onDestroy, onMount } from "svelte";
@@ -77,7 +77,7 @@
   });
 
   function goBack() {
-    goto("/");
+    goto("/conversations");
   }
 
   const isProcessing = $derived(conversation?.status === "processing");

@@ -15,10 +15,9 @@
   async function onSubmit() {
     if (!$uploadedFile) return;
 
-    isGeneratingResponse.set(true);
-    responseError.set(null);
-
     try {
+      isGeneratingResponse.set(true);
+      responseError.set(null);
       const relationshipContext = getRelationshipContextForUpload(
         $relationshipContextForm
       );
