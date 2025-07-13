@@ -58,7 +58,7 @@
 
 <button
   onclick={navigateToConversationPage}
-  class="w-full p-4 text-left hover:bg-gray-50 transition-colors duration-200 border-b border-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset group sm:p-6 cursor-pointer"
+  class="bg-white/20 mb-3 w-full p-4 text-left hover:bg-gray-50 transition-colors duration-200 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset group sm:p-5 cursor-pointer rounded-2xl"
 >
   <div class="flex items-start justify-between space-x-3">
     <div class="flex-1 min-w-0">
@@ -85,25 +85,6 @@
       <p class="text-xs text-gray-400 sm:text-sm">
         {timeAgo}
       </p>
-    </div>
-
-    <!-- Arrow indicator -->
-    <div
-      class="flex-shrink-0 text-gray-400 group-hover:text-blue-500 transition-colors"
-    >
-      <svg
-        class="w-5 h-5"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M9 5l7 7-7 7"
-        ></path>
-      </svg>
     </div>
   </div>
 </button>

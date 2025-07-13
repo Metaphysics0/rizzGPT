@@ -15,11 +15,11 @@
 
 <div class="max-w-4xl mx-auto px-4 sm:px-6">
   <!-- Header -->
-  <div class="bg-white border-b border-gray-200 px-4 py-4 sm:px-6">
+  <div class="mb-4 rounded-2xl border-gray-200 px-4 py-4 sm:px-6">
     <div class="flex items-center justify-between flex-wrap gap-4">
       <div>
         <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl">
-          Conversations
+          Conversation History
         </h1>
         <p class="text-sm text-gray-600 mt-1">
           {#if hasAtLeastOneConversation}
@@ -58,7 +58,7 @@
   </div>
 
   <!-- Main content -->
-  <div class="bg-white shadow-sm">
+  <div>
     {#if hasAtLeastOneConversation}
       <div class="divide-y divide-gray-100">
         {#each data.conversations as conversation (conversation.id)}
