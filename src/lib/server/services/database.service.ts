@@ -88,9 +88,28 @@ export class DatabaseService {
     return newConversation;
   }
 
-  async getConversationsForUser(userId: string): Promise<Conversation[]> {
+  async getConversationsForUser(
+    userId: string
+  ): Promise<
+    Pick<
+      Conversation,
+      | "id"
+      | "matchName"
+      | "createdAt"
+      | "updatedAt"
+      | "status"
+      | "rizzResponseDescription"
+    >[]
+  > {
     return await db
-      .select()
+      .select({
+        id: conversations.id,
+        matchName: conversations.matchName,
+        createdAt: conversations.createdAt,
+        updatedAt: conversations.updatedAt,
+        rizzResponseDescription: conversations.rizzResponseDescription,
+        status: conversations.status,
+      })
       .from(conversations)
       .where(eq(conversations.userId, userId))
       .orderBy(desc(conversations.createdAt));
