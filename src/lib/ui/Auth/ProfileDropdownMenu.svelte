@@ -73,7 +73,7 @@
   });
 </script>
 
-<nav class="absolute top-0 left-0 right-0 z-50 p-4">
+<nav class="absolute right-0 w-fit z-50 p-4">
   <div class="flex justify-end">
     <div class="relative profile-dropdown">
       <button
