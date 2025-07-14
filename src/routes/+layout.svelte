@@ -8,7 +8,7 @@
   let { children, data } = $props();
 </script>
 
-{#if page.url.pathname !== "/landing"}
+{#if page.url.pathname !== "/home"}
   <ProfileDropdownMenu
     isAuthenticated={data.isAuthenticated}
     user={data.user}
