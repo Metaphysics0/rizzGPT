@@ -69,9 +69,10 @@ export class DatabaseService {
   }
 
   async getConversationsForUser(
-    userId: string
+    userId: string,
+    limit = 100
   ): Promise<ConversationsListItem[]> {
-    return await db
+    return db
       .select({
         id: conversations.id,
         matchName: conversations.matchName,
@@ -82,7 +83,8 @@ export class DatabaseService {
       })
       .from(conversations)
       .where(eq(conversations.userId, userId))
-      .orderBy(desc(conversations.createdAt));
+      .orderBy(desc(conversations.createdAt))
+      .limit(limit);
   }
 
   async getConversationById(

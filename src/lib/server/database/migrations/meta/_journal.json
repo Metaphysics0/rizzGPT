@@ -15,6 +15,13 @@
       "when": 1752407905184,
       "tag": "0001_soft_anita_blake",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1753461651304,
+      "tag": "0002_watery_rictor",
+      "breakpoints": true
     }
   ]
 }

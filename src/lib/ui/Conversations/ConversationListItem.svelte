@@ -2,7 +2,7 @@
   import { goto } from "$app/navigation";
   import type { ConversationStatus } from "$lib/server/database/types";
   import type { ConversationsListItem } from "$lib/types";
-  import { formatRelativeTime } from "$lib/utils/date-format/format-relative-time.util";
+  import { formatRelativeTime } from "$lib/utils/date-format";
   import { truncateText } from "$lib/utils/string/truncate-text.util";
 
   let { conversation }: { conversation: ConversationsListItem } = $props();

@@ -14,14 +14,7 @@ export const POST = (async ({ request, locals }) => {
   try {
     const dbUser = locals.dbUser!;
 
-    const {
-      planName,
-      lemonSqueezyId,
-      lemonSqueezyCustomerId,
-      lemonSqueezyOrderId,
-      lemonSqueezyProductId,
-      lemonSqueezyVariantId,
-    } = await request.json();
+    const { planName } = await request.json();
 
     if (!planName) {
       return missingRequiredParametersErrorResponse(["planName"]);
@@ -39,16 +32,7 @@ export const POST = (async ({ request, locals }) => {
     // Update subscription
     await subscriptionService.updateSubscriptionPlan(
       dbUser.id,
-      planName as SubscriptionPlan,
-      lemonSqueezyId
-        ? {
-            lemonSqueezyId,
-            lemonSqueezyCustomerId,
-            lemonSqueezyOrderId,
-            lemonSqueezyProductId,
-            lemonSqueezyVariantId,
-          }
-        : undefined
+      planName as SubscriptionPlan
     );
 
     // Get updated subscription status

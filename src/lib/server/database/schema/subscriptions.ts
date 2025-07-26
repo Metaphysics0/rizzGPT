@@ -15,13 +15,6 @@ export const subscriptions = pgTable("subscriptions", {
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
 
-  // Lemon Squeezy integration fields
-  lemonSqueezyId: text("lemon_squeezy_id").unique(),
-  lemonSqueezyCustomerId: text("lemon_squeezy_customer_id"),
-  lemonSqueezyOrderId: text("lemon_squeezy_order_id"),
-  lemonSqueezyProductId: text("lemon_squeezy_product_id"),
-  lemonSqueezyVariantId: text("lemon_squeezy_variant_id"),
-
   // Subscription details
   planName: text("plan_name").notNull(), // "free_trial", "conversationalist", "date_magnet", "rizz_master"
   status: text()

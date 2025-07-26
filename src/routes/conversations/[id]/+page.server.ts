@@ -2,7 +2,9 @@ import { DatabaseService } from "$lib/server/services/database.service";
 import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
-export const load = (async ({ params, locals }) => {
+export const load = (async ({ params, locals, setHeaders }) => {
+  setHeaders({ "cache-control": "max-age=120" });
+
   const dbUser = locals.dbUser!;
   const user = locals.user!;
 

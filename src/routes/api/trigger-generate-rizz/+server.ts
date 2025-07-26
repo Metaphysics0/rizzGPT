@@ -45,7 +45,7 @@ export const POST = (async ({ request, locals }) => {
       relationshipContext,
     };
 
-    const result = await new ConversationGenerationService({
+    const { conversationId } = await new ConversationGenerationService({
       conversationGenerationRequest,
       backgroundJobUrl,
     }).initiateConversationGeneration();
@@ -53,10 +53,10 @@ export const POST = (async ({ request, locals }) => {
     // Increment usage count after successful conversation creation
     await subscriptionService.incrementConversationUsage(
       dbUser.id,
-      result.conversationId
+      conversationId
     );
 
-    return jsonSuccessResponse(result);
+    return jsonSuccessResponse({ conversationId });
   } catch (error) {
     console.error("Trigger generate rizz endpoint error:", error);
     return unknownErrorResponse(
