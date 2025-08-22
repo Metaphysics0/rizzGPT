@@ -8,7 +8,6 @@ import { DatabaseService } from "./database.service";
 import { QstashService } from "./qstash.service";
 
 export interface ConversationGenerationRequest {
-  userId: string;
   blobUrl: string;
   relationshipContext?: RelationshipContext;
 }
@@ -48,7 +47,6 @@ export class ConversationGenerationService {
 
   private async createInitialConversation(): Promise<Conversation> {
     return await this.databaseService.createConversation({
-      userId: this.conversationGenerationRequest.userId,
       rizzResponses: [],
       rizzResponseDescription: INITIAL_CONVERSATION_DESCRIPTION,
       initialUploadedConversationBlobUrl:
@@ -70,7 +68,6 @@ export class ConversationGenerationService {
       blobUrl: this.conversationGenerationRequest.blobUrl,
       relationshipContext:
         this.conversationGenerationRequest.relationshipContext,
-      userId: this.conversationGenerationRequest.userId,
     };
 
     if (this.shouldTriggerBackgroundJobLocally) {

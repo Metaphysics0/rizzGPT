@@ -15,10 +15,8 @@ interface ConversationEventData {
   updatedAt: Date;
 }
 
-export const GET = (async ({ request, params, locals }) => {
+export const GET = (async ({ request, params }) => {
   try {
-    const dbUser = locals.dbUser!;
-
     if (!params.id) {
       return jsonErrorResponse("Conversation ID is required", 400);
     }
@@ -27,7 +25,7 @@ export const GET = (async ({ request, params, locals }) => {
     const dbService = new DatabaseService();
 
     const conversation = await dbService.getConversationById(conversationId);
-    if (!conversation || conversation.userId !== dbUser.id) {
+    if (!conversation) {
       return jsonErrorResponse("Conversation not found", 404);
     }
 
