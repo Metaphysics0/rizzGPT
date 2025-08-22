@@ -1,57 +1,16 @@
 import type { ConversationsListItem } from "$lib/types";
 import { desc, eq } from "drizzle-orm";
 import { db } from "../database/connection";
-import { conversationMessages, conversations, users } from "../database/schema";
+import { conversationMessages, conversations } from "../database/schema";
 import type {
   Conversation,
   ConversationMessage,
   ConversationWithMessages,
-  KindeUser,
   NewConversation,
   NewConversationMessage,
-  NewUser,
-  User,
 } from "../database/types";
 
 export class DatabaseService {
-  async findOrCreateUserFromKinde(kindeUser: KindeUser): Promise<User> {
-    const existingUser = await this.getUserByKindeId(kindeUser.id);
-    if (existingUser) return existingUser;
-
-    const userData: NewUser = {
-      id: crypto.randomUUID(),
-      kindeId: kindeUser.id,
-      email: kindeUser.email,
-      givenName: kindeUser.given_name || null,
-      familyName: kindeUser.family_name || null,
-      picture: kindeUser.picture || null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    const [newUser] = await db.insert(users).values(userData).returning();
-    return newUser;
-  }
-
-  async getUserByKindeId(kindeId: string): Promise<User | null> {
-    const [result] = await db
-      .select()
-      .from(users)
-      .where(eq(users.kindeId, kindeId))
-      .limit(1);
-
-    return result;
-  }
-
-  async getUserById(userId: string): Promise<User | null> {
-    const result = await db
-      .select()
-      .from(users)
-      .where(eq(users.id, userId))
-      .limit(1);
-
-    return result[0] || null;
-  }
 
   async createConversation(
     conversationData: Omit<NewConversation, "id" | "createdAt" | "updatedAt">
@@ -69,7 +28,6 @@ export class DatabaseService {
   }
 
   async getConversationsForUser(
-    userId: string,
     limit = 100
   ): Promise<ConversationsListItem[]> {
     return db
@@ -82,7 +40,6 @@ export class DatabaseService {
         status: conversations.status,
       })
       .from(conversations)
-      .where(eq(conversations.userId, userId))
       .orderBy(desc(conversations.createdAt))
       .limit(limit);
   }
@@ -101,7 +58,7 @@ export class DatabaseService {
 
   async updateConversation(
     conversationId: string,
-    updates: Partial<Omit<NewConversation, "id" | "userId" | "createdAt">>
+    updates: Partial<Omit<NewConversation, "id" | "createdAt">>
   ): Promise<Conversation | null> {
     const [updatedConversation] = await db
       .update(conversations)

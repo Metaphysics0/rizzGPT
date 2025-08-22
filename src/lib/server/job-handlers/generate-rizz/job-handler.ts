@@ -18,12 +18,10 @@ export class GenerateRizzJobHandler {
 
   async call() {
     this.ensureRequiredFieldsArePresent();
-    const { blobUrl, relationshipContext, userId, conversationId } =
+    const { blobUrl, relationshipContext, conversationId } =
       this.jobPayload;
 
     try {
-      const dbUser = await this.dbService.getUserById(userId);
-      if (!dbUser) throw new Error("User not found in database");
       const file = await this.blobStorageService.downloadFileFromBlobUrl(
         blobUrl
       );
@@ -57,11 +55,10 @@ export class GenerateRizzJobHandler {
   }
 
   private ensureRequiredFieldsArePresent() {
-    const { blobUrl, userId, conversationId } = this.jobPayload;
+    const { blobUrl, conversationId } = this.jobPayload;
     const missingFields: string[] = [];
 
     if (!blobUrl) missingFields.push("blobUrl");
-    if (!userId) missingFields.push("userId");
     if (!conversationId) missingFields.push("conversationId");
 
     if (missingFields.length > 0) {

@@ -2,11 +2,8 @@ import { DatabaseService } from "$lib/server/services/database.service";
 import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
-export const load = (async ({ params, locals, setHeaders }) => {
+export const load = (async ({ params, setHeaders }) => {
   setHeaders({ "cache-control": "max-age=120" });
-
-  const dbUser = locals.dbUser!;
-  const user = locals.user!;
 
   if (!params.id) throw error(400, "Conversation ID is required");
 
@@ -14,13 +11,11 @@ export const load = (async ({ params, locals, setHeaders }) => {
   const dbService = new DatabaseService();
   const conversation = await dbService.getConversationById(conversationId);
 
-  if (!conversation || conversation.userId !== dbUser.id) {
+  if (!conversation) {
     throw error(404, "Conversation not found");
   }
 
   return {
     conversation,
-    user,
-    isAuthenticated: true,
   };
 }) satisfies PageServerLoad;

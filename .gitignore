@@ -26,3 +26,6 @@ test-assets/
 
 cursor-prompts/
 cursor-replies/
+
+src/lib/server/database/migrations/meta/
+
