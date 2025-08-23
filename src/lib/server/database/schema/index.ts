@@ -23,11 +23,12 @@ export const conversationMessages = pgTable(
       .defaultNow()
       .notNull(),
   },
-  (table) => ({
-    conversationOrderIdx: index(
-      "conversation_messages_conversation_id_order_idx"
-    ).on(table.conversationId, table.messageOrder),
-  })
+  (table) => [
+    index("conversation_messages_conversation_id_order_idx").on(
+      table.conversationId,
+      table.messageOrder
+    ),
+  ]
 );
 
 export const conversations = pgTable("conversations", {
