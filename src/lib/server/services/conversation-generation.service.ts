@@ -8,6 +8,7 @@ import { INITIAL_CONVERSATION_DESCRIPTION } from "$lib/constants/initial-convers
 export interface ConversationGenerationRequest {
   blobUrl: string;
   relationshipContext?: RelationshipContext;
+  userId: string;
 }
 
 export interface ConversationGenerationResult {
@@ -51,12 +52,13 @@ export class ConversationGenerationService {
     new GenerateRizzJobHandler(jobPayload).call().catch((error) => {
       console.error("Background job failed:", error);
       // TODO: Here you could add logic to update the conversation status to 'failed'
-      // this.databaseService.updateConversationStatus(conversation.id, 'failed');
+      this.databaseService.updateConversationStatus(conversation.id, "failed");
     });
   }
 
   private async createInitialConversation(): Promise<Conversation> {
     return this.databaseService.createConversation({
+      userId: this.params.userId,
       rizzResponses: [],
       rizzResponseDescription: INITIAL_CONVERSATION_DESCRIPTION,
       initialUploadedConversationBlobUrl: this.params.blobUrl,

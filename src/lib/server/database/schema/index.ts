@@ -1,6 +1,7 @@
 import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
-import type { RelationshipContext } from "$lib/types";
+import type { ConversationStatus, RelationshipContext } from "$lib/types";
 import { jsonb } from "drizzle-orm/pg-core";
+// import type { ConversationStatus } from "../types";
 
 // Users table
 export const users = pgTable("user", {
@@ -54,15 +55,15 @@ export const verifications = pgTable("verification", {
 
 export const conversations = pgTable("conversation", {
   id: uuid().primaryKey().defaultRandom(),
-  userId: text().references(() => users.id, { onDelete: "cascade" }),
+  userId: text()
+    .references(() => users.id, { onDelete: "cascade" })
+    .notNull(),
   rizzResponses: jsonb().$type<string[]>().notNull(),
   rizzResponseDescription: text().notNull(),
   initialUploadedConversationBlobUrl: text().notNull(),
   relationshipContext: jsonb().$type<RelationshipContext>(),
   matchName: text().notNull(),
-  status: text()
-    .$type<"initial" | "processing" | "refining" | "completed">()
-    .default("initial"),
+  status: text().$type<ConversationStatus>().default("initial"),
   createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
 });

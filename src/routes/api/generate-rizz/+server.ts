@@ -1,14 +1,17 @@
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 import {
+  unauthorizedResponse,
   unknownErrorResponse,
   unprocessableEntityResponse,
 } from "$lib/server/utils/response.util";
 import { ConversationGenerationService } from "$lib/server/services/conversation-generation.service";
 import { RelationshipContextSchema } from "$lib/types";
 
-export const POST = (async ({ request }) => {
+export const POST = (async ({ request, locals }) => {
   try {
+    if (!locals.user) return unauthorizedResponse("Unauthorized");
+
     const body = (await request.json()) as {
       blobUrl: string;
       relationshipContext: string;
@@ -17,6 +20,7 @@ export const POST = (async ({ request }) => {
 
     const { conversationId } = await new ConversationGenerationService({
       blobUrl: body.blobUrl,
+      userId: locals.user.id,
       ...(body.relationshipContext && {
         relationshipContext: RelationshipContextSchema.parse(
           JSON.parse(body.relationshipContext)

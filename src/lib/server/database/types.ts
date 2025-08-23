@@ -11,10 +11,3 @@ export type NewAccount = typeof accounts.$inferInsert;
 
 export type Conversation = typeof conversations.$inferSelect;
 export type NewConversation = typeof conversations.$inferInsert;
-
-export type ConversationRole = "user" | "assistant";
-export type ConversationStatus =
-  | "initial"
-  | "processing"
-  | "refining"
-  | "completed";
