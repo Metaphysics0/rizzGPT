@@ -38,3 +38,7 @@ export function missingRequiredParametersErrorResponse(
     `Missing required parameters: ${missingParameters.join(", ")}`
   );
 }
+
+export function unauthorizedResponse(message: string) {
+  return json({ success: false, error: message }, { status: 401 });
+}

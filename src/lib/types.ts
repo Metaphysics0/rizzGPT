@@ -34,3 +34,11 @@ export type ConversationsListItem = Pick<
   | "status"
   | "rizzResponseDescription"
 >;
+
+export type ConversationRole = "user" | "assistant";
+export type ConversationStatus =
+  | "initial"
+  | "processing"
+  | "refining"
+  | "completed"
+  | "failed";

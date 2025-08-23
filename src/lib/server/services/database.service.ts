@@ -1,4 +1,4 @@
-import type { ConversationsListItem } from "$lib/types";
+import type { ConversationsListItem, ConversationStatus } from "$lib/types";
 import { desc, eq } from "drizzle-orm";
 import { db } from "../database/connection";
 import { conversations } from "../database/schema";
@@ -6,7 +6,7 @@ import type { Conversation, NewConversation } from "../database/types";
 
 export class DatabaseService {
   async createConversation(
-    conversationData: Omit<NewConversation, "id" | "createdAt" | "updatedAt">
+    conversationData: NewConversation
   ): Promise<Conversation> {
     const [newConversation] = await db
       .insert(conversations)
@@ -16,19 +16,15 @@ export class DatabaseService {
     return newConversation;
   }
 
-  async getConversationsForUser(limit = 100): Promise<ConversationsListItem[]> {
+  async getConversationsForUser(
+    userId: string
+  ): Promise<ConversationsListItem[]> {
     return db
-      .select({
-        id: conversations.id,
-        matchName: conversations.matchName,
-        createdAt: conversations.createdAt,
-        updatedAt: conversations.updatedAt,
-        rizzResponseDescription: conversations.rizzResponseDescription,
-        status: conversations.status,
-      })
+      .select()
       .from(conversations)
+      .where(eq(conversations.userId, userId))
       .orderBy(desc(conversations.createdAt))
-      .limit(limit);
+      .limit(100);
   }
 
   async getConversationById(
@@ -70,7 +66,7 @@ export class DatabaseService {
 
   async updateConversationStatus(
     conversationId: string,
-    status: "initial" | "refining" | "completed"
+    status: ConversationStatus
   ): Promise<Conversation | null> {
     return await this.updateConversation(conversationId, { status });
   }
