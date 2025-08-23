@@ -37,6 +37,7 @@ export class ConversationGenerationService {
   }
 
   async initiateConversationGeneration(): Promise<ConversationGenerationResult> {
+    console.log("Starting conversation generation");
     const conversation = await this.createInitialConversation();
     await this.scheduleBackgroundProcessing(conversation);
 
