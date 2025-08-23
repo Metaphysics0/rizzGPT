@@ -3,7 +3,7 @@ import {
   jsonSuccessResponse,
   missingRequiredParametersErrorResponse,
   unknownErrorResponse,
-} from "$lib/server/utils/api-response.util";
+} from "$lib/server/utils/response.util";
 import type { RequestHandler } from "./$types";
 
 export const POST = (async ({ request }) => {

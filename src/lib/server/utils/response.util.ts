@@ -4,6 +4,10 @@ export function jsonSuccessResponse(data: unknown, status = 200) {
   return json({ success: true, data }, { status });
 }
 
+export function messageAcceptedResponse(message: string) {
+  return json({ success: true, message }, { status: 202 });
+}
+
 export function jsonErrorResponse(message: string, status = 400) {
   return json({ success: false, error: message }, { status });
 }
