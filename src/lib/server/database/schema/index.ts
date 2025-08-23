@@ -3,88 +3,65 @@ import type { RelationshipContext } from "$lib/types";
 import { jsonb } from "drizzle-orm/pg-core";
 
 // Users table
-export const users = pgTable("users", {
+export const users = pgTable("user", {
   id: uuid().primaryKey().defaultRandom(),
   email: text().unique().notNull(),
-  emailVerified: boolean("email_verified").default(false).notNull(),
+  emailVerified: boolean().default(false).notNull(),
   name: text(),
   image: text(),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
+  createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
 });
 
-export const sessions = pgTable("sessions", {
+export const sessions = pgTable("session", {
   id: text().primaryKey(),
-  userId: uuid("user_id")
+  userId: uuid()
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
-  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  expiresAt: timestamp({ withTimezone: true }).notNull(),
   token: text().notNull().unique(),
-  ipAddress: text("ip_address"),
-  userAgent: text("user_agent"),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
+  ipAddress: text(),
+  userAgent: text(),
+  createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
 });
 
-// Auth accounts table (for social providers)
-export const accounts = pgTable("accounts", {
+export const accounts = pgTable("account", {
   id: uuid().primaryKey().defaultRandom(),
-  userId: uuid("user_id")
+  userId: uuid()
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
-  accountId: text("account_id").notNull(),
-  providerId: text("provider_id").notNull(),
-  accessToken: text("access_token"),
-  refreshToken: text("refresh_token"),
-  idToken: text("id_token"),
-  accessTokenExpiresAt: timestamp("access_token_expires_at", {
-    withTimezone: true,
-  }),
-  refreshTokenExpiresAt: timestamp("refresh_token_expires_at", {
-    withTimezone: true,
-  }),
+  accountId: text().notNull(),
+  providerId: text().notNull(),
+  accessToken: text(),
+  refreshToken: text(),
+  idToken: text(),
+  accessTokenExpiresAt: timestamp({ withTimezone: true }),
+  refreshTokenExpiresAt: timestamp({ withTimezone: true }),
   scope: text(),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
+  createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
 });
 
-export const verification = pgTable("verification", {
-  id: text("id").primaryKey(),
-  identifier: text("identifier").notNull(),
-  value: text("value").notNull(),
-  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true }),
-  updatedAt: timestamp("updated_at", { withTimezone: true }),
+export const verifications = pgTable("verification", {
+  id: text().primaryKey(),
+  identifier: text().notNull(),
+  value: text().notNull(),
+  expiresAt: timestamp({ withTimezone: true }).notNull(),
+  createdAt: timestamp({ withTimezone: true }),
+  updatedAt: timestamp({ withTimezone: true }),
 });
 
-export const conversations = pgTable("conversations", {
+export const conversations = pgTable("conversation", {
   id: uuid().primaryKey().defaultRandom(),
-  userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }),
-  rizzResponses: jsonb("rizz_responses").$type<string[]>().notNull(),
-  rizzResponseDescription: text("rizz_response_description").notNull(),
-  initialUploadedConversationBlobUrl: text(
-    "initial_uploaded_conversation_blob_url"
-  ).notNull(),
-  relationshipContext: jsonb(
-    "relationship_context"
-  ).$type<RelationshipContext>(),
-  matchName: text("match_name").notNull(),
+  userId: uuid().references(() => users.id, { onDelete: "cascade" }),
+  rizzResponses: jsonb().$type<string[]>().notNull(),
+  rizzResponseDescription: text().notNull(),
+  initialUploadedConversationBlobUrl: text().notNull(),
+  relationshipContext: jsonb().$type<RelationshipContext>(),
+  matchName: text().notNull(),
   status: text()
     .$type<"initial" | "processing" | "refining" | "completed">()
     .default("initial"),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
+  createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
 });
