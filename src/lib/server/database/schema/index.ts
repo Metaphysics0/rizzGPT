@@ -4,7 +4,7 @@ import { jsonb } from "drizzle-orm/pg-core";
 
 // Users table
 export const users = pgTable("user", {
-  id: uuid().primaryKey().defaultRandom(),
+  id: text().primaryKey(),
   email: text().unique().notNull(),
   emailVerified: boolean().default(false).notNull(),
   name: text(),
@@ -15,7 +15,7 @@ export const users = pgTable("user", {
 
 export const sessions = pgTable("session", {
   id: text().primaryKey(),
-  userId: uuid()
+  userId: text()
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   expiresAt: timestamp({ withTimezone: true }).notNull(),
@@ -23,11 +23,12 @@ export const sessions = pgTable("session", {
   ipAddress: text(),
   userAgent: text(),
   createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
 });
 
 export const accounts = pgTable("account", {
-  id: uuid().primaryKey().defaultRandom(),
-  userId: uuid()
+  id: text().primaryKey(),
+  userId: text()
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   accountId: text().notNull(),
@@ -47,13 +48,13 @@ export const verifications = pgTable("verification", {
   identifier: text().notNull(),
   value: text().notNull(),
   expiresAt: timestamp({ withTimezone: true }).notNull(),
-  createdAt: timestamp({ withTimezone: true }),
-  updatedAt: timestamp({ withTimezone: true }),
+  createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
 });
 
 export const conversations = pgTable("conversation", {
   id: uuid().primaryKey().defaultRandom(),
-  userId: uuid().references(() => users.id, { onDelete: "cascade" }),
+  userId: text().references(() => users.id, { onDelete: "cascade" }),
   rizzResponses: jsonb().$type<string[]>().notNull(),
   rizzResponseDescription: text().notNull(),
   initialUploadedConversationBlobUrl: text().notNull(),
