@@ -2,7 +2,7 @@ import { BlobStorageService } from "$lib/server/services/blob-storage.service";
 import {
   unknownErrorResponse,
   unprocessableEntityResponse,
-} from "$lib/server/utils/api-response.util";
+} from "$lib/server/utils/response.util";
 import type { ClientFileUploadPayload } from "$lib/types";
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
