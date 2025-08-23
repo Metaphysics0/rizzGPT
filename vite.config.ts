@@ -5,8 +5,5 @@ import { defineConfig } from "vite";
 export default defineConfig(() => {
   return {
     plugins: [sveltekit(), tailwindcss()],
-    server: {
-      allowedHosts: ["https://crazy-ends-go.loca.lt"],
-    },
   };
 });

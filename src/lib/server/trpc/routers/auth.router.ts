@@ -11,7 +11,6 @@ export const authRouter = router({
           email: input.email,
           password: input.password,
         },
-        asResponse: true,
       });
     }),
 
@@ -22,7 +21,6 @@ export const authRouter = router({
         body: {
           provider: input.provider,
         },
-        asResponse: true,
       });
     }),
 });

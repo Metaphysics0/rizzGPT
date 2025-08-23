@@ -3,8 +3,11 @@
   import Header from "$lib/ui/Layout/Header.svelte";
   import { fade } from "svelte/transition";
   import "../app.css";
+  import { authClient } from "$lib/auth-client";
 
   let { children } = $props();
+
+  const session = authClient.useSession();
 </script>
 
 <div
