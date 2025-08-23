@@ -12,10 +12,8 @@
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "format": "biome format --write .",
     "lint": "biome check .",
-    "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio",
-    "db:migrate": "drizzle-kit migrate"
+    "db:studio": "drizzle-kit studio"
   },
   "devDependencies": {
     "@biomejs/biome": "2.0.6",
@@ -49,7 +47,8 @@
     "@vercel/functions": "^1.6.0",
     "drizzle-orm": "^0.44.2",
     "embla-carousel-svelte": "^8.6.0",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "pg": "^8.16.3"
   },
   "packageManager": "pnpm@10.12.4+sha512.5ea8b0deed94ed68691c9bad4c955492705c5eeb8a87ef86bc62c74a26b037b08ff9570f108b2e4dbd1dd1a9186fea925e527f141c648e85af45631074680184"
 }
