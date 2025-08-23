@@ -23,7 +23,7 @@
 
       const blobUrl = await triggerClientFileUpload($uploadedFile);
 
-      const { conversationId } = await trpc.generateRizz.mutate({
+      const { conversationId } = await trpc.generateRizz.generate.mutate({
         relationshipContext,
         blobUrl,
       });
