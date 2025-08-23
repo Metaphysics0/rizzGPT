@@ -6,7 +6,7 @@ import { type GenerateContentResponse, GoogleGenAI } from "@google/genai";
 
 export class GeminiService {
   private readonly client: GoogleGenAI;
-  private readonly GEMINI_FLASH_MODEL = "gemini-2.5-flash-preview-04-17";
+  private readonly GEMINI_FLASH_MODEL = "gemini-2.5-flash-lite";
 
   constructor() {
     if (!GEMINI_API_KEY) {

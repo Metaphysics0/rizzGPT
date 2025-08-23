@@ -46,18 +46,23 @@ export class ConversationGenerationService {
   }
 
   private async createInitialConversation(): Promise<Conversation> {
-    return await this.databaseService.createConversation({
-      rizzResponses: [],
-      rizzResponseDescription: INITIAL_CONVERSATION_DESCRIPTION,
-      initialUploadedConversationBlobUrl:
-        this.conversationGenerationRequest.blobUrl,
-      ...(this.conversationGenerationRequest.relationshipContext && {
-        relationshipContext:
-          this.conversationGenerationRequest.relationshipContext,
-      }),
-      matchName: "Processing...",
-      status: "processing",
-    });
+    try {
+      return await this.databaseService.createConversation({
+        rizzResponses: [],
+        rizzResponseDescription: INITIAL_CONVERSATION_DESCRIPTION,
+        initialUploadedConversationBlobUrl:
+          this.conversationGenerationRequest.blobUrl,
+        ...(this.conversationGenerationRequest.relationshipContext && {
+          relationshipContext:
+            this.conversationGenerationRequest.relationshipContext,
+        }),
+        matchName: "Processing...",
+        status: "processing",
+      });
+    } catch (error) {
+      console.error("Error creating initial conversation:", error);
+      throw error;
+    }
   }
 
   private async scheduleBackgroundProcessing(
