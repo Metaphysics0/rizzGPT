@@ -6,16 +6,15 @@
     responseError,
     uploadedFile,
   } from "$lib/stores/form.store";
-  import { ApiService } from "$lib/utils/api-service.util";
+  import { trpc } from "$lib/trpc/client";
   import { triggerClientFileUpload } from "$lib/utils/file/client-file-upload.util";
   import { getRelationshipContextForUpload } from "$lib/utils/get-relationship-context-for-upload.util";
 
   $: canGenerateResponse = $uploadedFile && !$isGeneratingResponse;
 
   async function onSubmit() {
-    if (!$uploadedFile) return;
-
     try {
+      if (!$uploadedFile) return;
       isGeneratingResponse.set(true);
       responseError.set(null);
       const relationshipContext = getRelationshipContextForUpload(
@@ -24,7 +23,7 @@
 
       const blobUrl = await triggerClientFileUpload($uploadedFile);
 
-      const { conversationId } = await new ApiService().triggerGenerateRizz({
+      const { conversationId } = await trpc.generateRizz.mutate({
         relationshipContext,
         blobUrl,
       });
