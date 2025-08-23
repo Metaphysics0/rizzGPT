@@ -17,9 +17,13 @@ export class GenerateRizzJobHandler {
   }
 
   async call() {
+    console.log(
+      `[GenerateRizzJobHandler] Starting background job - ${JSON.stringify(
+        this.jobPayload
+      )}`
+    );
     this.ensureRequiredFieldsArePresent();
-    const { blobUrl, relationshipContext, conversationId } =
-      this.jobPayload;
+    const { blobUrl, relationshipContext, conversationId } = this.jobPayload;
 
     try {
       const file = await this.blobStorageService.downloadFileFromBlobUrl(

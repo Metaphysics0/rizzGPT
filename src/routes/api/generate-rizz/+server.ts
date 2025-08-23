@@ -1,8 +1,3 @@
-import {
-  EdgeFunctionEndpoints,
-  getServerSideEdgeFunctionUrl,
-} from "$lib/constants/edge-function-endpoints.enum";
-import type { ConversationGenerationRequest } from "$lib/server/services/conversation-generation.service";
 import { ConversationGenerationService } from "$lib/server/services/conversation-generation.service";
 import {
   jsonSuccessResponse,
@@ -14,23 +9,11 @@ import type { RequestHandler } from "./$types";
 export const POST = (async ({ request }) => {
   try {
     const { blobUrl, relationshipContext } = await request.json();
-    if (!blobUrl) {
-      return missingRequiredParametersErrorResponse(["blobUrl"]);
-    }
-
-    const backgroundJobUrl = getServerSideEdgeFunctionUrl(
-      request,
-      EdgeFunctionEndpoints.GENERATE_RIZZ
-    );
-
-    const conversationGenerationRequest: ConversationGenerationRequest = {
-      blobUrl,
-      relationshipContext,
-    };
+    if (!blobUrl) return missingRequiredParametersErrorResponse(["blobUrl"]);
 
     const { conversationId } = await new ConversationGenerationService({
-      conversationGenerationRequest,
-      backgroundJobUrl,
+      blobUrl,
+      relationshipContext,
     }).initiateConversationGeneration();
 
     return jsonSuccessResponse({ conversationId });

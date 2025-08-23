@@ -1,4 +1,3 @@
-import { EdgeFunctionEndpoints } from "$lib/constants/edge-function-endpoints.enum";
 import type { RelationshipContext } from "$lib/types";
 
 export class ApiService {
@@ -9,7 +8,7 @@ export class ApiService {
     relationshipContext?: RelationshipContext;
     blobUrl: string;
   }): Promise<{ conversationId: string }> {
-    const response = await fetch(EdgeFunctionEndpoints.TRIGGER_GENERATE_RIZZ, {
+    const response = await fetch("/api/generate-rizz", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ blobUrl, relationshipContext }),
