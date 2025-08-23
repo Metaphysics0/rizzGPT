@@ -17,7 +17,6 @@ export const users = pgTable("users", {
     .notNull(),
 });
 
-// Auth sessions table (for BetterAuth when we add it)
 export const sessions = pgTable("sessions", {
   id: text().primaryKey(),
   userId: uuid("user_id")
@@ -56,6 +55,15 @@ export const accounts = pgTable("accounts", {
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .defaultNow()
     .notNull(),
+});
+
+export const verification = pgTable("verification", {
+  id: text("id").primaryKey(),
+  identifier: text("identifier").notNull(),
+  value: text("value").notNull(),
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }),
+  updatedAt: timestamp("updated_at", { withTimezone: true }),
 });
 
 export const conversations = pgTable("conversations", {
