@@ -1,6 +1,9 @@
 <script lang="ts">
   import { authClient } from "$lib/auth-client";
   import { goto } from "$app/navigation";
+  import { enhance } from "$app/forms";
+
+  // let { data } = $props();
 
   let email = "";
   let password = "";
@@ -73,7 +76,7 @@
   }
 </script>
 
-<div class="min-h-screen flex items-center justify-center">
+<div class="flex items-center justify-center">
   <div
     class="max-w-md w-full space-y-8 bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-lg"
   >
@@ -95,7 +98,9 @@
 
     <form
       class="mt-8 space-y-6"
+      method="POST"
       onsubmit={isSignUp ? handleEmailSignUp : handleEmailSignIn}
+      use:enhance
     >
       {#if error}
         <div
@@ -187,7 +192,7 @@
 
         <div class="relative">
           <div class="absolute inset-0 flex items-center">
-            <div class="w-full border-t border-gray-300" />
+            <div class="w-full border-t border-gray-300"></div>
           </div>
           <div class="relative flex justify-center text-sm">
             <span class="px-2 bg-white text-gray-500">Or continue with</span>

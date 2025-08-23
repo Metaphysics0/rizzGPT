@@ -20,7 +20,10 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
     schema: {
-      ...schema,
+      account: schema.accounts,
+      session: schema.sessions,
+      user: schema.users,
+      verification: schema.verifications,
     },
   }),
   plugins: [sveltekitCookies(getRequestEvent)],
