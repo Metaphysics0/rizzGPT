@@ -2,8 +2,8 @@
   import { goto } from "$app/navigation";
   import { page } from "$app/state";
   import { INITIAL_CONVERSATION_DESCRIPTION } from "$lib/constants/initial-conversation.constant";
-  import AiAnalysis from "$lib/ui/GeneratedResponse/AIAnalysis.svelte";
-  import GeneratedResponseItem from "$lib/ui/GeneratedResponse/GeneratedResponseItem.svelte";
+  import AiAnalysis from "$lib/ui/generated-response/AIAnalysis.svelte";
+  import GeneratedResponseItem from "$lib/ui/generated-response/GeneratedResponseItem.svelte";
   import MediaPreview from "$lib/ui/general/MediaPreview.svelte";
   import ProcessingResponseSkeleton from "$lib/ui/loading-animations/ProcessingResponseSkeleton.svelte";
   import { connectToSSE } from "$lib/utils/connect-to-sse.util";

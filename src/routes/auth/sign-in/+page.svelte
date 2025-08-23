@@ -39,7 +39,7 @@
       if (authError) {
         error = authError.message || "Sign up failed";
       } else if (data?.user) {
-        goto("/conversations");
+        goto("/");
       }
     } catch (err) {
       error = "An unexpected error occurred";
@@ -56,7 +56,7 @@
     try {
       await authClient.signIn.social({
         provider: "google",
-        callbackURL: "/conversations",
+        callbackURL: "/",
       });
     } catch (err) {
       error = "Google sign in failed";

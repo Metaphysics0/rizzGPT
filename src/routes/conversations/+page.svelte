@@ -1,7 +1,7 @@
 <script lang="ts">
-  import ConversationListItem from "$lib/ui/Conversations/ConversationListItem.svelte";
-  import NewConversationButton from "$lib/ui/Conversations/NewConversationButton.svelte";
-  import NoConversations from "$lib/ui/Conversations/NoConversations.svelte";
+  import ConversationListItem from "$lib/ui/conversations/ConversationListItem.svelte";
+  import NewConversationButton from "$lib/ui/conversations/NewConversationButton.svelte";
+  import NoConversations from "$lib/ui/conversations/NoConversations.svelte";
   import type { PageData } from "./$types";
 
   const { data }: { data: PageData } = $props();
