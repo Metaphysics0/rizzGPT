@@ -1,3 +1,4 @@
+import z from "zod/v4";
 import type { Conversation } from "./server/database/types";
 
 export interface RelationshipContext {
@@ -5,6 +6,12 @@ export interface RelationshipContext {
   objective: string;
   notes: string;
 }
+
+export const RelationshipContextSchema = z.object({
+  duration: z.number(),
+  objective: z.string(),
+  notes: z.string(),
+}) satisfies z.ZodType<RelationshipContext>;
 
 export interface GeneratedResponse {
   explanation: string;

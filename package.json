@@ -42,12 +42,15 @@
   "dependencies": {
     "@google/genai": "^1.8.0",
     "@neondatabase/serverless": "^1.0.1",
+    "@trpc/client": "^11.5.0",
+    "@trpc/server": "^11.5.0",
     "@vercel/blob": "^0.15.1",
     "@vercel/functions": "^1.6.0",
     "drizzle-orm": "^0.44.2",
     "embla-carousel-svelte": "^8.6.0",
     "lodash": "^4.17.21",
-    "pg": "^8.16.3"
+    "pg": "^8.16.3",
+    "zod": "^4.1.0"
   },
   "packageManager": "pnpm@10.12.4+sha512.5ea8b0deed94ed68691c9bad4c955492705c5eeb8a87ef86bc62c74a26b037b08ff9570f108b2e4dbd1dd1a9186fea925e527f141c648e85af45631074680184"
 }
