@@ -1,12 +1,4 @@
-import {
-  boolean,
-  index,
-  integer,
-  pgTable,
-  text,
-  timestamp,
-  uuid,
-} from "drizzle-orm/pg-core";
+import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import type { RelationshipContext } from "$lib/types";
 import { jsonb } from "drizzle-orm/pg-core";
 
@@ -51,8 +43,12 @@ export const accounts = pgTable("accounts", {
   accessToken: text("access_token"),
   refreshToken: text("refresh_token"),
   idToken: text("id_token"),
-  accessTokenExpiresAt: timestamp("access_token_expires_at", { withTimezone: true }),
-  refreshTokenExpiresAt: timestamp("refresh_token_expires_at", { withTimezone: true }),
+  accessTokenExpiresAt: timestamp("access_token_expires_at", {
+    withTimezone: true,
+  }),
+  refreshTokenExpiresAt: timestamp("refresh_token_expires_at", {
+    withTimezone: true,
+  }),
   scope: text(),
   createdAt: timestamp("created_at", { withTimezone: true })
     .defaultNow()
@@ -62,32 +58,9 @@ export const accounts = pgTable("accounts", {
     .notNull(),
 });
 
-export const conversationMessages = pgTable(
-  "conversation_messages",
-  {
-    id: uuid().primaryKey().defaultRandom(),
-    conversationId: uuid("conversation_id")
-      .references(() => conversations.id, { onDelete: "cascade" })
-      .notNull(),
-    role: text().$type<"user" | "assistant">().notNull(),
-    content: text().notNull(),
-    messageOrder: integer("message_order").notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-  },
-  (table) => [
-    index("conversation_messages_conversation_id_order_idx").on(
-      table.conversationId,
-      table.messageOrder
-    ),
-  ]
-);
-
 export const conversations = pgTable("conversations", {
   id: uuid().primaryKey().defaultRandom(),
-  userId: uuid("user_id")
-    .references(() => users.id, { onDelete: "cascade" }),
+  userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }),
   rizzResponses: jsonb("rizz_responses").$type<string[]>().notNull(),
   rizzResponseDescription: text("rizz_response_description").notNull(),
   initialUploadedConversationBlobUrl: text(

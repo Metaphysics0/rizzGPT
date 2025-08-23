@@ -1,14 +1,8 @@
 import type { ConversationsListItem } from "$lib/types";
 import { desc, eq } from "drizzle-orm";
 import { db } from "../database/connection";
-import { conversationMessages, conversations } from "../database/schema";
-import type {
-  Conversation,
-  ConversationMessage,
-  ConversationWithMessages,
-  NewConversation,
-  NewConversationMessage,
-} from "../database/types";
+import { conversations } from "../database/schema";
+import type { Conversation, NewConversation } from "../database/types";
 
 export class DatabaseService {
   async createConversation(
@@ -72,62 +66,6 @@ export class DatabaseService {
       .returning();
 
     return result.length > 0;
-  }
-
-  // Conversation Messages Methods
-  async addMessageToConversation(
-    messageData: Omit<NewConversationMessage, "id" | "createdAt">
-  ): Promise<ConversationMessage> {
-    const [newMessage] = await db
-      .insert(conversationMessages)
-      .values({
-        ...messageData,
-        createdAt: new Date(),
-      })
-      .returning();
-
-    return newMessage;
-  }
-
-  async getConversationWithMessages(
-    conversationId: string
-  ): Promise<ConversationWithMessages | null> {
-    // Get the conversation
-    const conversation = await this.getConversationById(conversationId);
-    if (!conversation) return null;
-
-    // Get all messages for this conversation
-    const messages = await db
-      .select()
-      .from(conversationMessages)
-      .where(eq(conversationMessages.conversationId, conversationId))
-      .orderBy(conversationMessages.messageOrder);
-
-    return {
-      ...conversation,
-      messages,
-    };
-  }
-
-  async getMessagesForConversation(
-    conversationId: string
-  ): Promise<ConversationMessage[]> {
-    return await db
-      .select()
-      .from(conversationMessages)
-      .where(eq(conversationMessages.conversationId, conversationId))
-      .orderBy(conversationMessages.messageOrder);
-  }
-
-  async getNextMessageOrder(conversationId: string): Promise<number> {
-    const lastMessage = await db
-      .select()
-      .from(conversationMessages)
-      .where(eq(conversationMessages.conversationId, conversationId))
-      .orderBy(conversationMessages.messageOrder)
-      .limit(1);
-
-    return lastMessage.length > 0 ? lastMessage[0].messageOrder + 1 : 1;
   }
 
   async updateConversationStatus(
