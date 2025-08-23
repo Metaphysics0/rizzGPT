@@ -1,64 +1,72 @@
 <script lang="ts">
-  import { goto } from "$app/navigation";
   import {
     isGeneratingResponse,
     relationshipContextForm,
     responseError,
     uploadedFile,
   } from "$lib/stores/form.store";
-  import { trpc } from "$lib/trpc/client";
   import { triggerClientFileUpload } from "$lib/utils/file/client-file-upload.util";
   import { getRelationshipContextForUpload } from "$lib/utils/get-relationship-context-for-upload.util";
+  import { enhance } from "$app/forms";
+
+  let blobUrl = "";
+  let relationshipContext = "";
 
   $: canGenerateResponse = $uploadedFile && !$isGeneratingResponse;
 
-  async function onSubmit() {
+  async function onButtonClick() {
     try {
       if (!$uploadedFile) return;
       isGeneratingResponse.set(true);
       responseError.set(null);
-      const relationshipContext = getRelationshipContextForUpload(
-        $relationshipContextForm
+      relationshipContext = JSON.stringify(
+        getRelationshipContextForUpload($relationshipContextForm)
       );
 
       const blobUrl = await triggerClientFileUpload($uploadedFile);
 
-      const { conversationId } = await trpc.generateRizz.generate.mutate({
-        relationshipContext,
-        blobUrl,
-      });
-
-      await goto(`/conversations/${conversationId}`);
+      // await goto(`/conversations/${conversationId}`);
     } catch (error) {
       responseError.set(
         error instanceof Error
           ? error.message
           : "An error occurred while generating response"
       );
-    } finally {
       isGeneratingResponse.set(false);
     }
   }
 </script>
 
-<button
-  disabled={!canGenerateResponse}
-  onclick={onSubmit}
-  class="
+<form
+  use:enhance={() => {
+    return ({ result, update }) => {
+      isGeneratingResponse.set(false);
+    };
+  }}
+  action="?/generateRizz"
+  method="POST"
+>
+  <input type="hidden" name="blobUrl" value={blobUrl} />
+  <input type="hidden" name="relationshipContext" value={relationshipContext} />
+  <button
+    disabled={!canGenerateResponse}
+    on:click={onButtonClick}
+    class="
           rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 px-8 py-3 font-medium
           text-white shadow-lg transition-all duration-200
           hover:scale-105 hover:from-purple-700 hover:to-pink-700 hover:shadow-xl
           disabled:transform-none disabled:cursor-not-allowed disabled:opacity-50
         "
->
-  {#if $isGeneratingResponse}
-    <span class="flex items-center gap-2">
-      <div
-        class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"
-      ></div>
-      Starting...
-    </span>
-  {:else}
-    Generate Response
-  {/if}
-</button>
+  >
+    {#if $isGeneratingResponse}
+      <span class="flex items-center gap-2">
+        <div
+          class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"
+        ></div>
+        Starting...
+      </span>
+    {:else}
+      Generate Response
+    {/if}
+  </button>
+</form>
