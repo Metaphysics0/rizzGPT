@@ -6,7 +6,7 @@ export default defineConfig(() => {
   return {
     plugins: [sveltekit(), tailwindcss()],
     server: {
-      allowedHosts: ["fast-ants-vanish.loca.lt"],
+      allowedHosts: ["https://crazy-ends-go.loca.lt"],
     },
   };
 });

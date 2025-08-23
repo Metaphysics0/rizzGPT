@@ -11,25 +11,18 @@ import type {
 } from "../database/types";
 
 export class DatabaseService {
-
   async createConversation(
     conversationData: Omit<NewConversation, "id" | "createdAt" | "updatedAt">
   ): Promise<Conversation> {
     const [newConversation] = await db
       .insert(conversations)
-      .values({
-        ...conversationData,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      })
+      .values(conversationData)
       .returning();
 
     return newConversation;
   }
 
-  async getConversationsForUser(
-    limit = 100
-  ): Promise<ConversationsListItem[]> {
+  async getConversationsForUser(limit = 100): Promise<ConversationsListItem[]> {
     return db
       .select({
         id: conversations.id,

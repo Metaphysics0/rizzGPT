@@ -3,7 +3,6 @@ import {
   QSTASH_NEXT_SIGNING_KEY,
   QSTASH_TOKEN,
 } from "$env/static/private";
-import type { EdgeFunctionEndpoints } from "$lib/constants/edge-function-endpoints.enum";
 import {
   jsonErrorResponse,
   unknownErrorResponse,
