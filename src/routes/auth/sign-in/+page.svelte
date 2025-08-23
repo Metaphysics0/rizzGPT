@@ -3,8 +3,6 @@
   import { goto } from "$app/navigation";
   import { enhance } from "$app/forms";
 
-  // let { data } = $props();
-
   let email = "";
   let password = "";
   let name = "";

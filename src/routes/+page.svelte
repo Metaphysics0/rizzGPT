@@ -5,12 +5,14 @@
 </script>
 
 <div class="mx-auto max-w-4xl space-y-8">
-  <div class="space-y-6">
-    <ImageInput />
-    <RelationshipContext />
-  </div>
+  <form method="POST" action="?/generateRizz">
+    <div class="space-y-6">
+      <ImageInput />
+      <RelationshipContext />
+    </div>
 
-  <div class="flex justify-center pt-4">
-    <GenerateResponseButton />
-  </div>
+    <div class="flex justify-center pt-4">
+      <GenerateResponseButton />
+    </div>
+  </form>
 </div>
