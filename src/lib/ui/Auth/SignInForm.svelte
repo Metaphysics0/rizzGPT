@@ -1,8 +1,6 @@
 <script lang="ts">
   import { authClient } from "$lib/auth-client";
   import { goto } from "$app/navigation";
-  import { authRouter } from "$lib/server/trpc/routers/auth.router";
-  import { trpc } from "$lib/trpc/client";
 
   let email = "";
   let password = "";
@@ -19,16 +17,6 @@
 
     isLoading = true;
     error = "";
-
-    try {
-      await trpc.auth.signInWithEmail.mutate({ email, password });
-      goto("/conversations");
-    } catch (err) {
-      error = "An unexpected error occurred";
-      console.error("Sign in error:", err);
-    } finally {
-      isLoading = false;
-    }
   }
 
   async function handleEmailSignUp() {

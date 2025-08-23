@@ -8,17 +8,22 @@ export const handle: Handle = async ({ event, resolve }) => {
     return new Response(null, { status: 204 });
   }
 
-  const session = await auth.api.getSession({
-    headers: event.request.headers,
-  });
+  try {
+    const session = await auth.api.getSession({
+      headers: event.request.headers,
+    });
 
-  // Make session and user available on server
-  if (session) {
-    event.locals.session = session.session;
-    event.locals.user = session.user;
+    // Make session and user available on server
+    if (session) {
+      event.locals.session = session.session;
+      event.locals.user = session.user;
+    }
+
+    return svelteKitHandler({ event, resolve, auth, building });
+  } catch (error) {
+    console.error("Error in handle", error);
+    return new Response(null, { status: 500 });
   }
-
-  return svelteKitHandler({ event, resolve, auth, building });
 };
 
 function isChromeDevToolsRequest(url: URL) {
