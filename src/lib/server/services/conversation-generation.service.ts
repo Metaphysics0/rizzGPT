@@ -1,11 +1,9 @@
-import { SHOULD_TRIGGER_BACKGROUND_JOB_LOCALLY_IF_IN_DEV_MODE } from "$env/static/private";
-import { INITIAL_CONVERSATION_DESCRIPTION } from "$lib/constants/initial-conversation.constant";
 import type { RelationshipContext } from "$lib/types";
 import type { Conversation } from "../database/types";
 import { GenerateRizzJobHandler } from "../job-handlers/generate-rizz/job-handler";
 import type { GenerateRizzJobPayload } from "../job-handlers/generate-rizz/job-payload.type";
 import { DatabaseService } from "./database.service";
-import { QstashService } from "./qstash.service";
+import { INITIAL_CONVERSATION_DESCRIPTION } from "$lib/constants/initial-conversation.constant";
 
 export interface ConversationGenerationRequest {
   blobUrl: string;
@@ -18,80 +16,55 @@ export interface ConversationGenerationResult {
 
 export class ConversationGenerationService {
   private readonly databaseService: DatabaseService;
-  private readonly qstashService: QstashService;
 
-  private conversationGenerationRequest: ConversationGenerationRequest;
-  private backgroundJobUrl: string;
+  private readonly params: ConversationGenerationRequest;
 
-  constructor({
-    conversationGenerationRequest,
-    backgroundJobUrl,
-  }: {
-    conversationGenerationRequest: ConversationGenerationRequest;
-    backgroundJobUrl: string;
-  }) {
+  constructor(conversationGenerationRequest: ConversationGenerationRequest) {
     this.databaseService = new DatabaseService();
-    this.qstashService = new QstashService();
-    this.backgroundJobUrl = backgroundJobUrl;
-    this.conversationGenerationRequest = conversationGenerationRequest;
+    this.params = conversationGenerationRequest;
   }
 
   async initiateConversationGeneration(): Promise<ConversationGenerationResult> {
-    console.log("Starting conversation generation");
+    console.log(
+      `Starting conversation generation - ${JSON.stringify(this.params)}`
+    );
     const conversation = await this.createInitialConversation();
-    await this.scheduleBackgroundProcessing(conversation);
+    console.log(
+      `Initial conversation created - ${JSON.stringify(conversation)}`
+    );
+
+    this.processInBackground(conversation);
 
     return {
       conversationId: conversation.id,
     };
   }
 
-  private async createInitialConversation(): Promise<Conversation> {
-    try {
-      return await this.databaseService.createConversation({
-        rizzResponses: [],
-        rizzResponseDescription: INITIAL_CONVERSATION_DESCRIPTION,
-        initialUploadedConversationBlobUrl:
-          this.conversationGenerationRequest.blobUrl,
-        ...(this.conversationGenerationRequest.relationshipContext && {
-          relationshipContext:
-            this.conversationGenerationRequest.relationshipContext,
-        }),
-        matchName: "Processing...",
-        status: "processing",
-      });
-    } catch (error) {
-      console.error("Error creating initial conversation:", error);
-      throw error;
-    }
-  }
-
-  private async scheduleBackgroundProcessing(
-    conversation: Conversation
-  ): Promise<void> {
+  private processInBackground(conversation: Conversation): void {
     const jobPayload: GenerateRizzJobPayload = {
       conversationId: conversation.id,
-      blobUrl: this.conversationGenerationRequest.blobUrl,
-      relationshipContext:
-        this.conversationGenerationRequest.relationshipContext,
+      blobUrl: this.params.blobUrl,
+      relationshipContext: this.params.relationshipContext,
     };
 
-    if (this.shouldTriggerBackgroundJobLocally) {
-      console.log("Dev mode detected - Triggering background job locally");
-      await new GenerateRizzJobHandler(jobPayload).call();
-      return;
-    }
-
-    await this.qstashService.publish<GenerateRizzJobPayload>({
-      url: this.backgroundJobUrl,
-      body: jobPayload,
+    // We don't await the call() method, allowing it to run in the background
+    new GenerateRizzJobHandler(jobPayload).call().catch((error) => {
+      console.error("Background job failed:", error);
+      // TODO: Here you could add logic to update the conversation status to 'failed'
+      // this.databaseService.updateConversationStatus(conversation.id, 'failed');
     });
   }
 
-  private get shouldTriggerBackgroundJobLocally(): boolean {
-    return (
-      SHOULD_TRIGGER_BACKGROUND_JOB_LOCALLY_IF_IN_DEV_MODE === "true" &&
-      process.env.NODE_ENV === "development"
-    );
+  private async createInitialConversation(): Promise<Conversation> {
+    return this.databaseService.createConversation({
+      rizzResponses: [],
+      rizzResponseDescription: INITIAL_CONVERSATION_DESCRIPTION,
+      initialUploadedConversationBlobUrl: this.params.blobUrl,
+      ...(this.params.relationshipContext && {
+        relationshipContext: this.params.relationshipContext,
+      }),
+      matchName: "Processing...",
+      status: "processing",
+    });
   }
 }
