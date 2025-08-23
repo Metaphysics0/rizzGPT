@@ -3,7 +3,8 @@
   import { authClient } from "$lib/auth-client";
   import Icon from "@iconify/svelte";
   import type { User } from "better-auth";
-
+  import { cn } from "$lib/utils/string/cn.util";
+  import { page } from "$app/state";
   let isDropdownOpen = $state(false);
 
   interface Props {
@@ -59,7 +60,7 @@
         await authClient.signOut({
           fetchOptions: {
             onSuccess: () => {
-              goto("/auth/sign-in");
+              goto("/sign-in");
               isDropdownOpen = false;
             },
           },
@@ -159,7 +160,7 @@
                   {#if item.label === "Sign Out"}
                     <button
                       onclick={item.onClick}
-                      class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-red-50 hover:text-red-600 w-full cursor-pointer"
+                      class={"flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-red-50 hover:text-red-600 w-full cursor-pointer"}
                     >
                       <Icon icon={item.icon} class="h-4 w-4" />
                       {item.label}
@@ -167,7 +168,10 @@
                   {:else}
                     <a
                       href={item.href}
-                      class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-red-50 hover:text-red-600"
+                      class={cn(
+                        "flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-red-50 hover:text-red-600",
+                        page.route.id === item.href && "bg-red-50 text-red-600"
+                      )}
                     >
                       <Icon icon={item.icon} class="h-4 w-4" />
                       {item.label}
@@ -179,7 +183,7 @@
               <!-- Not Authenticated Menu -->
               <div class="py-1">
                 <a
-                  href="/auth/sign-in"
+                  href="/sign-in"
                   class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-purple-50 hover:text-purple-600"
                 >
                   <Icon icon="mdi:login" class="h-4 w-4" />
