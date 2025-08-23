@@ -1,11 +1,16 @@
 <script lang="ts">
   import { page } from "$app/state";
-  import Header from "$lib/ui/Layout/Header.svelte";
+  import Header from "$lib/ui/layout/Header.svelte";
   import { fade } from "svelte/transition";
   import "../app.css";
+  import ProfileDropdownMenu from "$lib/ui/Auth/ProfileDropdownMenu.svelte";
 
-  let { children } = $props();
+  let { children, data } = $props();
 </script>
+
+{#if data.user}
+  <ProfileDropdownMenu user={data.user} />
+{/if}
 
 <div
   class="min-h-screen bg-gradient-to-br from-pink-100 via-purple-50 to-yellow-100 p-4 md:p-8"

@@ -1,7 +1,7 @@
 <script lang="ts">
-  import GenerateResponseButton from "$lib/ui/Form/GenerateResponseButton.svelte";
-  import ImageInput from "$lib/ui/Form/ImageInput.svelte";
-  import RelationshipContext from "$lib/ui/Form/RelationshipContext.svelte";
+  import GenerateResponseButton from "$lib/ui/form/GenerateResponseButton.svelte";
+  import ImageInput from "$lib/ui/form/ImageInput.svelte";
+  import RelationshipContext from "$lib/ui/form/RelationshipContext.svelte";
 </script>
 
 <div class="mx-auto max-w-4xl space-y-8">
