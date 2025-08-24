@@ -97,7 +97,7 @@
     <form
       class="mt-8 space-y-6"
       method="POST"
-      onsubmit={isSignUp ? handleEmailSignUp : handleEmailSignIn}
+      action={isSignUp ? "/sign-in?/signUp" : "/sign-in?/signIn"}
       use:enhance
     >
       {#if error}
