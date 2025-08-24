@@ -51,7 +51,6 @@ export class ConversationGenerationService {
     // We don't await the call() method, allowing it to run in the background
     new GenerateRizzJobHandler(jobPayload).call().catch((error) => {
       console.error("Background job failed:", error);
-      // TODO: Here you could add logic to update the conversation status to 'failed'
       this.databaseService.updateConversationStatus(conversation.id, "failed");
     });
   }
