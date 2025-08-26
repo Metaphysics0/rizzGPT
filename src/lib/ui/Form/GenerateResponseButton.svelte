@@ -59,6 +59,6 @@
       Starting...
     </span>
   {:else}
-    Generate Response
+    Generate Rizz
   {/if}
 </button>
