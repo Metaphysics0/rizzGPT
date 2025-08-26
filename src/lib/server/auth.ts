@@ -8,7 +8,10 @@ import * as schema from "./database/schema";
 import { ResendService } from "./services/send-email.service";
 
 export const auth = betterAuth({
-  trustedOrigins: [process.env.VERCEL_URL!],
+  trustedOrigins: [
+    "http://localhost:5173", 
+    ...(process.env.VERCEL_URL ? [`https://${process.env.VERCEL_URL}`] : [])
+  ],
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
