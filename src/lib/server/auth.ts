@@ -5,10 +5,12 @@ import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from "$env/static/private";
 import { sveltekitCookies } from "better-auth/svelte-kit";
 import { getRequestEvent } from "$app/server";
 import * as schema from "./database/schema";
+import { ResendService } from "./services/send-email.service";
 
 export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
+    requireEmailVerification: true,
   },
   socialProviders: {
     google: {
@@ -20,11 +22,11 @@ export const auth = betterAuth({
   emailVerification: {
     sendOnSignUp: true,
     sendVerificationEmail: async ({ user, url, token }, request) => {
-      // await sendEmail({
-      //   to: user.email,
-      //   subject: "Verify your email address",
-      //   text: `Click the link to verify your email: ${url}`,
-      // });
+      await new ResendService().sendEmail({
+        to: user.email,
+        subject: "Verify your email address",
+        text: `Click the link to verify your email: ${url}`,
+      });
     },
   },
   database: drizzleAdapter(db, {

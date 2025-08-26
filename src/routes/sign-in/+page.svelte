@@ -18,6 +18,27 @@
 
     isLoading = true;
     error = "";
+
+    try {
+      await authClient.signIn.email(
+        { email, password },
+        {
+          onError: (ctx) => {
+            if (ctx.error.status === 403) {
+              alert("Email not verified");
+              return;
+            }
+
+            alert(ctx.error.message);
+          },
+        }
+      );
+    } catch (err) {
+      error = "An unexpected error occurred";
+      console.error("Sign in error:", err);
+    } finally {
+      isLoading = false;
+    }
   }
 
   async function handleEmailSignUp() {
@@ -111,9 +132,6 @@
       <div class="space-y-4">
         {#if isSignUp}
           <div>
-            <label for="name" class="block text-sm font-medium text-gray-700">
-              Full Name
-            </label>
             <input
               id="name"
               name="name"
