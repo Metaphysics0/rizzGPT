@@ -2,6 +2,7 @@
   import { authClient } from "$lib/auth-client";
   import { goto } from "$app/navigation";
   import { enhance } from "$app/forms";
+  import { MINIMUM_PASSWORD_LENGTH } from "$lib/constants/minimum-password-length.constant";
 
   let email = "";
   let password = "";
@@ -9,66 +10,6 @@
   let isSignUp = false;
   let isLoading = false;
   let error = "";
-
-  async function handleEmailSignIn() {
-    if (!email || !password) {
-      error = "Please fill in all fields";
-      return;
-    }
-
-    isLoading = true;
-    error = "";
-
-    try {
-      await authClient.signIn.email(
-        { email, password },
-        {
-          onError: (ctx) => {
-            if (ctx.error.status === 403) {
-              alert("Email not verified");
-              return;
-            }
-
-            alert(ctx.error.message);
-          },
-        }
-      );
-    } catch (err) {
-      error = "An unexpected error occurred";
-      console.error("Sign in error:", err);
-    } finally {
-      isLoading = false;
-    }
-  }
-
-  async function handleEmailSignUp() {
-    if (!email || !password || !name) {
-      error = "Please fill in all fields";
-      return;
-    }
-
-    isLoading = true;
-    error = "";
-
-    try {
-      const { data, error: authError } = await authClient.signUp.email({
-        email,
-        password,
-        name,
-      });
-
-      if (authError) {
-        error = authError.message || "Sign up failed";
-      } else if (data?.user) {
-        goto("/");
-      }
-    } catch (err) {
-      error = "An unexpected error occurred";
-      console.error("Sign up error:", err);
-    } finally {
-      isLoading = false;
-    }
-  }
 
   async function handleGoogleSignIn() {
     isLoading = true;
@@ -118,20 +59,25 @@
     <form
       class="mt-8 space-y-6"
       method="POST"
-      action={isSignUp ? "/sign-in?/signUp" : "/sign-in?/signIn"}
-      use:enhance
-    >
-      {#if error}
-        <div
-          class="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm"
-        >
-          {error}
-        </div>
-      {/if}
+      action={isSignUp
+        ? "/sign-in?/signUpWithEmail"
+        : "/sign-in?/signInWithEmail"}
+      use:enhance={() => {
+        isLoading = true;
+        error = "";
 
+        return async ({ result }) => {
+          isLoading = false;
+          console.log("RESULT", result);
+        };
+      }}
+    >
       <div class="space-y-4">
         {#if isSignUp}
           <div>
+            <label for="name" class="block text-sm font-medium text-gray-700">
+              Full Name
+            </label>
             <input
               id="name"
               name="name"
@@ -162,18 +108,32 @@
         <div>
           <label for="password" class="block text-sm font-medium text-gray-700">
             Password
+            {#if isSignUp}
+              <span class="text-xs opacity-80"
+                >({MINIMUM_PASSWORD_LENGTH} characters minimum)</span
+              >
+            {/if}
           </label>
           <input
             id="password"
             name="password"
             type="password"
             required
+            minlength={MINIMUM_PASSWORD_LENGTH}
             bind:value={password}
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500"
             placeholder="Enter your password"
           />
         </div>
       </div>
+
+      {#if error}
+        <div
+          class="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm"
+        >
+          {error}
+        </div>
+      {/if}
 
       <div class="space-y-4">
         <button
