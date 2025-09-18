@@ -15,29 +15,8 @@ export const signUpVerificationEmailTemplate = ({
         background-color: #f0f0f0;
         color: #333;
       }
-      header {
-        background-color: #9333ea;
-        color: #fff;
-        padding: 10px;
-        text-align: center;
-      }
-      h1 {
-        color: #9333ea;
-      }
-      p {
-        color: #333;
-      }
       a {
         color: #9333ea;
-      }
-      footer {
-        background-color: #9333ea;
-        color: #fff;
-        padding: 10px;
-        text-align: center;
-      }
-      footer p {
-        color: #fff;
       }
     </style>
     <head>
@@ -47,12 +26,12 @@ export const signUpVerificationEmailTemplate = ({
     <header>
       🚀 RizzGPT
     </header>
-    <h1>Verify your email address</h1>
-    <p>Hello ${name},</p>
+    <p>What's up ${name},</p>
+    <p>Almost in rizz town.</p>
     <p>Click the link to verify your email: <a href="${url}">${url}</a></p>
     <p>If you did not request this verification, please ignore this email.</p>
-    <p>Thank you,</p>
-    <p>The RizzGPT Team</p>
+    <p>Thanks,</p>
+    <p>Ryan from RizzGPT</p>
     </body>
   </html>
   `;
