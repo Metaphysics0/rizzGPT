@@ -1,17 +1,17 @@
 import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import type { ConversationStatus, RelationshipContext } from "$lib/types";
 import { jsonb } from "drizzle-orm/pg-core";
-// import type { ConversationStatus } from "../types";
 
-// Users table
 export const users = pgTable("user", {
   id: text().primaryKey(),
   email: text().unique().notNull(),
   emailVerified: boolean().default(false).notNull(),
   name: text(),
   image: text(),
-  createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
-  updatedAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
+  createdAt: timestamp().defaultNow().notNull(),
+  updatedAt: timestamp()
+    .$onUpdate(() => /* @__PURE__ */ new Date())
+    .notNull(),
 });
 
 export const sessions = pgTable("session", {
@@ -19,12 +19,14 @@ export const sessions = pgTable("session", {
   userId: text()
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
-  expiresAt: timestamp({ withTimezone: true }).notNull(),
+  expiresAt: timestamp().notNull(),
   token: text().notNull().unique(),
   ipAddress: text(),
   userAgent: text(),
-  createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
-  updatedAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
+  createdAt: timestamp().defaultNow().notNull(),
+  updatedAt: timestamp()
+    .$onUpdate(() => /* @__PURE__ */ new Date())
+    .notNull(),
 });
 
 export const accounts = pgTable("account", {
@@ -37,20 +39,25 @@ export const accounts = pgTable("account", {
   accessToken: text(),
   refreshToken: text(),
   idToken: text(),
-  accessTokenExpiresAt: timestamp({ withTimezone: true }),
-  refreshTokenExpiresAt: timestamp({ withTimezone: true }),
+  accessTokenExpiresAt: timestamp(),
+  refreshTokenExpiresAt: timestamp(),
   scope: text(),
-  createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
-  updatedAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
+  password: text(),
+  createdAt: timestamp().defaultNow().notNull(),
+  updatedAt: timestamp()
+    .$onUpdate(() => /* @__PURE__ */ new Date())
+    .notNull(),
 });
 
 export const verifications = pgTable("verification", {
   id: text().primaryKey(),
   identifier: text().notNull(),
   value: text().notNull(),
-  expiresAt: timestamp({ withTimezone: true }).notNull(),
-  createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
-  updatedAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
+  expiresAt: timestamp().notNull(),
+  createdAt: timestamp().defaultNow().notNull(),
+  updatedAt: timestamp()
+    .$onUpdate(() => /* @__PURE__ */ new Date())
+    .notNull(),
 });
 
 export const conversations = pgTable("conversation", {
@@ -64,6 +71,8 @@ export const conversations = pgTable("conversation", {
   relationshipContext: jsonb().$type<RelationshipContext>(),
   matchName: text().notNull(),
   status: text().$type<ConversationStatus>().default("initial"),
-  createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
-  updatedAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
+  createdAt: timestamp().defaultNow().notNull(),
+  updatedAt: timestamp()
+    .$onUpdate(() => /* @__PURE__ */ new Date())
+    .notNull(),
 });

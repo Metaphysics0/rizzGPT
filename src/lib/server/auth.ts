@@ -8,14 +8,16 @@ import * as schema from "./database/schema";
 import { ResendService } from "./services/send-email.service";
 
 export const auth = betterAuth({
-  baseURL: process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:5173",
+  baseURL: process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "http://localhost:5173",
   trustedOrigins: [
     "http://localhost:5173",
     ...(process.env.VERCEL_URL ? [`https://${process.env.VERCEL_URL}`] : []),
   ],
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: true,
+    requireEmailVerification: false,
   },
   socialProviders: {
     google: {
@@ -26,7 +28,7 @@ export const auth = betterAuth({
   },
   emailVerification: {
     sendOnSignUp: true,
-    sendVerificationEmail: async ({ user, url, token }, request) => {
+    sendVerificationEmail: async ({ user, url }) => {
       await new ResendService().sendEmail({
         to: user.email,
         subject: "Verify your email address",
