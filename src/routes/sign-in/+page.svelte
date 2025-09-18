@@ -14,8 +14,8 @@
   let isSignUp = false;
   let isLoading = false;
   let error = "";
+  let afterSignUpVerificationMessage = "";
 
-  // Set form values if there's error data from server
   $: if (form?.error) error = form.error;
 
   function toggleMode() {
@@ -24,6 +24,7 @@
     email = "";
     password = "";
     name = "";
+    afterSignUpVerificationMessage = "";
   }
 
   async function handleGoogleSignIn() {
@@ -78,9 +79,8 @@
     error = "";
 
     // most likely sign in with verification response
-    if (isSignUp && result.data?.message) {
-      console.log("result.data.message", result.data.message);
-      error = result.data.message;
+    if (isSignUp && result.data?.message && result.data?.requiresVerification) {
+      afterSignUpVerificationMessage = result.data.message;
       return;
     }
 
@@ -180,6 +180,14 @@
           class="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm"
         >
           {error}
+        </div>
+      {/if}
+
+      {#if isSignUp && afterSignUpVerificationMessage}
+        <div
+          class="bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-lg text-sm"
+        >
+          {afterSignUpVerificationMessage}
         </div>
       {/if}
 

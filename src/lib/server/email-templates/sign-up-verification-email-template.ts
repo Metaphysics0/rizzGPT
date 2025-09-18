@@ -23,15 +23,21 @@ export const signUpVerificationEmailTemplate = ({
       <title>Verify your email address</title>
     </head>
     <body>
-    <header>
-      🚀 RizzGPT
-    </header>
     <p>What's up ${name},</p>
-    <p>Almost in rizz town.</p>
-    <p>Click the link to verify your email: <a href="${url}">${url}</a></p>
-    <p>If you did not request this verification, please ignore this email.</p>
+    <p>
+      Thanks for checking out my app.
+      You're almost in rizz town, you just need to click on the link to verify your email: 
+      <a href="${url}">${url}</a>
+    </p>
+    <br>
+    <p>
+      If you did not request this verification, please ignore this email.
+    </p>
+
+    <br>
+
     <p>Thanks,</p>
-    <p>Ryan from RizzGPT</p>
+    <p>Ryan</p>
     </body>
   </html>
   `;
