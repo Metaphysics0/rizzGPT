@@ -100,7 +100,7 @@
         {isSignUp ? "Already have an account?" : "Don't have an account?"}
         <button
           type="button"
-          class="font-medium text-pink-600 hover:text-pink-500 ml-1"
+          class="font-medium text-pink-600 hover:text-pink-500 ml-1 cursor-pointer"
           onclick={toggleMode}
         >
           {isSignUp ? "Sign in" : "Sign up"}

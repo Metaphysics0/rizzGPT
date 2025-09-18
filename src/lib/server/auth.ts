@@ -17,7 +17,7 @@ export const auth = betterAuth({
   ],
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: false,
+    requireEmailVerification: true,
   },
   socialProviders: {
     google: {
@@ -28,12 +28,16 @@ export const auth = betterAuth({
   },
   emailVerification: {
     sendOnSignUp: true,
+    autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, url }) => {
-      await new ResendService().sendEmail({
+      await new ResendService().sendSignUpVerificationEmail({
         to: user.email,
-        subject: "Verify your email address",
-        text: `Click the link to verify your email: ${url}`,
+        name: user.name,
+        url,
       });
+    },
+    afterEmailVerification: async (user, request) => {
+      console.log(`${user.email} has been successfully verified!`);
     },
   },
   database: drizzleAdapter(db, {
@@ -45,7 +49,6 @@ export const auth = betterAuth({
       verification: schema.verifications,
     },
   }),
-
   session: {
     expiresIn: 60 * 60 * 24 * 7, // 7 days
     updateAge: 60 * 60 * 24, // 1 day (every 1 day the session expiration is updated)

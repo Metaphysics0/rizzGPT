@@ -1,6 +1,7 @@
 export type LogArgsOptions = {
   label?: string;
   formatArgs?: (args: unknown[]) => unknown;
+  prefix?: string;
 };
 
 export function logArgs(options?: LogArgsOptions) {
@@ -10,12 +11,12 @@ export function logArgs(options?: LogArgsOptions) {
     descriptor: TypedPropertyDescriptor<(...args: any[]) => any>
   ) {
     const originalMethod = descriptor.value!;
-    const label = options?.label ?? "Service";
-    const methodName = propertyKey;
+    const label = options?.label ?? "INFO";
+    const prefix = options?.prefix ?? propertyKey + "args";
 
     descriptor.value = function (this: unknown, ...args: any[]) {
       const argsData = options?.formatArgs ? options.formatArgs(args) : args;
-      console.log(`[${label}] ${methodName} args: ${JSON.stringify(argsData)}`);
+      console.log(`[${label}] ${prefix}: ${JSON.stringify(argsData)}`);
       return originalMethod.apply(this as any, args);
     } as unknown as (...args: any[]) => any;
 
