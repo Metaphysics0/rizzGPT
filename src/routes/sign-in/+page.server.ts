@@ -46,12 +46,13 @@ export const actions: Actions = {
     } catch (error) {
       console.error("Sign in error:", error);
 
-      // Handle Better Auth APIError
-      if (error instanceof APIError) {
+      // 403 == Email not verified
+      if (error instanceof APIError && error.statusCode === 403) {
         return fail(400, {
           email: email as string,
           password: "",
-          error: "Invalid email or password",
+          error:
+            "Please check your inbox for a verification link. If you don't receive it, you may need to sign up again.",
           type: "auth_error",
         });
       }
@@ -99,9 +100,10 @@ export const actions: Actions = {
 
       return {
         success: true,
+        requiresVerification: true,
         message:
           "Account created! Please check your email to verify your account.",
-      };
+      } as const;
     } catch (error) {
       console.error("Sign up error:", error);
 
