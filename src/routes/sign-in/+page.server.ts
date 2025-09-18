@@ -1,7 +1,16 @@
 import { auth } from "$lib/server/auth";
 import { APIError } from "better-auth/api";
-import type { Actions, RequestEvent } from "./$types";
-import { fail } from "@sveltejs/kit";
+import type { Actions, RequestEvent, PageServerLoad } from "./$types";
+import { fail, redirect } from "@sveltejs/kit";
+
+export const load: PageServerLoad = async ({ locals }) => {
+  // If user is already authenticated, redirect to home page
+  if (locals.user) {
+    throw redirect(302, "/");
+  }
+
+  return {};
+};
 
 export const actions: Actions = {
   signInWithEmail: async ({ request }: RequestEvent) => {
@@ -14,11 +23,9 @@ export const actions: Actions = {
         email: email as string,
         password: password as string,
         error: "Email and password are required",
-        missingFields: !email
-          ? ["email"]
-          : !password
-          ? ["password"]
-          : ["email", "password"],
+        missingFields: [!email && "email", !password && "password"].filter(
+          Boolean
+        ),
       });
     }
 
@@ -29,6 +36,11 @@ export const actions: Actions = {
           password: password as string,
         },
       });
+
+      // If sign-in is successful, redirect to home page
+      if (result) {
+        throw redirect(302, "/");
+      }
 
       return result;
     } catch (error) {
@@ -75,7 +87,7 @@ export const actions: Actions = {
     }
 
     try {
-      const result = await auth.api.signUpEmail({
+      await auth.api.signUpEmail({
         body: {
           name: name as string,
           email: email as string,

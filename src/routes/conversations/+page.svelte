@@ -1,14 +1,10 @@
 <script lang="ts">
   import ConversationListItem from "$lib/ui/conversations/ConversationListItem.svelte";
   import NewConversationButton from "$lib/ui/conversations/NewConversationButton.svelte";
-  import NoConversations from "$lib/ui/conversations/NoConversations.svelte";
+  import { pluralizeWithCount } from "$lib/utils/string/pluralize";
   import type { PageData } from "./$types";
 
   const { data }: { data: PageData } = $props();
-
-  const hasAtLeastOneConversation = $derived(
-    data.conversations && data.conversations.length > 0
-  );
 </script>
 
 <svelte:head>
@@ -23,27 +19,16 @@
           Conversation History
         </h1>
         <p class="text-sm text-gray-600 mt-1">
-          {#if hasAtLeastOneConversation}
-            {data.conversations.length} conversation{data.conversations
-              .length === 1
-              ? ""
-              : "s"}
-          {:else}
-            No conversations yet
-          {/if}
+          {pluralizeWithCount(data.conversations.length, "conversation")}
         </p>
       </div>
       <NewConversationButton />
     </div>
   </div>
 
-  {#if hasAtLeastOneConversation}
-    <div class="divide-y divide-gray-100">
-      {#each data.conversations as conversation (conversation.id)}
-        <ConversationListItem {conversation} />
-      {/each}
-    </div>
-  {:else}
-    <NoConversations />
-  {/if}
+  <div class="divide-y divide-gray-100">
+    {#each data.conversations as conversation (conversation.id)}
+      <ConversationListItem {conversation} />
+    {/each}
+  </div>
 </div>

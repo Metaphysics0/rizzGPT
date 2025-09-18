@@ -12,7 +12,7 @@
   const session = authClient.useSession();
 </script>
 
-{#if $session.data?.user}
+{#if $session.data?.user && page.route.id !== "/sign-in"}
   <ProfileDropdownMenu user={$session.data.user} />
 {/if}
 
