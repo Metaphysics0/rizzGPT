@@ -4,7 +4,7 @@
   import { enhance } from "$app/forms";
   import { MINIMUM_PASSWORD_LENGTH } from "$lib/constants/minimum-password-length.constant";
   import type { ActionData } from "./$types";
-  import type { ActionResult, SubmitFunction } from "@sveltejs/kit";
+  import type { ActionResult } from "@sveltejs/kit";
 
   export let form: ActionData;
 
@@ -16,9 +16,15 @@
   let error = "";
 
   // Set form values if there's error data from server
-  $: if (form?.email) email = form.email;
-  $: if (form?.name) name = form.name;
   $: if (form?.error) error = form.error;
+
+  function toggleMode() {
+    isSignUp = !isSignUp;
+    error = "";
+    email = "";
+    password = "";
+    name = "";
+  }
 
   async function handleGoogleSignIn() {
     isLoading = true;
@@ -34,14 +40,6 @@
       console.error("Google sign in error:", err);
       isLoading = false;
     }
-  }
-
-  function toggleMode() {
-    isSignUp = !isSignUp;
-    error = "";
-    email = "";
-    password = "";
-    name = "";
   }
 
   async function handleFormResult({
@@ -79,7 +77,9 @@
 
     error = "";
 
+    // most likely sign in with verification response
     if (isSignUp && result.data?.message) {
+      console.log("result.data.message", result.data.message);
       error = result.data.message;
       return;
     }
