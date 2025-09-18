@@ -3,6 +3,10 @@
   import { goto } from "$app/navigation";
   import { enhance } from "$app/forms";
   import { MINIMUM_PASSWORD_LENGTH } from "$lib/constants/minimum-password-length.constant";
+  import type { ActionData } from "./$types";
+  import type { ActionResult, SubmitFunction } from "@sveltejs/kit";
+
+  export let form: ActionData;
 
   let email = "";
   let password = "";
@@ -10,6 +14,11 @@
   let isSignUp = false;
   let isLoading = false;
   let error = "";
+
+  // Set form values if there's error data from server
+  $: if (form?.email) email = form.email;
+  $: if (form?.name) name = form.name;
+  $: if (form?.error) error = form.error;
 
   async function handleGoogleSignIn() {
     isLoading = true;
@@ -33,6 +42,49 @@
     email = "";
     password = "";
     name = "";
+  }
+
+  async function handleFormResult({
+    result,
+    update,
+  }: {
+    result: ActionResult;
+    update: (options?: {
+      reset?: boolean;
+      invalidateAll?: boolean;
+    }) => Promise<void>;
+  }) {
+    isLoading = false;
+
+    if (result.type === "failure") {
+      await update();
+      return;
+    }
+
+    if (result.type === "redirect") {
+      goto(result.location);
+      return;
+    }
+
+    if (result.type !== "success") {
+      await update();
+      return;
+    }
+
+    // Handle success
+    if (!result.data?.success) {
+      await update();
+      return;
+    }
+
+    error = "";
+
+    if (isSignUp && result.data?.message) {
+      error = result.data.message;
+      return;
+    }
+
+    goto("/");
   }
 </script>
 
@@ -65,11 +117,7 @@
       use:enhance={() => {
         isLoading = true;
         error = "";
-
-        return async ({ result }) => {
-          isLoading = false;
-          console.log("RESULT", result);
-        };
+        return handleFormResult;
       }}
     >
       <div class="space-y-4">
