@@ -65,7 +65,7 @@
 <FormStep
   title="1. Upload Conversation (Image or Video)"
   required
-  collapsible={true}
+  collapsible={false}
 >
   <div class="flex h-max flex-col">
     {#if $imagePreview}

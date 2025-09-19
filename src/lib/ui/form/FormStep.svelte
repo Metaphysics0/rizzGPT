@@ -31,7 +31,7 @@
     <button
       type="button"
       onclick={() => (isOpen = !isOpen)}
-      class="flex w-full items-center justify-between text-left focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 rounded-lg p-2 -m-2"
+      class="flex w-full items-center justify-between text-left focus:outline-none rounded-lg p-2 -m-2 cursor-pointer"
     >
       <h2 class="text-lg font-semibold text-gray-700">
         {title}
@@ -51,7 +51,7 @@
     </button>
 
     {#if isOpen}
-      <div transition:slide={{ duration: 300 }} class="mt-4">
+      <div transition:slide={{ duration: 300 }}>
         {@render children()}
       </div>
     {/if}

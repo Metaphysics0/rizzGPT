@@ -20,12 +20,15 @@
         $relationshipContextForm
       );
 
-      const blobUrl = await triggerClientFileUpload($uploadedFile);
+      // const blobUrl = await triggerClientFileUpload($uploadedFile);
+      const blobUrl = "https://www.google.com";
 
       const response = await fetch("/api/generate-rizz", {
         method: "POST",
         body: JSON.stringify({ blobUrl, relationshipContext }),
       });
+      if (!response.ok) throw new Error();
+
       const { conversationId } = await response.json();
 
       await invalidate("/conversations");
