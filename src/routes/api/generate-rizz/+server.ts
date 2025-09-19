@@ -6,6 +6,7 @@ import {
 } from "$lib/server/utils/response.util";
 import { ConversationGenerationService } from "$lib/server/services/conversation-generation.service";
 import { type RelationshipContext } from "$lib/types";
+import { json } from "@sveltejs/kit";
 
 export const POST = (async ({ request, locals }) => {
   try {
@@ -26,13 +27,7 @@ export const POST = (async ({ request, locals }) => {
       }),
     }).initiateConversationGeneration();
 
-    // return json({ conversationId });
-
-    // testing error handlign on client
-    return unknownErrorResponse(
-      new Error("Generate Rizz failed"),
-      "Generate Rizz failed"
-    );
+    return json({ conversationId });
   } catch (error) {
     console.error("Generate Rizz endpoint error:", error);
     return unknownErrorResponse(error, "Generate Rizz failed");
