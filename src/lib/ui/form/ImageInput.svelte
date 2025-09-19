@@ -7,16 +7,43 @@
   let fileInput: HTMLInputElement;
   let isVideo = false;
   let videoElement: HTMLVideoElement;
+  let isDragOver = false;
+
+  function handleFile(file: File) {
+    uploadedFile.set(file);
+    isVideo = file.type.startsWith("video/");
+    const previewUrl = URL.createObjectURL(file);
+    imagePreview.set(previewUrl);
+  }
 
   async function processImage(event: Event) {
     const target = event.target as HTMLInputElement;
     const file = target.files?.[0];
     if (!file) return;
-    uploadedFile.set(file);
+    handleFile(file);
+  }
 
-    isVideo = file.type.startsWith("video/");
-    const previewUrl = URL.createObjectURL(file);
-    imagePreview.set(previewUrl);
+  function handleDragOver(event: DragEvent) {
+    event.preventDefault();
+    isDragOver = true;
+  }
+
+  function handleDragLeave(event: DragEvent) {
+    event.preventDefault();
+    isDragOver = false;
+  }
+
+  function handleDrop(event: DragEvent) {
+    event.preventDefault();
+    isDragOver = false;
+
+    const files = event.dataTransfer?.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      if (file.type.startsWith("image/") || file.type.startsWith("video/")) {
+        handleFile(file);
+      }
+    }
   }
 
   $: if (!$imagePreview && fileInput) {
@@ -67,13 +94,18 @@
         <div
           class="
             group flex h-full min-h-[200px] cursor-pointer flex-col items-center justify-center rounded-xl
-            border-2 border-dashed border-gray-300 bg-gray-50/50 py-5
-            transition-all duration-200 hover:border-purple-400 hover:bg-purple-50/30
+            border-2 border-dashed transition-all duration-200 py-5
+            {isDragOver
+            ? 'border-purple-500 bg-purple-100/50'
+            : 'border-gray-300 bg-gray-50/50 hover:border-purple-400 hover:bg-purple-50/30'}
           "
           onclick={triggerFileInput}
           role="button"
           tabindex="0"
           onkeydown={(e) => e.key === "Enter" && triggerFileInput()}
+          ondragover={handleDragOver}
+          ondragleave={handleDragLeave}
+          ondrop={handleDrop}
         >
           <div class="mb-4 flex items-center gap-3">
             {#each uploadIcons as { icon, color }}
@@ -93,6 +125,8 @@
                   class="mr-2 inline h-5 w-5"
                 />
                 Processing...
+              {:else if isDragOver}
+                Drop your file here!
               {:else}
                 Upload your conversation screenshot or screen recording
               {/if}
