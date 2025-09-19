@@ -169,9 +169,6 @@
             <p>Drag and drop a file here</p>
           </div>
         </div>
-        <!-- <p class="mb-4 text-sm text-gray-500">
-          Supports: .jpg, .png, .mp4, .mov & more! (max 50MB)
-        </p> -->
       </div>
     {/if}
 
