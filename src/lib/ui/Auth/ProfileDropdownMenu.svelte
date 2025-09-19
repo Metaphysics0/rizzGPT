@@ -49,8 +49,8 @@
       href: "/",
     },
     {
-      label: "Conversations",
-      icon: "mdi:chat-outline",
+      label: "History",
+      icon: "mdi:history",
       href: "/conversations",
     },
     {
