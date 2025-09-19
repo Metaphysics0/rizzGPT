@@ -2,7 +2,7 @@ import type { RelationshipContext } from "$lib/types";
 import type { Conversation } from "../database/types";
 import { GenerateRizzJobHandler } from "../job-handlers/generate-rizz/job-handler";
 import type { GenerateRizzJobPayload } from "../job-handlers/generate-rizz/job-payload.type";
-import { DatabaseService } from "./database.service";
+import { databaseService } from "./database.service";
 import { INITIAL_CONVERSATION_DESCRIPTION } from "$lib/constants/initial-conversation.constant";
 
 export interface ConversationGenerationRequest {
@@ -11,21 +11,14 @@ export interface ConversationGenerationRequest {
   userId: string;
 }
 
-export interface ConversationGenerationResult {
-  conversationId: string;
-}
-
 export class ConversationGenerationService {
-  private readonly databaseService: DatabaseService;
-
   private readonly params: ConversationGenerationRequest;
 
-  constructor(conversationGenerationRequest: ConversationGenerationRequest) {
-    this.databaseService = new DatabaseService();
-    this.params = conversationGenerationRequest;
+  constructor(params: ConversationGenerationRequest) {
+    this.params = params;
   }
 
-  async initiateConversationGeneration(): Promise<ConversationGenerationResult> {
+  async initiateConversationGeneration() {
     console.log(
       `Starting conversation generation - ${JSON.stringify(this.params)}`
     );
@@ -51,12 +44,12 @@ export class ConversationGenerationService {
     // We don't await the call() method, allowing it to run in the background
     new GenerateRizzJobHandler(jobPayload).call().catch((error) => {
       console.error("Background job failed:", error);
-      this.databaseService.updateConversationStatus(conversation.id, "failed");
+      databaseService.updateConversationStatus(conversation.id, "failed");
     });
   }
 
   private async createInitialConversation(): Promise<Conversation> {
-    return this.databaseService.createConversation({
+    return databaseService.createConversation({
       userId: this.params.userId,
       rizzResponses: [],
       rizzResponseDescription: INITIAL_CONVERSATION_DESCRIPTION,

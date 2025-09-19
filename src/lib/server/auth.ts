@@ -5,7 +5,7 @@ import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from "$env/static/private";
 import { sveltekitCookies } from "better-auth/svelte-kit";
 import { getRequestEvent } from "$app/server";
 import * as schema from "./database/schema";
-import { ResendService } from "./services/send-email.service";
+import { ResendService } from "./services/resend.service";
 
 export const auth = betterAuth({
   baseURL: process.env.VERCEL_URL

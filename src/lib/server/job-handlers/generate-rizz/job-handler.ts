@@ -1,18 +1,14 @@
-import { BlobStorageService } from "$lib/server/services/blob-storage.service";
-import { DatabaseService } from "$lib/server/services/database.service";
+import { databaseService } from "$lib/server/services/database.service";
 import { GeminiService } from "$lib/server/services/gemini.service";
+import { downloadFileFromUrl } from "$lib/server/utils/download-file-from-url.util";
 import type { GenerateRizzJobPayload } from "./job-payload.type";
 
 export class GenerateRizzJobHandler {
   private readonly jobPayload: GenerateRizzJobPayload;
-  private readonly dbService: DatabaseService;
-  private readonly blobStorageService: BlobStorageService;
   private readonly geminiService: GeminiService;
 
   constructor(jobPayload: GenerateRizzJobPayload) {
     this.jobPayload = jobPayload;
-    this.dbService = new DatabaseService();
-    this.blobStorageService = new BlobStorageService();
     this.geminiService = new GeminiService();
   }
 
@@ -26,15 +22,13 @@ export class GenerateRizzJobHandler {
     const { blobUrl, relationshipContext, conversationId } = this.jobPayload;
 
     try {
-      const file = await this.blobStorageService.downloadFileFromBlobUrl(
-        blobUrl
-      );
+      const file = await downloadFileFromUrl(blobUrl);
       const generateRizzResponse = await this.geminiService.generateRizz({
         relationshipContext,
         file,
       });
 
-      await this.dbService.updateConversation(conversationId, {
+      await databaseService.updateConversation(conversationId, {
         rizzResponses: generateRizzResponse.responses,
         rizzResponseDescription: generateRizzResponse.explanation,
         matchName: generateRizzResponse.matchName,
@@ -44,7 +38,7 @@ export class GenerateRizzJobHandler {
       return generateRizzResponse;
     } catch (processingError) {
       console.error("Error generating rizz", processingError);
-      await this.dbService.updateConversation(conversationId, {
+      await databaseService.updateConversation(conversationId, {
         rizzResponses: [],
         rizzResponseDescription: `Error: ${
           processingError instanceof Error

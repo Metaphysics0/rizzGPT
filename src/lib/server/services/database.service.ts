@@ -4,7 +4,7 @@ import { db } from "../database/connection";
 import { conversations } from "../database/schema";
 import type { Conversation, NewConversation } from "../database/types";
 
-export class DatabaseService {
+class DatabaseService {
   async createConversation(
     conversationData: NewConversation
   ): Promise<Conversation> {
@@ -71,3 +71,5 @@ export class DatabaseService {
     return await this.updateConversation(conversationId, { status });
   }
 }
+
+export const databaseService = new DatabaseService();
