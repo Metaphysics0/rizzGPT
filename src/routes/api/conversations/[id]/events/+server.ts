@@ -1,4 +1,4 @@
-import { DatabaseService } from "$lib/server/services/database.service";
+import { databaseService } from "$lib/server/services/database.service";
 import { ServerSentEventsService } from "$lib/server/services/server-sent-events.service";
 import {
   jsonErrorResponse,
@@ -22,9 +22,10 @@ export const GET = (async ({ request, params }) => {
     }
 
     const conversationId = params.id!;
-    const dbService = new DatabaseService();
 
-    const conversation = await dbService.getConversationById(conversationId);
+    const conversation = await databaseService.getConversationById(
+      conversationId
+    );
     if (!conversation) {
       return jsonErrorResponse("Conversation not found", 404);
     }
@@ -39,7 +40,7 @@ export const GET = (async ({ request, params }) => {
     };
 
     const dataFetcher = async (): Promise<ConversationEventData | null> => {
-      const updatedConversation = await dbService.getConversationById(
+      const updatedConversation = await databaseService.getConversationById(
         conversationId
       );
       if (!updatedConversation) return null;

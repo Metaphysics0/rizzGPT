@@ -6,7 +6,7 @@ import {
   unprocessableEntityResponse,
 } from "$lib/server/utils/response.util";
 import { ConversationGenerationService } from "$lib/server/services/conversation-generation.service";
-import { RelationshipContextSchema } from "$lib/types";
+import { type RelationshipContext } from "$lib/types";
 
 export const POST = (async ({ request, locals }) => {
   try {
@@ -14,17 +14,16 @@ export const POST = (async ({ request, locals }) => {
 
     const body = (await request.json()) as {
       blobUrl: string;
-      relationshipContext: string;
+      relationshipContext: RelationshipContext;
     };
+
     if (!body) return unprocessableEntityResponse("Request body is required");
 
     const { conversationId } = await new ConversationGenerationService({
       blobUrl: body.blobUrl,
       userId: locals.user.id,
       ...(body.relationshipContext && {
-        relationshipContext: RelationshipContextSchema.parse(
-          JSON.parse(body.relationshipContext)
-        ),
+        relationshipContext: body.relationshipContext,
       }),
     }).initiateConversationGeneration();
 
