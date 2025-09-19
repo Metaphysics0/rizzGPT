@@ -5,6 +5,7 @@
   import type { ActionResult } from "@sveltejs/kit";
   import SignInWithGoogleButton from "$lib/ui/Auth/SignInWithGoogleButton.svelte";
   import SignInWithEmailForm from "$lib/ui/Auth/SignInWithEmailForm.svelte";
+  import SocialMediaIcons from "$lib/ui/layout/SocialMediaIcons.svelte";
 
   let { form }: { form: ActionData } = $props();
 
@@ -169,5 +170,7 @@
         <SignInWithGoogleButton {isLoading} {error} />
       </div>
     </form>
+
+    <SocialMediaIcons />
   </div>
 </div>
