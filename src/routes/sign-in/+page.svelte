@@ -4,7 +4,7 @@
   import type { ActionData } from "./$types";
   import type { ActionResult } from "@sveltejs/kit";
   import SignInWithGoogleButton from "$lib/ui/Auth/SignInWithGoogleButton.svelte";
-  import SignInWithEmail from "$lib/ui/Auth/SignInWithEmail.svelte";
+  import SignInWithEmailForm from "$lib/ui/Auth/SignInWithEmailForm.svelte";
 
   let { form }: { form: ActionData } = $props();
 
@@ -108,7 +108,7 @@
         return handleFormResult;
       }}
     >
-      <SignInWithEmail {isSignUp} {name} {email} {password} />
+      <SignInWithEmailForm {isSignUp} {name} {email} {password} />
 
       {#if error}
         <div
