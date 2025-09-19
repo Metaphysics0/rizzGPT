@@ -3,6 +3,7 @@
   import { imagePreview } from "$lib/stores/image-preview.store";
   import Icon from "@iconify/svelte";
   import FormStep from "./FormStep.svelte";
+  import { fade } from "svelte/transition";
 
   let fileInput: HTMLInputElement;
   let isVideo = false;
@@ -55,6 +56,15 @@
     fileInput?.click();
   }
 
+  function clearImage() {
+    imagePreview.set(null);
+    uploadedFile.set(null);
+    if (fileInput) {
+      fileInput.value = "";
+    }
+    isVideo = false;
+  }
+
   const uploadIcons = [
     { icon: "mdi:upload", color: "blue" },
     { icon: "mdi:image", color: "green" },
@@ -62,11 +72,20 @@
   ];
 </script>
 
-<FormStep
-  title="1. Upload Conversation (Image or Video)"
-  required
-  collapsible={false}
->
+<FormStep title="1. Upload DM Conversation" required collapsible={false}>
+  {#snippet headerAction()}
+    {#if $imagePreview}
+      <button
+        type="button"
+        onclick={clearImage}
+        class="flex items-center gap-1.5 rounded-lg bg-red-50 px-3 py-1.5 text-sm font-medium text-red-600 transition-all duration-200 hover:bg-red-100 hover:text-red-700"
+        transition:fade={{ duration: 200 }}
+      >
+        <Icon icon="mdi:close" class="h-4 w-4" />
+        Clear
+      </button>
+    {/if}
+  {/snippet}
   <div class="flex h-max flex-col">
     {#if $imagePreview}
       <!-- Preview Section -->
@@ -96,8 +115,8 @@
             group flex h-full min-h-[200px] cursor-pointer flex-col items-center justify-center rounded-xl
             border-2 border-dashed transition-all duration-200 py-5
             {isDragOver
-            ? 'border-purple-500 bg-purple-100/50'
-            : 'border-gray-300 bg-gray-50/50 hover:border-purple-400 hover:bg-purple-50/30'}
+            ? 'border-purple-400 bg-purple-50/40'
+            : 'border-gray-300 bg-gray-50/30 hover:border-gray-400 hover:bg-gray-100/40'}
           "
           onclick={triggerFileInput}
           role="button"
@@ -112,13 +131,13 @@
               <div
                 class="rounded-lg bg-{color}-100 p-3 text-{color}-600 group-hover:bg-{color}-200"
               >
-                <Icon {icon} class="h-6 w-6" />
+                <Icon {icon} class="h-5 w-5" />
               </div>
             {/each}
           </div>
 
           <div class="text-center">
-            <p class="mb-2 text-lg font-medium text-gray-700">
+            <p class="mb-4 text-lg font-medium text-gray-700">
               {#if $isGeneratingResponse}
                 <Icon
                   icon="svg-spinners:90-ring-with-bg"
@@ -131,25 +150,28 @@
                 Upload your conversation screenshot or screen recording
               {/if}
             </p>
-            <p class="mb-4 text-sm text-gray-500">
-              Supported formats: JPG, PNG, MP4, MOV (max 50MB)
-            </p>
           </div>
 
-          {#if !$isGeneratingResponse}
+          <div class="flex flex-col items-center">
             <button
               type="button"
               class="
-                flex items-center gap-2 rounded-xl bg-gradient-to-r from-purple-600 to-blue-600
-                px-6 py-3 font-medium text-white shadow-md transition-all duration-200
-                hover:scale-105 hover:from-purple-700 hover:to-blue-700 hover:shadow-lg
-              "
+              text-sm
+                  flex items-center gap-2 rounded-xl border-2 border-gray-300 bg-white
+                  px-6 py-2.5 font-medium text-gray-700 transition-all duration-200
+                hover:border-purple-400 hover:bg-purple-50 hover:text-purple-700 cursor-pointer"
+              disabled={$isGeneratingResponse}
             >
-              <Icon icon="mdi:folder-upload" class="h-5 w-5" />
-              Choose File
+              <Icon icon="mdi:folder-upload" class="h-4 w-4" />
+              Select File
             </button>
-          {/if}
+            <span class="text-gray-500 text-sm my-2">or</span>
+            <p>Drag and drop a file here</p>
+          </div>
         </div>
+        <!-- <p class="mb-4 text-sm text-gray-500">
+          Supports: .jpg, .png, .mp4, .mov & more! (max 50MB)
+        </p> -->
       </div>
     {/if}
 

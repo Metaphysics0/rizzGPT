@@ -10,6 +10,7 @@
     collapsible?: boolean;
     defaultCollapsed?: boolean;
     children: Snippet;
+    headerAction?: Snippet;
   }
 
   let {
@@ -19,6 +20,7 @@
     collapsible = false,
     defaultCollapsed = false,
     children,
+    headerAction,
   }: Props = $props();
 
   let isOpen = $state(!defaultCollapsed);
@@ -56,15 +58,20 @@
       </div>
     {/if}
   {:else}
-    <h2 class="mb-4 text-lg font-semibold text-gray-700">
-      {title}
-      {#if subtitle}
-        <span class="text-gray-400">{subtitle}</span>
+    <div class="mb-4 flex items-center justify-between">
+      <h2 class="text-lg font-semibold text-gray-700">
+        {title}
+        {#if subtitle}
+          <span class="text-gray-400">{subtitle}</span>
+        {/if}
+        {#if required}
+          <span class="text-red-500">*</span>
+        {/if}
+      </h2>
+      {#if headerAction}
+        {@render headerAction()}
       {/if}
-      {#if required}
-        <span class="text-red-500">*</span>
-      {/if}
-    </h2>
+    </div>
     {@render children()}
   {/if}
 </div>

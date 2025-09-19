@@ -1,4 +1,3 @@
-import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 import {
   unauthorizedResponse,
@@ -27,7 +26,13 @@ export const POST = (async ({ request, locals }) => {
       }),
     }).initiateConversationGeneration();
 
-    return json({ conversationId });
+    // return json({ conversationId });
+
+    // testing error handlign on client
+    return unknownErrorResponse(
+      new Error("Generate Rizz failed"),
+      "Generate Rizz failed"
+    );
   } catch (error) {
     console.error("Generate Rizz endpoint error:", error);
     return unknownErrorResponse(error, "Generate Rizz failed");
