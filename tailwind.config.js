@@ -2,6 +2,9 @@ module.exports = {
   content: ["./src/**/*.{html,js,svelte,ts}"],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["Valera Round", "ui-sans-serif", "system-ui", "sans-serif"],
+      },
       animation: {
         "fade-in-up": "fadeInUp 0.5s ease-out",
       },
