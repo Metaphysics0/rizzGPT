@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { goto } from "$app/navigation";
+  import { goto, invalidate } from "$app/navigation";
   import {
     isGeneratingResponse,
     relationshipContextForm,
@@ -28,6 +28,7 @@
       });
       const { conversationId } = await response.json();
 
+      await invalidate("/conversations");
       await goto(`/conversations/${conversationId}`);
     } catch (error) {
       responseError.set(
