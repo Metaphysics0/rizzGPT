@@ -20,7 +20,7 @@
 >
   <div class="space-y-6">
     <!-- Duration of Communication -->
-    <div>
+    <div class="mt-4">
       <label
         class="mb-3 block text-sm font-medium text-gray-700"
         for="duration"
