@@ -1,5 +1,5 @@
 import type { ConversationsListItem, ConversationStatus } from "$lib/types";
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { db } from "../database/connection";
 import { conversations } from "../database/schema";
 import type { Conversation, NewConversation } from "../database/types";
@@ -22,7 +22,13 @@ class DatabaseService {
     return db
       .select()
       .from(conversations)
-      .where(eq(conversations.userId, userId))
+      .where(
+        and(
+          eq(conversations.userId, userId),
+          // for now, only show completed conversations
+          eq(conversations.status, "completed")
+        )
+      )
       .orderBy(desc(conversations.createdAt))
       .limit(100);
   }

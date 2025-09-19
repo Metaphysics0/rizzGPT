@@ -64,12 +64,6 @@
     }
     isVideo = false;
   }
-
-  const uploadIcons = [
-    { icon: "mdi:upload", color: "blue" },
-    { icon: "mdi:image", color: "green" },
-    { icon: "mdi:video", color: "purple" },
-  ];
 </script>
 
 <FormStep title="Conversation Upload" collapsible={false}>
@@ -89,7 +83,7 @@
   <div class="flex h-max flex-col">
     {#if $imagePreview}
       <!-- Preview Section -->
-      <div class="mb-4 flex-1">
+      <div class="mb-4 flex-1" transition:fade={{ duration: 200 }}>
         {#if isVideo}
           <div class="relative">
             <!-- svelte-ignore a11y_media_has_caption -->
@@ -97,14 +91,14 @@
               bind:this={videoElement}
               src={$imagePreview}
               controls
-              class="h-auto max-h-64 w-full rounded-xl object-contain"
+              class="h-auto max-h-60 w-full rounded-xl object-contain"
             ></video>
           </div>
         {:else}
           <img
             src={$imagePreview}
             alt="Preview"
-            class="h-auto max-h-64 w-full rounded-xl object-contain"
+            class="h-auto max-h-60 w-full rounded-xl object-contain"
           />
         {/if}
       </div>
@@ -113,10 +107,10 @@
         <div
           class="
             group flex h-full min-h-[200px] flex-col items-center justify-center rounded-xl
-            border-2 border-dashed transition-all duration-200 py-5
+            border-2 border-dashed transition-all duration-200 py-5 bg-gray-100 cursor-pointer
             {isDragOver
             ? 'border-purple-400 bg-purple-50/40'
-            : 'border-gray-300 bg-gray-50/30 hover:border-gray-400 hover:bg-gray-100/40'}
+            : 'border-gray-300 bg-gray-50/30 hover:bg-gray-200'}
           "
           onclick={triggerFileInput}
           role="button"
@@ -126,53 +120,16 @@
           ondragleave={handleDragLeave}
           ondrop={handleDrop}
         >
-          <div class="mb-4 flex items-center gap-3">
-            {#each uploadIcons as { icon, color }}
-              <div
-                class="rounded-lg bg-{color}-100 p-3 text-{color}-600 group-hover:bg-{color}-200"
-              >
-                <Icon {icon} class="h-5 w-5" />
-              </div>
-            {/each}
-          </div>
-
-          <div class="text-center">
-            <p class="mb-4 font-medium text-gray-700">
-              {#if $isGeneratingResponse}
-                <Icon
-                  icon="svg-spinners:90-ring-with-bg"
-                  class="mr-2 inline h-5 w-5"
-                />
-                Processing...
-              {:else if isDragOver}
-                Drop your file here!
-              {:else}
-                Upload your conversation screenshot or screen recording
-              {/if}
-            </p>
-          </div>
-
           <div class="flex flex-col items-center">
-            <button
-              type="button"
-              class="
-              text-sm
-                  flex items-center gap-2 rounded-xl border-1 border-gray-300
-                  px-6 py-2.5 font-medium text-gray-700 transition-all duration-200
-                hover:border-purple-400 hover:bg-purple-50 hover:text-purple-700 cursor-pointer"
-              disabled={$isGeneratingResponse}
-            >
-              <Icon icon="mdi:folder-upload" class="h-4 w-4" />
-              Select File
-            </button>
-            <span class="text-gray-500 text-sm my-2">or</span>
-            <p>Drag and drop a file here</p>
+            <p class="text-gray-500 my-2">Drag and drop a file here or click</p>
+            <Icon
+              icon="clarity:upload-cloud-line"
+              class="h-10 w-10 text-gray-500"
+            />
           </div>
         </div>
       </div>
     {/if}
-
-    <!-- Pro Tip -->
 
     <!-- Hidden File Input -->
     <input

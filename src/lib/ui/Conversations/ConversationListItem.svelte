@@ -1,7 +1,6 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import type { ConversationStatus } from "$lib/server/database/types";
-  import type { ConversationsListItem } from "$lib/types";
+  import type { ConversationsListItem, ConversationStatus } from "$lib/types";
   import { formatRelativeTime } from "$lib/utils/date-format";
   import { truncateText } from "$lib/utils/string/truncate-text.util";
 
@@ -29,7 +28,7 @@
         };
       case "completed":
         return {
-          text: "Ready",
+          text: "Completed",
           color: "text-green-600",
           bgColor: "bg-green-50",
         };
