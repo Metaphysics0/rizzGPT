@@ -72,7 +72,7 @@
   ];
 </script>
 
-<FormStep title="1. Upload DM Conversation" required collapsible={false}>
+<FormStep title="Conversation Upload" collapsible={false}>
   {#snippet headerAction()}
     {#if $imagePreview}
       <button
@@ -112,7 +112,7 @@
       <div class="flex-1">
         <div
           class="
-            group flex h-full min-h-[200px] cursor-pointer flex-col items-center justify-center rounded-xl
+            group flex h-full min-h-[200px] flex-col items-center justify-center rounded-xl
             border-2 border-dashed transition-all duration-200 py-5
             {isDragOver
             ? 'border-purple-400 bg-purple-50/40'
@@ -137,7 +137,7 @@
           </div>
 
           <div class="text-center">
-            <p class="mb-4 text-lg font-medium text-gray-700">
+            <p class="mb-4 font-medium text-gray-700">
               {#if $isGeneratingResponse}
                 <Icon
                   icon="svg-spinners:90-ring-with-bg"
@@ -157,7 +157,7 @@
               type="button"
               class="
               text-sm
-                  flex items-center gap-2 rounded-xl border-2 border-gray-300 bg-white
+                  flex items-center gap-2 rounded-xl border-1 border-gray-300
                   px-6 py-2.5 font-medium text-gray-700 transition-all duration-200
                 hover:border-purple-400 hover:bg-purple-50 hover:text-purple-700 cursor-pointer"
               disabled={$isGeneratingResponse}
@@ -173,19 +173,6 @@
     {/if}
 
     <!-- Pro Tip -->
-    <div class="mt-4 rounded-lg bg-blue-50 p-3 text-sm">
-      <div class="flex items-start gap-2">
-        <Icon icon="mdi:lightbulb" class="mt-0.5 h-4 w-4 text-blue-600" />
-        <div>
-          <span class="font-medium text-blue-800">💡 Pro tip:</span>
-          <span class="text-blue-700">
-            For best results, make sure the conversation is clearly visible and
-            well-lit. Large files will upload instantly and then process in the
-            background! ✨
-          </span>
-        </div>
-      </div>
-    </div>
 
     <!-- Hidden File Input -->
     <input

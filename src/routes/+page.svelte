@@ -4,7 +4,7 @@
   import RelationshipContext from "$lib/ui/form/RelationshipContext.svelte";
 </script>
 
-<div class="mx-auto max-w-4xl space-y-8">
+<div class="mx-auto max-w-xl space-y-8">
   <form method="POST" action="?/generateRizz">
     <div class="space-y-6">
       <ImageInput />

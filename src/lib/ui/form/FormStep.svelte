@@ -4,9 +4,8 @@
   import { slide } from "svelte/transition";
 
   interface Props {
-    title: string;
+    title?: string;
     subtitle?: string;
-    required?: boolean;
     collapsible?: boolean;
     defaultCollapsed?: boolean;
     children: Snippet;
@@ -16,7 +15,6 @@
   let {
     title,
     subtitle,
-    required = false,
     collapsible = false,
     defaultCollapsed = false,
     children,
@@ -26,9 +24,7 @@
   let isOpen = $state(!defaultCollapsed);
 </script>
 
-<div
-  class="rounded-2xl border border-white/20 bg-white/70 p-6 shadow-lg backdrop-blur-sm"
->
+<div class="rounded-2xl bg-white/70 p-6 shadow">
   {#if collapsible}
     <button
       type="button"
@@ -39,9 +35,6 @@
         {title}
         {#if subtitle}
           <span class="text-gray-400">{subtitle}</span>
-        {/if}
-        {#if required}
-          <span class="text-red-500">*</span>
         {/if}
       </h2>
       <Icon
@@ -63,9 +56,6 @@
         {title}
         {#if subtitle}
           <span class="text-gray-400">{subtitle}</span>
-        {/if}
-        {#if required}
-          <span class="text-red-500">*</span>
         {/if}
       </h2>
       {#if headerAction}
