@@ -85,7 +85,7 @@
       <div class="relative profile-dropdown">
         <button
           onclick={() => (isDropdownOpen = !isDropdownOpen)}
-          class="flex items-center gap-2 rounded-full bg-white/70 p-2 shadow-lg backdrop-blur-sm transition-all duration-200 hover:bg-white/80 hover:shadow-xl cursor-pointer"
+          class="flex items-center gap-2 rounded-2xl bg-white/70 p-2 shadow-lg backdrop-blur-sm transition-all duration-200 hover:bg-white/80 hover:shadow-xl cursor-pointer"
           aria-label="Profile menu"
         >
           <!-- User Avatar -->
