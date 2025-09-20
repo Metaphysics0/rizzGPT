@@ -1,11 +1,14 @@
 <script lang="ts">
+  import * as Tooltip from "$lib/ui/tooltip/index";
   import Icon from "@iconify/svelte";
   import type { Snippet } from "svelte";
   import { slide } from "svelte/transition";
+  // import { TooltipContent, TooltipProvider, TooltipTrigger } from "../tooltip";
 
   interface Props {
     title?: string;
     subtitle?: string;
+    tooltip?: string;
     collapsible?: boolean;
     defaultCollapsed?: boolean;
     children: Snippet;
@@ -14,6 +17,7 @@
 
   let {
     title,
+    tooltip,
     subtitle,
     collapsible = false,
     defaultCollapsed = false,
@@ -52,8 +56,21 @@
     {/if}
   {:else}
     <div class="mb-4 flex items-center justify-between">
-      <h2 class="text-lg font-semibold text-gray-700">
-        {title}
+      <h2 class="text-lg font-semibold text-gray-700 flex items-center gap-2">
+        <span> {title} </span>
+
+        {#if tooltip}
+          <Tooltip.Provider delayDuration={0}>
+            <Tooltip.Root>
+              <Tooltip.Trigger>
+                <Icon icon="mdi:information" class="h-4 w-4 text-gray-500" />
+              </Tooltip.Trigger>
+              <Tooltip.Content>
+                <p>{tooltip}</p>
+              </Tooltip.Content>
+            </Tooltip.Root>
+          </Tooltip.Provider>
+        {/if}
         {#if subtitle}
           <span class="text-gray-400">{subtitle}</span>
         {/if}
