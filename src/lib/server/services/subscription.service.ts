@@ -15,7 +15,7 @@ export interface GumroadWebhookPayload {
   is_renewal?: string;
   cancelled?: string;
   ended?: string;
-  [key: string]: any;
+  test?: boolean;
 }
 
 export interface SubscriptionData {
@@ -33,8 +33,11 @@ export interface SubscriptionData {
 }
 
 export class SubscriptionService {
-  async createOrUpdateSubscription(webhookData: GumroadWebhookPayload): Promise<void> {
-    const subscriptionData: SubscriptionData = this.parseWebhookData(webhookData);
+  async createOrUpdateSubscription(
+    webhookData: GumroadWebhookPayload
+  ): Promise<void> {
+    const subscriptionData: SubscriptionData =
+      this.parseWebhookData(webhookData);
 
     const existing = await db
       .select()
@@ -61,10 +64,7 @@ export class SubscriptionService {
       .select()
       .from(subscriptions)
       .where(
-        and(
-          eq(subscriptions.email, email),
-          eq(subscriptions.status, "active")
-        )
+        and(eq(subscriptions.email, email), eq(subscriptions.status, "active"))
       );
 
     return activeSubscriptions.length > 0;
@@ -87,9 +87,12 @@ export class SubscriptionService {
       .where(eq(subscriptions.gumroadSaleId, saleId));
   }
 
-  private parseWebhookData(webhookData: GumroadWebhookPayload): SubscriptionData {
+  private parseWebhookData(
+    webhookData: GumroadWebhookPayload
+  ): SubscriptionData {
     const isSubscription = webhookData.is_subscription_payment === "true";
-    const isCancelled = webhookData.cancelled === "true" || webhookData.ended === "true";
+    const isCancelled =
+      webhookData.cancelled === "true" || webhookData.ended === "true";
 
     let status: "active" | "expired" | "cancelled" = "active";
     if (isCancelled) {
