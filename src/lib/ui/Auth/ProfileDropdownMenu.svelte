@@ -160,7 +160,7 @@
                   {#if item.label === "Sign Out"}
                     <button
                       onclick={item.onClick}
-                      class={"flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-red-50 hover:text-red-600 w-full cursor-pointer"}
+                      class={"flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-slate-100 hover:text-slate-600 w-full cursor-pointer"}
                     >
                       <Icon icon={item.icon} class="h-4 w-4" />
                       {item.label}
@@ -169,8 +169,9 @@
                     <a
                       href={item.href}
                       class={cn(
-                        "flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-red-50 hover:text-red-600",
-                        page.route.id === item.href && "bg-red-50 text-red-600"
+                        "flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-slate-100 hover:text-slate-600",
+                        page.route.id === item.href &&
+                          "bg-slate-100 text-slate-600"
                       )}
                     >
                       <Icon icon={item.icon} class="h-4 w-4" />

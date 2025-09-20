@@ -69,7 +69,7 @@
 <FormStep
   title="Conversation Upload"
   collapsible={false}
-  tooltip="Upload a video or image of your conversation with your partner."
+  tooltip="Upload a screen recording or screenshot of your conversation with your partner."
 >
   {#snippet headerAction()}
     {#if $imagePreview}
