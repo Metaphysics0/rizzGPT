@@ -66,7 +66,11 @@
   }
 </script>
 
-<FormStep title="Conversation Upload" collapsible={false}>
+<FormStep
+  title="Conversation Upload"
+  collapsible={false}
+  tooltip="Upload a video or image of your conversation with your partner."
+>
   {#snippet headerAction()}
     {#if $imagePreview}
       <button

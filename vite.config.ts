@@ -5,5 +5,11 @@ import { defineConfig } from "vite";
 export default defineConfig(() => {
   return {
     plugins: [sveltekit(), tailwindcss()],
+    optimizeDeps: {
+      include: ["bits-ui"]
+    },
+    ssr: {
+      noExternal: ["bits-ui"]
+    }
   };
 });
