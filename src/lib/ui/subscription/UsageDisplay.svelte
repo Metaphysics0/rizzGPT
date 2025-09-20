@@ -1,7 +1,7 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
   import { cn } from "$lib/utils/string/cn.util";
-  import SubscriptionPricingCard from "./SubscriptionPricingCard.svelte";
+  import SubscriptionPricingCard from "./UpgradeToProTierCard.svelte";
   import type { Subscription } from "$lib/server/database/schema";
 
   interface Props {
@@ -23,7 +23,9 @@
   const isProUser = subscription?.status === "active";
   const freeLimit = 5;
   const remainingResponses = Math.max(0, freeLimit - usageCount);
-  const usagePercentage = isProUser ? 0 : Math.min((usageCount / freeLimit) * 100, 100);
+  const usagePercentage = isProUser
+    ? 0
+    : Math.min((usageCount / freeLimit) * 100, 100);
 
   function getUsageColor() {
     if (isProUser) return "text-green-600";
@@ -40,7 +42,7 @@
   }
 </script>
 
-<div class={cn("space-y-4", className)}>
+<div class={cn("space-y-4", className || "")}>
   <!-- Usage Stats Card -->
   <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
     <div class="flex items-center justify-between mb-4">
@@ -50,12 +52,16 @@
       </h3>
 
       {#if isProUser}
-        <div class="flex items-center gap-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+        <div
+          class="flex items-center gap-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium"
+        >
           <Icon icon="mdi:crown" class="w-4 h-4" />
           Pro
         </div>
       {:else}
-        <div class="flex items-center gap-2 px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-medium">
+        <div
+          class="flex items-center gap-2 px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-medium"
+        >
           <Icon icon="mdi:account" class="w-4 h-4" />
           Free
         </div>
@@ -68,9 +74,11 @@
         <span class="text-sm text-gray-600">Responses Generated</span>
         <span class={cn("text-xl font-bold", getUsageColor())}>
           {#if isProUser}
-            {usageCount} <span class="text-sm font-normal text-gray-500">/ Unlimited</span>
+            {usageCount}
+            <span class="text-sm font-normal text-gray-500">/ Unlimited</span>
           {:else}
-            {usageCount} <span class="text-sm font-normal text-gray-500">/ {freeLimit}</span>
+            {usageCount}
+            <span class="text-sm font-normal text-gray-500">/ {freeLimit}</span>
           {/if}
         </span>
       </div>
@@ -79,7 +87,10 @@
       {#if !isProUser}
         <div class="w-full bg-gray-200 rounded-full h-2">
           <div
-            class={cn("h-2 rounded-full transition-all duration-300", getProgressColor())}
+            class={cn(
+              "h-2 rounded-full transition-all duration-300",
+              getProgressColor()
+            )}
             style="width: {usagePercentage}%"
           ></div>
         </div>
@@ -109,9 +120,13 @@
         <div class="flex items-start gap-2">
           <Icon icon="mdi:alert" class="w-5 h-5 text-orange-600 mt-0.5" />
           <div>
-            <p class="text-sm font-medium text-orange-800">Almost at your limit</p>
+            <p class="text-sm font-medium text-orange-800">
+              Almost at your limit
+            </p>
             <p class="text-xs text-orange-700 mt-1">
-              You have {remainingResponses} response{remainingResponses !== 1 ? 's' : ''} left this month.
+              You have {remainingResponses} response{remainingResponses !== 1
+                ? "s"
+                : ""} left this month.
             </p>
           </div>
         </div>
@@ -124,7 +139,9 @@
         <div class="flex items-start gap-2">
           <Icon icon="mdi:lock" class="w-5 h-5 text-red-600 mt-0.5" />
           <div>
-            <p class="text-sm font-medium text-red-800">Monthly limit reached</p>
+            <p class="text-sm font-medium text-red-800">
+              Monthly limit reached
+            </p>
             <p class="text-xs text-red-700 mt-1">
               Upgrade to Pro for unlimited responses or wait until next month.
             </p>
@@ -136,6 +153,6 @@
 
   <!-- Upgrade Card -->
   {#if showUpgradeCard && !isProUser}
-    <SubscriptionPricingCard {userEmail} currentPlan="trial" />
+    <SubscriptionPricingCard {userEmail} />
   {/if}
 </div>
