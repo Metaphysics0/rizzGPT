@@ -49,7 +49,7 @@
   disabled={!canGenerateResponse}
   onclick={onSubmit}
   class="
-          rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 px-8 py-3 font-medium
+          rounded-xl bg-linear-to-r from-purple-600 to-pink-600 px-8 py-3 font-medium
           text-white shadow-lg transition-all duration-200
           hover:scale-105 hover:from-purple-700 hover:to-pink-700 hover:shadow-xl
           disabled:transform-none disabled:cursor-not-allowed disabled:opacity-50
