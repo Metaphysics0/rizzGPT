@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { goto } from "$app/navigation";
-  import { authClient } from "$lib/auth-client";
   import Icon from "@iconify/svelte";
   import type { User } from "better-auth";
   import { cn } from "$lib/utils/string/cn.util";
