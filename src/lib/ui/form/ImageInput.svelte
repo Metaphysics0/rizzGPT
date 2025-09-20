@@ -72,7 +72,7 @@
       <button
         type="button"
         onclick={clearImage}
-        class="flex items-center gap-1.5 rounded-lg bg-red-50 px-3 py-1.5 text-sm font-medium text-red-600 transition-all duration-200 hover:bg-red-100 hover:text-red-700"
+        class="flex items-center gap-1.5 rounded-lg text-gray-500 px-3 py-1.5 text-sm font-medium transition-all duration-200 cursor-pointer hover:text-gray-700"
         transition:fade={{ duration: 200 }}
       >
         <Icon icon="mdi:close" class="h-4 w-4" />
@@ -83,7 +83,7 @@
   <div class="flex h-max flex-col">
     {#if $imagePreview}
       <!-- Preview Section -->
-      <div class="mb-4 flex-1" transition:fade={{ duration: 200 }}>
+      <div class="mb-4 flex-1">
         {#if isVideo}
           <div class="relative">
             <!-- svelte-ignore a11y_media_has_caption -->
@@ -121,11 +121,17 @@
           ondrop={handleDrop}
         >
           <div class="flex flex-col items-center">
-            <p class="text-gray-500 my-2">Drag and drop a file here or click</p>
             <Icon
-              icon="clarity:upload-cloud-line"
-              class="h-10 w-10 text-gray-500"
+              icon="mingcute:upload-2-line"
+              class="h-10 w-10 text-gray-500 bg-gray-200 border border-gray-300 rounded-md p-2"
             />
+            <p class="text-gray-500 my-2">Upload a file</p>
+            <p class="text-gray-800 text-sm">
+              Drag and drop or click to upload
+            </p>
+            <p class="text-gray-800 text-sm">
+              Accepts images and videos up to 50MB
+            </p>
           </div>
         </div>
       </div>
