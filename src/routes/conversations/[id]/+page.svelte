@@ -96,7 +96,7 @@
 </svelte:head>
 
 <div
-  class="min-h-screen bg-gradient-to-br from-pink-100 via-purple-50 to-yellow-100 p-4 md:p-8"
+  class="min-h-screen bg-linear-to-br from-pink-100 via-purple-50 to-yellow-100 p-4 md:p-8"
 >
   <div class="mx-auto max-w-4xl space-y-8">
     <button
@@ -225,7 +225,7 @@
         </p>
         <button
           onclick={goBack}
-          class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-3 font-medium text-white shadow-lg transition-all duration-200 hover:scale-105"
+          class="inline-flex items-center gap-2 rounded-xl bg-linear-to-r from-purple-600 to-pink-600 px-6 py-3 font-medium text-white shadow-lg transition-all duration-200 hover:scale-105"
         >
           <Icon icon="heroicons:arrow-left" class="h-4 w-4" />
           Go Back

@@ -98,7 +98,7 @@
               />
             {:else}
               <div
-                class="flex h-full w-full items-center justify-center bg-gradient-to-br from-purple-500 to-pink-500 text-sm font-medium text-white"
+                class="flex h-full w-full items-center justify-center bg-linear-to-br from-purple-500 to-pink-500 text-sm font-medium text-white"
               >
                 {getUserInitials()}
               </div>
@@ -137,7 +137,7 @@
                       />
                     {:else}
                       <div
-                        class="flex h-full w-full items-center justify-center bg-gradient-to-br from-purple-500 to-pink-500 text-white font-medium"
+                        class="flex h-full w-full items-center justify-center bg-linear-to-br from-purple-500 to-pink-500 text-white font-medium"
                       >
                         {getUserInitials()}
                       </div>
