@@ -4,16 +4,13 @@
   import { fade } from "svelte/transition";
   import "../app.css";
   import ProfileDropdownMenu from "$lib/ui/Auth/ProfileDropdownMenu.svelte";
-  import { authClient } from "$lib/auth-client";
+  import type { PageData } from "./$types";
 
-  let { children } = $props();
-
-  // Use client-side session data which updates reactively
-  const session = authClient.useSession();
+  let { children, data }: { children: any; data: PageData } = $props();
 </script>
 
-{#if $session.data?.user && page.route.id !== "/sign-in"}
-  <ProfileDropdownMenu user={$session.data.user} />
+{#if data.user && page.route.id !== "/sign-in"}
+  <ProfileDropdownMenu user={data.user} />
 {/if}
 
 <div

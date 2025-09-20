@@ -5,6 +5,7 @@
   import type { User } from "better-auth";
   import { cn } from "$lib/utils/string/cn.util";
   import { page } from "$app/state";
+  import SubscriptionTierStatusBadge from "../general/SubscriptionTierStatusBadge.svelte";
   let isDropdownOpen = $state(false);
 
   interface Props {
@@ -27,9 +28,11 @@
     return "U";
   }
 
-  function getDisplayName(): string {
+  function getDisplayName({
+    fullName = false,
+  }: { fullName?: boolean } = {}): string {
     if (!user) return "User";
-    if (user.name) return user.name;
+    if (user.name) return fullName ? user.name : user.name.split(" ")[0];
     if (user.email) return user.email.split("@")[0];
 
     return "User";
@@ -54,19 +57,24 @@
       href: "/conversations",
     },
     {
-      label: "Sign Out",
-      icon: "mdi:logout",
-      onClick: async () => {
-        await authClient.signOut({
-          fetchOptions: {
-            onSuccess: () => {
-              goto("/sign-in");
-              isDropdownOpen = false;
-            },
-          },
-        });
-      },
+      label: "Account",
+      icon: "mdi:account",
+      href: "/profile",
     },
+    // {
+    //   label: "Sign Out",
+    //   icon: "mdi:logout",
+    //   onClick: async () => {
+    //     await authClient.signOut({
+    //       fetchOptions: {
+    //         onSuccess: () => {
+    //           goto("/sign-in");
+    //           isDropdownOpen = false;
+    //         },
+    //       },
+    //     });
+    //   },
+    // },
   ] as const;
 
   $effect(() => {
@@ -107,7 +115,7 @@
 
           <!-- Name (hidden on mobile) -->
           <span class="hidden font-medium text-gray-700 sm:block">
-            {getDisplayName()}
+            {getDisplayName({ fullName: true })}
           </span>
 
           <!-- Dropdown Arrow -->
@@ -144,9 +152,12 @@
                     {/if}
                   </div>
                   <div class="flex-1 min-w-0">
-                    <p class="font-medium text-gray-900 truncate">
-                      {getDisplayName()}
-                    </p>
+                    <div class="flex items-center justify-between gap-2">
+                      <p class="font-medium text-gray-900 truncate">
+                        {getDisplayName()}
+                      </p>
+                      <SubscriptionTierStatusBadge status={"trial"} />
+                    </div>
                     <p class="text-sm text-gray-500 truncate">
                       {user.email}
                     </p>
@@ -157,27 +168,17 @@
               <!-- Menu Items -->
               <div class="py-1">
                 {#each MENU_ITEMS as item}
-                  {#if item.label === "Sign Out"}
-                    <button
-                      onclick={item.onClick}
-                      class={"flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-slate-100 hover:text-slate-600 w-full cursor-pointer"}
-                    >
-                      <Icon icon={item.icon} class="h-4 w-4" />
-                      {item.label}
-                    </button>
-                  {:else}
-                    <a
-                      href={item.href}
-                      class={cn(
-                        "flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-slate-100 hover:text-slate-600",
-                        page.route.id === item.href &&
-                          "bg-slate-100 text-slate-600"
-                      )}
-                    >
-                      <Icon icon={item.icon} class="h-4 w-4" />
-                      {item.label}
-                    </a>
-                  {/if}
+                  <a
+                    href={item.href}
+                    class={cn(
+                      "flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-slate-100 hover:text-slate-600",
+                      page.route.id === item.href &&
+                        "bg-slate-100 text-slate-600"
+                    )}
+                  >
+                    <Icon icon={item.icon} class="h-4 w-4" />
+                    {item.label}
+                  </a>
                 {/each}
               </div>
             {:else}
