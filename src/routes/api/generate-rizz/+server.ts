@@ -22,6 +22,7 @@ export const POST = (async ({ request, locals }) => {
     const { conversationId } = await new ConversationGenerationService({
       blobUrl: body.blobUrl,
       userId: locals.user.id,
+      userEmail: locals.user.email,
       ...(body.relationshipContext && {
         relationshipContext: body.relationshipContext,
       }),

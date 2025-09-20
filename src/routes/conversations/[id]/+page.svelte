@@ -101,7 +101,7 @@
     class="mt-4 inline-flex items-center gap-2 rounded-lg px-4 py-2 text-purple-600 hover:bg-purple-50 transition-colors cursor-pointer"
   >
     <Icon icon="heroicons:arrow-left" class="h-4 w-4" />
-    Start New Conversation
+    Conversation History
   </button>
 
   {#if conversation.initialUploadedConversationBlobUrl}
