@@ -60,6 +60,29 @@ export const verifications = pgTable("verification", {
     .notNull(),
 });
 
+export const subscriptions = pgTable("subscription", {
+  id: uuid().primaryKey().defaultRandom(),
+  email: text().notNull(),
+  gumroadSaleId: text().unique().notNull(),
+  productId: text().notNull(),
+  productName: text().notNull(),
+  price: text().notNull(),
+  status: text()
+    .$type<"active" | "expired" | "cancelled">()
+    .default("active")
+    .notNull(),
+  purchaserEmail: text().notNull(),
+  purchaserName: text(),
+  isSubscription: boolean().default(false).notNull(),
+  subscriptionId: text(),
+  expiresAt: timestamp(),
+  createdAt: timestamp().defaultNow().notNull(),
+  updatedAt: timestamp()
+    .$onUpdate(() => /* @__PURE__ */ new Date())
+    .notNull(),
+});
+export type Subscription = typeof subscriptions.$inferSelect;
+
 export const conversations = pgTable("conversation", {
   id: uuid().primaryKey().defaultRandom(),
   userId: text()
