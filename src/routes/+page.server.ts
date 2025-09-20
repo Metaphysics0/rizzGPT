@@ -1,15 +1,8 @@
-import { auth } from "$lib/server/auth";
-import { redirect } from "@sveltejs/kit";
-import type { PageServerLoad, RequestEvent } from "./$types";
+import type { PageServerLoad } from "./$types";
 
-export const load: PageServerLoad = async (event: RequestEvent) => {
-  const session = await auth.api.getSession({
-    headers: event.request.headers,
-  });
-
-  if (!session) {
-    return redirect(302, "/sign-in");
-  }
-
-  return session;
+export const load: PageServerLoad = async ({ locals }) => {
+  return {
+    session: locals.session,
+    user: locals.user,
+  };
 };

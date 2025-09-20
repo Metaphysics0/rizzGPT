@@ -4,11 +4,11 @@ import { building } from "$app/environment";
 import { auth } from "$lib/server/auth";
 
 export const handle: Handle = async ({ event, resolve }) => {
-  if (isChromeDevToolsRequest(event.url)) {
-    return new Response(null, { status: 204 });
-  }
-
   try {
+    if (isChromeDevToolsRequest(event.url)) {
+      return new Response(null, { status: 204 });
+    }
+
     const session = await auth.api.getSession({
       headers: event.request.headers,
     });
@@ -17,6 +17,13 @@ export const handle: Handle = async ({ event, resolve }) => {
     if (session) {
       event.locals.session = session.session;
       event.locals.user = session.user;
+    }
+
+    if (isProtectedRoute(event.url.pathname) && !session) {
+      return new Response(null, {
+        status: 302,
+        headers: { Location: "/sign-in" },
+      });
     }
 
     return svelteKitHandler({ event, resolve, auth, building });
@@ -29,5 +36,13 @@ export const handle: Handle = async ({ event, resolve }) => {
 function isChromeDevToolsRequest(url: URL) {
   return url.pathname.startsWith(
     "/.well-known/appspecific/com.chrome.devtools"
+  );
+}
+
+function isProtectedRoute(pathname: string) {
+  const protectedRoutes = ["/profile", "/conversations", "/settings"];
+  return (
+    pathname === "/" ||
+    protectedRoutes.some((route) => pathname.startsWith(route))
   );
 }
