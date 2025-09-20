@@ -5,6 +5,10 @@
   import { page } from "$app/state";
   import SubscriptionTierStatusBadge from "../general/SubscriptionTierStatusBadge.svelte";
   import type { Subscription } from "$lib/server/database/schema";
+  import {
+    getDisplayName,
+    getUserInitials,
+  } from "$lib/utils/user/user-info.util";
   let isDropdownOpen = $state(false);
 
   interface Props {
@@ -12,30 +16,6 @@
   }
 
   let { user }: Props = $props();
-
-  function getUserInitials(): string {
-    if (!user) return "U";
-    const firstName = user.name?.split(" ")[0] || "";
-    const lastName = user.name?.split(" ")[1] || "";
-
-    if (firstName && lastName)
-      return `${firstName[0]}${lastName[0]}`.toUpperCase();
-
-    if (firstName) return firstName[0].toUpperCase();
-    if (user.email) return user.email[0].toUpperCase();
-
-    return "U";
-  }
-
-  function getDisplayName({
-    fullName = false,
-  }: { fullName?: boolean } = {}): string {
-    if (!user) return "User";
-    if (user.name) return fullName ? user.name : user.name.split(" ")[0];
-    if (user.email) return user.email.split("@")[0];
-
-    return "User";
-  }
 
   function handleClickOutside(event: MouseEvent) {
     const target = event.target as Element;
@@ -100,21 +80,21 @@
             {#if user.image}
               <img
                 src={user.image}
-                alt={getDisplayName()}
+                alt={getDisplayName({ user })}
                 class="h-full w-full object-cover"
               />
             {:else}
               <div
                 class="flex h-full w-full items-center justify-center bg-linear-to-br from-purple-500 to-pink-500 text-sm font-medium text-white"
               >
-                {getUserInitials()}
+                {getUserInitials(user)}
               </div>
             {/if}
           </div>
 
           <!-- Name (hidden on mobile) -->
           <span class="hidden font-medium text-gray-700 sm:block">
-            {getDisplayName({ fullName: true })}
+            {getDisplayName({ user, fullName: true })}
           </span>
 
           <!-- Dropdown Arrow -->
@@ -139,21 +119,21 @@
                     {#if user.image}
                       <img
                         src={user.image}
-                        alt={getDisplayName()}
+                        alt={getDisplayName({ user })}
                         class="h-full w-full object-cover"
                       />
                     {:else}
                       <div
                         class="flex h-full w-full items-center justify-center bg-linear-to-br from-purple-500 to-pink-500 text-white font-medium"
                       >
-                        {getUserInitials()}
+                        {getUserInitials(user)}
                       </div>
                     {/if}
                   </div>
                   <div class="flex-1 min-w-0">
                     <div class="flex items-center justify-between gap-2">
                       <p class="font-medium text-gray-900 truncate">
-                        {getDisplayName()}
+                        {getDisplayName({ user })}
                       </p>
                       <SubscriptionTierStatusBadge
                         status={user.subscription?.status === "active"
