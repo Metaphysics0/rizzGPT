@@ -4,10 +4,11 @@
   import { cn } from "$lib/utils/string/cn.util";
   import { page } from "$app/state";
   import SubscriptionTierStatusBadge from "../general/SubscriptionTierStatusBadge.svelte";
+  import type { Subscription } from "$lib/server/database/schema";
   let isDropdownOpen = $state(false);
 
   interface Props {
-    user: User;
+    user: User & { subscription?: Subscription };
   }
 
   let { user }: Props = $props();
@@ -154,7 +155,11 @@
                       <p class="font-medium text-gray-900 truncate">
                         {getDisplayName()}
                       </p>
-                      <SubscriptionTierStatusBadge status={"trial"} />
+                      <SubscriptionTierStatusBadge
+                        status={user.subscription?.status === "active"
+                          ? "pro"
+                          : "trial"}
+                      />
                     </div>
                     <p class="text-sm text-gray-500 truncate">
                       {user.email}
