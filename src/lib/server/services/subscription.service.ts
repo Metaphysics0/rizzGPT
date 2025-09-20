@@ -59,15 +59,15 @@ export class SubscriptionService {
     }
   }
 
-  async getActiveSubscription(email: string): Promise<boolean> {
-    const activeSubscriptions = await db
+  async getActiveSubscription(email: string) {
+    return await db
       .select()
       .from(subscriptions)
       .where(
         and(eq(subscriptions.email, email), eq(subscriptions.status, "active"))
-      );
-
-    return activeSubscriptions.length > 0;
+      )
+      .limit(1)
+      .then((results) => results[0] || null);
   }
 
   async getUserSubscriptions(email: string) {
