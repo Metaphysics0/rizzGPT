@@ -83,6 +83,20 @@ export const subscriptions = pgTable("subscription", {
 });
 export type Subscription = typeof subscriptions.$inferSelect;
 
+export const userUsage = pgTable("user_usage", {
+  id: uuid().primaryKey().defaultRandom(),
+  userId: text()
+    .references(() => users.id, { onDelete: "cascade" })
+    .notNull(),
+  monthYear: text().notNull(), // Format: "YYYY-MM"
+  responseCount: text().default("0").notNull(),
+  createdAt: timestamp().defaultNow().notNull(),
+  updatedAt: timestamp()
+    .$onUpdate(() => /* @__PURE__ */ new Date())
+    .notNull(),
+});
+export type UserUsage = typeof userUsage.$inferSelect;
+
 export const conversations = pgTable("conversation", {
   id: uuid().primaryKey().defaultRandom(),
   userId: text()

@@ -4,4 +4,5 @@ export interface GenerateRizzJobPayload {
   blobUrl: string;
   relationshipContext?: RelationshipContext;
   conversationId: string;
+  userId: string;
 }

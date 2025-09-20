@@ -3,25 +3,49 @@ import type { Conversation } from "../database/types";
 import { GenerateRizzJobHandler } from "../job-handlers/generate-rizz/job-handler";
 import type { GenerateRizzJobPayload } from "../job-handlers/generate-rizz/job-payload.type";
 import { databaseService } from "./database.service";
+import { UsageService } from "./usage.service";
+import { SubscriptionService } from "./subscription.service";
 import { INITIAL_CONVERSATION_DESCRIPTION } from "$lib/constants/initial-conversation.constant";
 
 export interface ConversationGenerationRequest {
   blobUrl: string;
   relationshipContext?: RelationshipContext;
   userId: string;
+  userEmail: string;
 }
 
 export class ConversationGenerationService {
   private readonly params: ConversationGenerationRequest;
+  private readonly usageService: UsageService;
+  private readonly subscriptionService: SubscriptionService;
 
   constructor(params: ConversationGenerationRequest) {
     this.params = params;
+    this.usageService = new UsageService();
+    this.subscriptionService = new SubscriptionService();
   }
 
   async initiateConversationGeneration() {
     console.log(
       `Starting conversation generation - ${JSON.stringify(this.params)}`
     );
+
+    // Check if user has active subscription
+    const activeSubscription = await this.subscriptionService.getActiveSubscription(
+      this.params.userEmail
+    );
+
+    // If no active subscription, check usage limits
+    if (!activeSubscription) {
+      const hasExceeded = await this.usageService.hasExceededFreeLimit(
+        this.params.userId
+      );
+
+      if (hasExceeded) {
+        throw new Error("FREE_LIMIT_EXCEEDED");
+      }
+    }
+
     const conversation = await this.createInitialConversation();
     console.log(
       `Initial conversation created - ${JSON.stringify(conversation)}`
@@ -39,6 +63,7 @@ export class ConversationGenerationService {
       conversationId: conversation.id,
       blobUrl: this.params.blobUrl,
       relationshipContext: this.params.relationshipContext,
+      userId: this.params.userId,
     };
 
     // We don't await the call() method, allowing it to run in the background

@@ -1,4 +1,5 @@
 import { databaseService } from "$lib/server/services/database.service";
+import { UsageService } from "$lib/server/services/usage.service";
 import { GeminiService } from "$lib/server/services/gemini.service";
 import { downloadFileFromUrl } from "$lib/server/utils/download-file-from-url.util";
 import type { GenerateRizzJobPayload } from "./job-payload.type";
@@ -6,10 +7,12 @@ import type { GenerateRizzJobPayload } from "./job-payload.type";
 export class GenerateRizzJobHandler {
   private readonly jobPayload: GenerateRizzJobPayload;
   private readonly geminiService: GeminiService;
+  private readonly usageService: UsageService;
 
   constructor(jobPayload: GenerateRizzJobPayload) {
     this.jobPayload = jobPayload;
     this.geminiService = new GeminiService();
+    this.usageService = new UsageService();
   }
 
   async call() {
@@ -34,6 +37,9 @@ export class GenerateRizzJobHandler {
         matchName: generateRizzResponse.matchName,
         status: "completed",
       });
+
+      // Increment usage count after successful generation
+      await this.usageService.incrementUsage(this.jobPayload.userId);
 
       return generateRizzResponse;
     } catch (processingError) {
