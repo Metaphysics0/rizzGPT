@@ -1,7 +1,7 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
   import * as Dialog from "$lib/ui/dialog/index.js";
-  import SubscriptionPricingCard from "./UpgradeToProTierCard.svelte";
+  import SubscribeToProCard from "./SubscribeToProCard.svelte";
 
   interface Props {
     open: boolean;
@@ -49,7 +49,7 @@
 
     <!-- Pricing Card -->
     <div class="p-0">
-      <SubscriptionPricingCard {userEmail} />
+      <SubscribeToProCard {userEmail} />
     </div>
 
     <!-- Modal Footer -->

@@ -1,7 +1,6 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
   import { cn } from "$lib/utils/string/cn.util";
-  import SubscriptionPricingCard from "./UpgradeToProTierCard.svelte";
   import type { Subscription } from "$lib/server/database/schema";
 
   interface Props {
@@ -150,9 +149,4 @@
       </div>
     {/if}
   </div>
-
-  <!-- Upgrade Card -->
-  {#if showUpgradeCard && !isProUser}
-    <SubscriptionPricingCard {userEmail} />
-  {/if}
 </div>
