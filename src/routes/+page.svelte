@@ -1,5 +1,5 @@
 <script lang="ts">
-  import GenerateResponseButton from "$lib/ui/form/GenerateResponseButton.svelte";
+  import GenerateResponseButton from "$lib/ui/form/GenerateRizzButton.svelte";
   import ImageInput from "$lib/ui/form/ImageInput.svelte";
   import RelationshipContext from "$lib/ui/form/RelationshipContext.svelte";
 </script>
