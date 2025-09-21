@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { isGeneratingResponse, uploadedFile } from "$lib/stores/form.store";
+  import { isGeneratingResponse, generateRizzForm } from "$lib/stores/form.store";
   import { imagePreview } from "$lib/stores/image-preview.store";
+  import { triggerClientFileUpload } from "$lib/utils/file/client-file-upload.util";
   import Icon from "@iconify/svelte";
   import FormStep from "./FormStep.svelte";
   import { fade } from "svelte/transition";
@@ -9,19 +10,41 @@
   let isVideo = false;
   let videoElement: HTMLVideoElement;
   let isDragOver = false;
+  let isUploading = false;
 
-  function handleFile(file: File) {
-    uploadedFile.set(file);
-    isVideo = file.type.startsWith("video/");
-    const previewUrl = URL.createObjectURL(file);
-    imagePreview.set(previewUrl);
+  async function handleFile(file: File) {
+    try {
+      isUploading = true;
+      isVideo = file.type.startsWith("video/");
+      const previewUrl = URL.createObjectURL(file);
+      imagePreview.set(previewUrl);
+
+      // Upload to S3 immediately
+      const blobUrl = await triggerClientFileUpload(file);
+
+      // Update the form store with the blob URL
+      generateRizzForm.update(form => ({
+        ...form,
+        blobUrl
+      }));
+    } catch (error) {
+      console.error("Failed to upload file:", error);
+      // Clear preview on error
+      imagePreview.set(null);
+      generateRizzForm.update(form => ({
+        ...form,
+        blobUrl: ""
+      }));
+    } finally {
+      isUploading = false;
+    }
   }
 
   async function processImage(event: Event) {
     const target = event.target as HTMLInputElement;
     const file = target.files?.[0];
     if (!file) return;
-    handleFile(file);
+    await handleFile(file);
   }
 
   function handleDragOver(event: DragEvent) {
@@ -34,7 +57,7 @@
     isDragOver = false;
   }
 
-  function handleDrop(event: DragEvent) {
+  async function handleDrop(event: DragEvent) {
     event.preventDefault();
     isDragOver = false;
 
@@ -42,23 +65,31 @@
     if (files && files.length > 0) {
       const file = files[0];
       if (file.type.startsWith("image/") || file.type.startsWith("video/")) {
-        handleFile(file);
+        await handleFile(file);
       }
     }
   }
 
   $: if (!$imagePreview && fileInput) {
     fileInput.value = "";
-    uploadedFile.set(null);
+    generateRizzForm.update(form => ({
+      ...form,
+      blobUrl: ""
+    }));
   }
 
   function triggerFileInput() {
-    fileInput?.click();
+    if (!isUploading && !$isGeneratingResponse) {
+      fileInput?.click();
+    }
   }
 
   function clearImage() {
     imagePreview.set(null);
-    uploadedFile.set(null);
+    generateRizzForm.update(form => ({
+      ...form,
+      blobUrl: ""
+    }));
     if (fileInput) {
       fileInput.value = "";
     }
@@ -111,7 +142,10 @@
         <div
           class="
             group flex h-full min-h-[200px] flex-col items-center justify-center rounded-xl
-            border-2 border-dashed transition-all duration-200 py-5 bg-gray-100 cursor-pointer
+            border-2 border-dashed transition-all duration-200 py-5 bg-gray-100
+            {isUploading || $isGeneratingResponse
+            ? 'cursor-not-allowed opacity-50'
+            : 'cursor-pointer'}
             {isDragOver
             ? 'border-purple-400 bg-purple-50/40'
             : 'border-gray-300 bg-gray-50/30 hover:bg-gray-200'}
@@ -125,11 +159,16 @@
           ondrop={handleDrop}
         >
           <div class="flex flex-col items-center">
-            <Icon
-              icon="mingcute:upload-2-line"
-              class="h-10 w-10 text-gray-500 bg-gray-200 border border-gray-300 rounded-md p-2"
-            />
-            <p class="text-gray-500 my-2">Upload a file</p>
+            {#if isUploading}
+              <div class="h-10 w-10 animate-spin rounded-full border-2 border-purple-500 border-t-transparent bg-gray-200 p-2"></div>
+              <p class="text-gray-500 my-2">Uploading...</p>
+            {:else}
+              <Icon
+                icon="mingcute:upload-2-line"
+                class="h-10 w-10 text-gray-500 bg-gray-200 border border-gray-300 rounded-md p-2"
+              />
+              <p class="text-gray-500 my-2">Upload a file</p>
+            {/if}
             <p class="text-gray-800 text-sm">
               Drag and drop or click to upload
             </p>
@@ -148,7 +187,7 @@
       onchange={processImage}
       class="hidden"
       bind:this={fileInput}
-      disabled={$isGeneratingResponse}
+      disabled={$isGeneratingResponse || isUploading}
     />
   </div>
 </FormStep>

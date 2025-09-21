@@ -2,29 +2,29 @@
   import { goto, invalidate } from "$app/navigation";
   import {
     isGeneratingResponse,
-    relationshipContextForm,
+    generateRizzForm,
     responseError,
-    uploadedFile,
   } from "$lib/stores/form.store";
-  import { triggerClientFileUpload } from "$lib/utils/file/client-file-upload.util";
   import { getRelationshipContextForUpload } from "$lib/utils/get-relationship-context-for-upload.util";
 
-  $: canGenerateResponse = $uploadedFile && !$isGeneratingResponse;
+  $: canGenerateResponse = $generateRizzForm.blobUrl && !$isGeneratingResponse;
 
   async function onSubmit() {
     try {
-      if (!$uploadedFile) return;
+      if (!$generateRizzForm.blobUrl) return;
       isGeneratingResponse.set(true);
       responseError.set(null);
-      const relationshipContext = getRelationshipContextForUpload(
-        $relationshipContextForm
-      );
 
-      const blobUrl = await triggerClientFileUpload($uploadedFile);
+      const relationshipContext = getRelationshipContextForUpload(
+        $generateRizzForm.relationshipContext
+      );
 
       const response = await fetch("/api/generate-rizz", {
         method: "POST",
-        body: JSON.stringify({ blobUrl, relationshipContext }),
+        body: JSON.stringify({
+          blobUrl: $generateRizzForm.blobUrl,
+          relationshipContext
+        }),
       });
 
       if (!response.ok) throw new Error();

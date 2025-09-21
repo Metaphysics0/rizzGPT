@@ -40,7 +40,7 @@
     >
       <div class="flex items-center justify-center gap-2 mb-2">
         <Icon icon="mdi:crown" class="w-6 h-6 text-yellow-300" />
-        <h3 class="text-2xl font-bold">RizzGPT Pro</h3>
+        <h3 class="text-2xl font-bold">Upgrade Today</h3>
       </div>
       <div class="flex items-baseline justify-center gap-1">
         <span class="text-4xl font-bold">$14.99</span>
