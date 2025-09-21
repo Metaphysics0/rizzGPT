@@ -9,6 +9,8 @@
     getDisplayName,
     getUserInitials,
   } from "$lib/utils/user/user-info.util";
+  import { authClient } from "$lib/auth-client";
+  import { goto } from "$app/navigation";
   let isDropdownOpen = $state(false);
 
   interface Props {
@@ -55,6 +57,17 @@
     //   },
     // },
   ] as const;
+
+  async function signOut() {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          goto("/sign-in");
+          isDropdownOpen = false;
+        },
+      },
+    });
+  }
 
   $effect(() => {
     if (isDropdownOpen) {
@@ -163,6 +176,17 @@
                     {item.label}
                   </a>
                 {/each}
+
+                <!-- Sign Out Button -->
+                <button
+                  onclick={signOut}
+                  class="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-slate-100 cursor-pointer"
+                >
+                  <Icon icon="mdi:logout" class="h-4 w-4" />
+                  Sign Out
+                </button>
+                <!-- <div class="mt-3 pt-3 border-t border-gray-200">
+                </div> -->
               </div>
             {:else}
               <!-- Not Authenticated Menu -->
