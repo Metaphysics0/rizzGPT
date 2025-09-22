@@ -1,44 +1,10 @@
 <script lang="ts">
-  import { enhance } from "$app/forms";
   import { generateRizzFormStore } from "$lib/stores/form.svelte";
 
   // const canGenerateResponse = $derived(generateRizzFormStore.canGenerate);
   const canGenerateResponse = true;
 </script>
 
-<!-- Hidden form inputs for the form action -->
-<input
-  type="hidden"
-  name="fileName"
-  value={generateRizzFormStore.form.fileName}
-/>
-<input
-  type="hidden"
-  name="duration"
-  value={generateRizzFormStore.form.relationshipContext.duration}
-/>
-<input
-  type="hidden"
-  name="objective"
-  value={generateRizzFormStore.form.relationshipContext.objective}
-/>
-<input
-  type="hidden"
-  name="notes"
-  value={generateRizzFormStore.form.relationshipContext.notes}
-/>
-
-<!-- use:enhance={() => {
-    generateRizzFormStore.setGenerating(true);
-    return async ({ result }) => {
-      generateRizzFormStore.setGenerating(false);
-      if (result.type === "failure") {
-        generateRizzFormStore.setError(
-          (result.data?.error as string) || "Generation failed"
-        );
-      }
-    };
-  }} -->
 <button
   type="submit"
   disabled={!canGenerateResponse}

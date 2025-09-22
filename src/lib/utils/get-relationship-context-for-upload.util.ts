@@ -5,10 +5,5 @@ export function getRelationshipContextForUpload(
   relationshipContextForm: RelationshipContext
 ): RelationshipContext | undefined {
   if (areAllObjectValuesEmpty(relationshipContextForm)) return;
-
-  return {
-    duration: relationshipContextForm.duration,
-    objective: relationshipContextForm.objective,
-    notes: relationshipContextForm.notes || "",
-  };
+  return relationshipContextForm;
 }

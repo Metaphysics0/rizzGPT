@@ -1,8 +1,8 @@
 import type { Actions, PageServerLoad } from "./$types";
 import { fail, isRedirect, redirect } from "@sveltejs/kit";
 import { ConversationGenerationService } from "$lib/server/services/conversation-generation.service";
-import { getRelationshipContextForUpload } from "$lib/utils/get-relationship-context-for-upload.util";
 import type { RelationshipContext } from "$lib/types";
+import { areAllObjectValuesEmpty } from "$lib/utils/object/are-all-object-values-empty.util";
 
 export const load: PageServerLoad = async ({ locals }) => {
   return {
@@ -14,42 +14,32 @@ export const load: PageServerLoad = async ({ locals }) => {
 export const actions = {
   generateRizz: async ({ request, locals }) => {
     try {
-      if (!locals.user) {
-        return fail(401, { error: "Unauthorized" });
-      }
+      if (!locals.user) return fail(401, { error: "Unauthorized" });
 
       const formData = await request.formData();
+      console.log("FORM DATA", JSON.stringify(Object.fromEntries(formData)));
+
       const fileName = formData.get("fileName") as string;
+      if (!fileName) return fail(400, { error: "File upload missing" });
 
-      if (!fileName) {
-        return fail(400, { error: "File upload required" });
-      }
-
-      // Parse relationship context from form data
       const relationshipContext: RelationshipContext = {
-        duration: Number(formData.get("duration")) || 0,
+        duration: Number(formData.get("duration")),
         objective: (formData.get("objective") as string) || "",
         notes: (formData.get("notes") as string) || "",
       };
-
-      // Use existing utility to conditionally include relationship context
-      const processedContext =
-        getRelationshipContextForUpload(relationshipContext);
 
       const { conversationId } = await new ConversationGenerationService({
         fileName,
         userId: locals.user.id,
         userEmail: locals.user.email,
-        ...(processedContext && { relationshipContext: processedContext }),
+        ...(!areAllObjectValuesEmpty(relationshipContext) && {
+          relationshipContext,
+        }),
       }).initiateConversationGeneration();
-
-      console.log("redirecting to conversation", conversationId);
 
       redirect(303, `/conversations/${conversationId}`);
     } catch (error) {
-      if (isRedirect(error)) {
-        throw error;
-      }
+      if (isRedirect(error)) throw error;
       console.error("Generate Rizz form action error:", error);
       return fail(500, {
         error:
