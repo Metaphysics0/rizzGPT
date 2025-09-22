@@ -4,9 +4,17 @@ import {
   BACKBLAZE_BUCKET_ID,
 } from "$env/static/private";
 
+interface CacheEntry {
+  url: string;
+  expiresAt: number;
+}
+
 export class BackblazeStorageService {
   BASE_API_URL = "https://api005.backblazeb2.com/b2api/v4";
   PUBLIC_API_URL = "https://api.backblazeb2.com/b2api/v4";
+
+  // In-memory cache for signed URLs
+  private static urlCache = new Map<string, CacheEntry>();
 
   async getClientUploadUrl(): Promise<{
     authorizationToken: string;
@@ -59,10 +67,17 @@ export class BackblazeStorageService {
 
   async getSignedDownloadUrl(
     fileName: string,
-    validDurationSeconds: number = 3600
+    validDurationInSeconds: number = 86400 // 24 hours since images never change
   ): Promise<string> {
-    const token = await this.getAuthorizationToken();
+    const cacheKey = `${fileName}:${validDurationInSeconds}`;
+    const now = Date.now();
+    const cached = BackblazeStorageService.urlCache.get(cacheKey);
+    if (cached && cached.expiresAt > now) {
+      console.log(`[Backblaze] - Cache HIT for ${cacheKey}`);
+      return cached.url;
+    }
 
+    const token = await this.getAuthorizationToken();
     const response = await fetch(
       `${this.BASE_API_URL}/b2_get_download_authorization`,
       {
@@ -74,12 +89,32 @@ export class BackblazeStorageService {
         body: JSON.stringify({
           bucketId: BACKBLAZE_BUCKET_ID,
           fileNamePrefix: fileName,
-          validDurationInSeconds: validDurationSeconds,
+          validDurationInSeconds,
         }),
       }
     );
 
     const { authorizationToken } = await response.json();
-    return `https://f005.backblazeb2.com/file/rizz-gpt/${fileName}?Authorization=${authorizationToken}`;
+    const signedUrl = `https://f005.backblazeb2.com/file/rizz-gpt/${fileName}?Authorization=${authorizationToken}`;
+
+    // Cache the URL (expire 5 minutes before Backblaze token expires for safety)
+    const cacheExpiresAt = now + (validDurationInSeconds - 300) * 1000;
+    BackblazeStorageService.urlCache.set(cacheKey, {
+      url: signedUrl,
+      expiresAt: cacheExpiresAt,
+    });
+
+    this.cleanExpiredCache();
+
+    return signedUrl;
+  }
+
+  private cleanExpiredCache(): void {
+    const now = Date.now();
+    for (const [key, entry] of BackblazeStorageService.urlCache.entries()) {
+      if (entry.expiresAt <= now) {
+        BackblazeStorageService.urlCache.delete(key);
+      }
+    }
   }
 }
