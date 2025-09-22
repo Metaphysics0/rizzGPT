@@ -1,5 +1,5 @@
 import { BackblazeStorageService } from "$lib/server/services/backblaze-storage.service";
-import { error, redirect } from "@sveltejs/kit";
+import { error, isRedirect, redirect } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 
 export const GET: RequestHandler = async ({ params, locals }) => {
@@ -14,6 +14,9 @@ export const GET: RequestHandler = async ({ params, locals }) => {
 
     redirect(302, signedUrl);
   } catch (err) {
+    if (isRedirect(err)) {
+      throw err;
+    }
     console.error("File download error:", err);
     throw error(500, "Failed to access file");
   }
