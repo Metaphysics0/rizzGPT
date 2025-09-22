@@ -5,9 +5,9 @@ import type { RequestHandler } from "./$types";
 export const GET: RequestHandler = async ({ params, locals }) => {
   try {
     if (!locals.user) throw error(401, "Unauthorized");
-    if (!params.filename) throw error(400, "Filename required");
+    if (!params.fileName) throw error(400, "Filename required");
 
-    const filePath = `uploads/${locals.user.id}/${params.filename}`;
+    const filePath = `uploads/${locals.user.id}/${params.fileName}`;
     const signedUrl = await new BackblazeStorageService().getSignedDownloadUrl(
       filePath
     );
