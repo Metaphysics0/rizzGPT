@@ -2,7 +2,8 @@
   import { enhance } from "$app/forms";
   import { generateRizzFormStore } from "$lib/stores/form.svelte";
 
-  const canGenerateResponse = $derived(generateRizzFormStore.canGenerate);
+  // const canGenerateResponse = $derived(generateRizzFormStore.canGenerate);
+  const canGenerateResponse = true;
 </script>
 
 <!-- Hidden form inputs for the form action -->

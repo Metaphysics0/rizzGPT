@@ -33,7 +33,8 @@ export const actions = {
       };
 
       // Use existing utility to conditionally include relationship context
-      const processedContext = getRelationshipContextForUpload(relationshipContext);
+      const processedContext =
+        getRelationshipContextForUpload(relationshipContext);
 
       const { conversationId } = await new ConversationGenerationService({
         blobUrl,
@@ -42,14 +43,14 @@ export const actions = {
         ...(processedContext && { relationshipContext: processedContext }),
       }).initiateConversationGeneration();
 
-      throw redirect(303, `/conversations/${conversationId}`);
+      console.log("redirecting to conversation", conversationId);
+
+      redirect(303, `/conversations/${conversationId}`);
     } catch (error) {
-      if (error instanceof Response) {
-        throw error; // Re-throw redirects
-      }
       console.error("Generate Rizz form action error:", error);
       return fail(500, {
-        error: error instanceof Error ? error.message : "Failed to generate rizz"
+        error:
+          error instanceof Error ? error.message : "Failed to generate rizz",
       });
     }
   },
