@@ -1,6 +1,9 @@
 <script lang="ts">
   import { relationshipObjectives } from "$lib/constants/relationship-objectives.constant";
-  import { generateRizzForm } from "$lib/stores/form.store";
+  import { generateRizzFormStore } from "$lib/stores/form.svelte";
+
+  const { form } = generateRizzFormStore;
+
   import FormStep from "./FormStep.svelte";
 
   function getDurationLabel(duration: number): string {
@@ -35,7 +38,7 @@
           min="0"
           max="100"
           step="1"
-          bind:value={$generateRizzForm.relationshipContext.duration}
+          bind:value={form.relationshipContext.duration}
           class="
             h-2 w-full cursor-pointer appearance-none rounded-lg
             bg-gray-200 accent-purple-500
@@ -46,7 +49,7 @@
         <div class="mt-2 flex justify-between text-xs text-gray-500">
           <span class="text-left">Just started talking</span>
           <span class="text-center font-medium text-pink-500"
-            >{getDurationLabel($generateRizzForm.relationshipContext.duration)}</span
+            >{getDurationLabel(form.relationshipContext.duration)}</span
           >
           <span class="text-right">Long established</span>
         </div>
@@ -68,7 +71,7 @@
               group relative flex cursor-pointer items-center gap-3 rounded-xl border-2
               border-gray-200 bg-white p-4 text-sm transition-all duration-200
               hover:scale-105 hover:border-gray-300 hover:shadow-md
-              {$generateRizzForm.relationshipContext.objective === objective.id
+              {form.relationshipContext.objective === objective.id
               ? 'border-purple-400 bg-purple-50 ring-2 shadow-lg ring-purple-200'
               : ''}
             "
@@ -77,7 +80,7 @@
               type="radio"
               name="objective"
               value={objective.id}
-              bind:group={$generateRizzForm.relationshipContext.objective}
+              bind:group={form.relationshipContext.objective}
               class="sr-only"
             />
             <div
@@ -100,7 +103,7 @@
       </label>
       <textarea
         id="notes"
-        bind:value={$generateRizzForm.relationshipContext.notes}
+        bind:value={form.relationshipContext.notes}
         placeholder="Add any additional context about your conversation, their personality, shared interests, or what kind of vibe you're going for..."
         class="
           w-full rounded-xl border-2 border-gray-200

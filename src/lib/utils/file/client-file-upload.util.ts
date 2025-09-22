@@ -1,3 +1,4 @@
+// import { BLOB_READ_WRITE_TOKEN } from "$env/static/private";
 import { upload } from "@vercel/blob/client";
 
 export async function triggerClientFileUpload(file: File): Promise<string> {
@@ -11,7 +12,5 @@ export async function triggerClientFileUpload(file: File): Promise<string> {
     handleUploadUrl: "/api/generate-client-upload-token",
     clientPayload: "",
   });
-
-  console.log("File uploaded successfully:", blob.url);
   return blob.url;
 }

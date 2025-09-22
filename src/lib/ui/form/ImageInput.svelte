@@ -1,40 +1,32 @@
 <script lang="ts">
-  import { isGeneratingResponse, generateRizzForm } from "$lib/stores/form.store";
-  import { imagePreview } from "$lib/stores/image-preview.store";
+  import { generateRizzFormStore } from "$lib/stores/form.svelte";
   import { triggerClientFileUpload } from "$lib/utils/file/client-file-upload.util";
   import Icon from "@iconify/svelte";
   import FormStep from "./FormStep.svelte";
   import { fade } from "svelte/transition";
 
-  let fileInput: HTMLInputElement;
-  let isVideo = false;
-  let videoElement: HTMLVideoElement;
-  let isDragOver = false;
-  let isUploading = false;
+  let imagePreview = $state<string | null>("");
+
+  let fileInput = $state<HTMLInputElement>();
+  let isVideo = $state(false);
+  let isDragOver = $state(false);
+  let isUploading = $state(false);
 
   async function handleFile(file: File) {
     try {
       isUploading = true;
       isVideo = file.type.startsWith("video/");
       const previewUrl = URL.createObjectURL(file);
-      imagePreview.set(previewUrl);
+      imagePreview = previewUrl;
 
-      // Upload to S3 immediately
       const blobUrl = await triggerClientFileUpload(file);
+      console.log("Uploaded file succesfully: ", blobUrl);
 
-      // Update the form store with the blob URL
-      generateRizzForm.update(form => ({
-        ...form,
-        blobUrl
-      }));
+      generateRizzFormStore.updateBlobUrl(blobUrl);
     } catch (error) {
       console.error("Failed to upload file:", error);
-      // Clear preview on error
-      imagePreview.set(null);
-      generateRizzForm.update(form => ({
-        ...form,
-        blobUrl: ""
-      }));
+      imagePreview = null;
+      generateRizzFormStore.updateBlobUrl("");
     } finally {
       isUploading = false;
     }
@@ -70,26 +62,16 @@
     }
   }
 
-  $: if (!$imagePreview && fileInput) {
-    fileInput.value = "";
-    generateRizzForm.update(form => ({
-      ...form,
-      blobUrl: ""
-    }));
-  }
-
   function triggerFileInput() {
-    if (!isUploading && !$isGeneratingResponse) {
+    if (!isUploading && !generateRizzFormStore.isGenerating) {
       fileInput?.click();
     }
   }
 
   function clearImage() {
-    imagePreview.set(null);
-    generateRizzForm.update(form => ({
-      ...form,
-      blobUrl: ""
-    }));
+    imagePreview = null;
+    generateRizzFormStore.updateBlobUrl("");
+
     if (fileInput) {
       fileInput.value = "";
     }
@@ -103,7 +85,7 @@
   tooltip="Upload a screen recording or screenshot of your conversation with your partner."
 >
   {#snippet headerAction()}
-    {#if $imagePreview}
+    {#if imagePreview}
       <button
         type="button"
         onclick={clearImage}
@@ -116,22 +98,45 @@
     {/if}
   {/snippet}
   <div class="flex h-max flex-col">
-    {#if $imagePreview}
+    {#if imagePreview}
       <!-- Preview Section -->
       <div class="mb-4 flex-1">
-        {#if isVideo}
+        {#if isUploading}
           <div class="relative">
-            <!-- svelte-ignore a11y_media_has_caption -->
-            <video
-              bind:this={videoElement}
-              src={$imagePreview}
-              controls
-              class="h-auto max-h-60 w-full rounded-xl object-contain"
-            ></video>
+            <div
+              class="absolute inset-0 bg-black/50 rounded-xl flex items-center justify-center z-10"
+            >
+              <!-- <UploadProgress
+                progress={uploadProgress}
+                {isUploading}
+                message="Uploading new file..."
+              /> -->
+            </div>
+            {#if isVideo}
+              <!-- svelte-ignore a11y_media_has_caption -->
+              <video
+                src={imagePreview}
+                controls
+                class="h-auto max-h-60 w-full rounded-xl object-contain opacity-75"
+              ></video>
+            {:else}
+              <img
+                src={imagePreview}
+                alt="Preview"
+                class="h-auto max-h-60 w-full rounded-xl object-contain opacity-75"
+              />
+            {/if}
           </div>
+        {:else if isVideo}
+          <!-- svelte-ignore a11y_media_has_caption -->
+          <video
+            src={imagePreview}
+            controls
+            class="h-auto max-h-60 w-full rounded-xl object-contain"
+          ></video>
         {:else}
           <img
-            src={$imagePreview}
+            src={imagePreview}
             alt="Preview"
             class="h-auto max-h-60 w-full rounded-xl object-contain"
           />
@@ -143,7 +148,7 @@
           class="
             group flex h-full min-h-[200px] flex-col items-center justify-center rounded-xl
             border-2 border-dashed transition-all duration-200 py-5 bg-gray-100
-            {isUploading || $isGeneratingResponse
+            {isUploading || generateRizzFormStore.isGenerating
             ? 'cursor-not-allowed opacity-50'
             : 'cursor-pointer'}
             {isDragOver
@@ -160,21 +165,24 @@
         >
           <div class="flex flex-col items-center">
             {#if isUploading}
-              <div class="h-10 w-10 animate-spin rounded-full border-2 border-purple-500 border-t-transparent bg-gray-200 p-2"></div>
-              <p class="text-gray-500 my-2">Uploading...</p>
+              <!-- <UploadProgress
+                progress={uploadProgress}
+                {isUploading}
+                message="Uploading file..."
+              /> -->
             {:else}
               <Icon
                 icon="mingcute:upload-2-line"
                 class="h-10 w-10 text-gray-500 bg-gray-200 border border-gray-300 rounded-md p-2"
               />
               <p class="text-gray-500 my-2">Upload a file</p>
+              <p class="text-gray-800 text-sm">
+                Drag and drop or click to upload
+              </p>
+              <p class="text-gray-800 text-sm">
+                Accepts images and videos up to 50MB
+              </p>
             {/if}
-            <p class="text-gray-800 text-sm">
-              Drag and drop or click to upload
-            </p>
-            <p class="text-gray-800 text-sm">
-              Accepts images and videos up to 50MB
-            </p>
           </div>
         </div>
       </div>
@@ -187,7 +195,7 @@
       onchange={processImage}
       class="hidden"
       bind:this={fileInput}
-      disabled={$isGeneratingResponse || isUploading}
+      disabled={generateRizzFormStore.isGenerating || isUploading}
     />
   </div>
 </FormStep>
