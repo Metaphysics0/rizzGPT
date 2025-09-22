@@ -1,5 +1,5 @@
 import type { Actions, PageServerLoad } from "./$types";
-import { fail, redirect } from "@sveltejs/kit";
+import { fail, isRedirect, redirect } from "@sveltejs/kit";
 import { ConversationGenerationService } from "$lib/server/services/conversation-generation.service";
 import { getRelationshipContextForUpload } from "$lib/utils/get-relationship-context-for-upload.util";
 import type { RelationshipContext } from "$lib/types";
@@ -47,6 +47,9 @@ export const actions = {
 
       redirect(303, `/conversations/${conversationId}`);
     } catch (error) {
+      if (isRedirect(error)) {
+        throw error;
+      }
       console.error("Generate Rizz form action error:", error);
       return fail(500, {
         error:
