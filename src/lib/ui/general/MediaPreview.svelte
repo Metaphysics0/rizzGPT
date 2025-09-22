@@ -1,6 +1,8 @@
 <script lang="ts">
   import { getSignedUrlFromFilePath } from "$lib/utils/file/client-file-upload.util";
   import { isFileUrlMovie } from "$lib/utils/file/is-file-url-movie.util";
+  import { mediaCache } from "$lib/stores/image-preview.svelte";
+  import MediaSkeleton from "$lib/ui/loading-animations/MediaSkeleton.svelte";
   import Icon from "@iconify/svelte";
 
   interface Props {
@@ -8,17 +10,34 @@
     title: string;
   }
 
-  let hasError = $state(false);
-
   const { fileName, title }: Props = $props();
-  const downloadUrl = $derived(getSignedUrlFromFilePath(fileName));
+  const isVideo = $derived(isFileUrlMovie(fileName));
+
+  let hasError = $state(false);
+  let isLoading = $state(true);
+
+  // Check cache first
+  const cachedMedia = mediaCache.get(fileName);
+  const downloadUrl = $derived(
+    cachedMedia?.url || getSignedUrlFromFilePath(fileName)
+  );
+
+  // If we have cached media, don't show loading
+  if (cachedMedia) {
+    isLoading = false;
+  }
 
   function handleMediaError(error: Event) {
     hasError = true;
+    isLoading = false;
     console.error("Media failed to load:", error);
   }
 
-  const isVideo = $derived(isFileUrlMovie(fileName));
+  function handleMediaLoad() {
+    isLoading = false;
+    // Cache the loaded media
+    mediaCache.set(fileName, downloadUrl, isVideo);
+  }
 </script>
 
 <div class="mb-6 rounded-xl border border-gray-200 bg-gray-50/30 p-4">
@@ -35,24 +54,39 @@
         </div>
         <span>The file might be processing or temporarily unavailable.</span>
       </div>
-    {/if}
+    {:else}
+      <div class="relative">
+        {#if isLoading}
+          <MediaSkeleton
+            height="256px"
+            aspectRatio={isVideo ? "video" : "auto"}
+          />
+        {/if}
 
-    {#if isVideo && !hasError}
-      <!-- svelte-ignore a11y_media_has_caption -->
-      <video
-        src={downloadUrl}
-        controls
-        preload="metadata"
-        class="h-auto max-h-64 w-full rounded-xl object-contain"
-        onerror={handleMediaError}
-      ></video>
-    {:else if !hasError}
-      <img
-        src={downloadUrl}
-        alt="Original conversation"
-        class="h-auto max-h-64 w-full rounded-xl object-contain"
-        onerror={handleMediaError}
-      />
+        {#if isVideo}
+          <!-- svelte-ignore a11y_media_has_caption -->
+          <video
+            src={downloadUrl}
+            controls
+            preload="metadata"
+            class="h-auto max-h-64 w-full rounded-xl object-contain {isLoading
+              ? 'opacity-0 absolute inset-0'
+              : ''}"
+            onerror={handleMediaError}
+            onloadeddata={handleMediaLoad}
+          ></video>
+        {:else}
+          <img
+            src={downloadUrl}
+            alt="Original conversation"
+            class="h-auto max-h-64 w-full rounded-xl object-contain {isLoading
+              ? 'opacity-0 absolute inset-0'
+              : ''}"
+            onerror={handleMediaError}
+            onload={handleMediaLoad}
+          />
+        {/if}
+      </div>
     {/if}
   </div>
 </div>
