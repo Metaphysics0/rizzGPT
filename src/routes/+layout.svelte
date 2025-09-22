@@ -4,9 +4,15 @@
   import { fade } from "svelte/transition";
   import "../app.css";
   import ProfileDropdownMenu from "$lib/ui/Auth/ProfileDropdownMenu.svelte";
+  import { userStore } from "$lib/stores/user.svelte";
   import type { PageData } from "./$types";
 
   let { children, data }: { children: any; data: PageData } = $props();
+
+  // Initialize user store from server data
+  $effect(() => {
+    userStore.setUser(data.user);
+  });
 </script>
 
 {#if data.user && page.route.id !== "/sign-in"}

@@ -104,9 +104,9 @@
     Conversation History
   </button>
 
-  {#if conversation.initialUploadedConversationBlobUrl}
+  {#if conversation.initialUploadedConversationFileName}
     <MediaPreview
-      blobUrl={conversation.initialUploadedConversationBlobUrl}
+      fileName={conversation.initialUploadedConversationFileName}
       title="Uploaded Conversation"
     />
   {/if}

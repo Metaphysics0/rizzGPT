@@ -8,7 +8,7 @@ import { SubscriptionService } from "./subscription.service";
 import { INITIAL_CONVERSATION_DESCRIPTION } from "$lib/constants/initial-conversation.constant";
 
 export interface ConversationGenerationRequest {
-  blobUrl: string;
+  fileName: string;
   relationshipContext?: RelationshipContext;
   userId: string;
   userEmail: string;
@@ -61,7 +61,7 @@ export class ConversationGenerationService {
   private processInBackground(conversation: Conversation): void {
     const jobPayload: GenerateRizzJobPayload = {
       conversationId: conversation.id,
-      blobUrl: this.params.blobUrl,
+      fileName: this.params.fileName,
       relationshipContext: this.params.relationshipContext,
       userId: this.params.userId,
     };
@@ -78,7 +78,7 @@ export class ConversationGenerationService {
       userId: this.params.userId,
       rizzResponses: [],
       rizzResponseDescription: INITIAL_CONVERSATION_DESCRIPTION,
-      initialUploadedConversationBlobUrl: this.params.blobUrl,
+      initialUploadedConversationFileName: this.params.fileName,
       ...(this.params.relationshipContext && {
         relationshipContext: this.params.relationshipContext,
       }),

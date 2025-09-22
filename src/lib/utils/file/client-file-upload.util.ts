@@ -1,5 +1,10 @@
-export async function triggerClientFileUpload(file: File): Promise<string> {
-  const filename = constructFileName(file);
+// import { randomUUID } from "crypto";
+
+export async function triggerClientFileUpload(
+  file: File,
+  userId: string
+): Promise<string> {
+  const filename = constructFileName(file, userId);
   const response = await fetch("/api/generate-client-upload-url");
   const { authorizationToken, uploadUrl } = await response.json();
 
@@ -28,12 +33,10 @@ export async function triggerClientFileUpload(file: File): Promise<string> {
     throw new Error(`Upload failed: ${uploadResponse.statusText}`);
   }
 
-  return `https://f005.backblazeb2.com/file/rizz-gpt/${uploadResult.fileName}`;
+  return uploadResult.fileName;
 }
 
-function constructFileName(file: File): string {
-  const timestamp = Date.now();
-  const randomId = Math.random().toString(36).substring(2);
+function constructFileName(file: File, userId: string): string {
   const extension = file.name.split(".").pop() || "bin";
-  return `uploads/${timestamp}-${randomId}.${extension}`;
+  return `uploads/${userId}/${crypto.randomUUID()}.${extension}`;
 }

@@ -104,7 +104,7 @@ export const conversations = pgTable("conversation", {
     .notNull(),
   rizzResponses: jsonb().$type<string[]>().notNull(),
   rizzResponseDescription: text().notNull(),
-  initialUploadedConversationBlobUrl: text().notNull(),
+  initialUploadedConversationFileName: text().notNull(),
   relationshipContext: jsonb().$type<RelationshipContext>(),
   matchName: text().notNull(),
   status: text().$type<ConversationStatus>().default("initial"),

@@ -2,21 +2,22 @@ import type { GeneratedResponse, RelationshipContext } from "$lib/types";
 
 export interface GenerateRizzForm {
   relationshipContext: RelationshipContext;
-  blobUrl: string;
+  fileName: string;
 }
 
 class GenerateRizzFormStore {
-  form = $state<GenerateRizzForm>({
+  private readonly INITIAL_VALUE: GenerateRizzForm = {
     relationshipContext: { duration: 0, objective: "", notes: "" },
-    blobUrl: "",
-  });
+    fileName: "",
+  };
+  form = $state<GenerateRizzForm>(this.INITIAL_VALUE);
 
   isGenerating = $state(false);
   error = $state<string | null>(null);
   generatedResponse = $state<GeneratedResponse | null>(null);
 
-  updateBlobUrl(blobUrl: string) {
-    this.form.blobUrl = blobUrl;
+  updateFileName(fileName: string) {
+    this.form.fileName = fileName;
   }
 
   updateRelationshipContext(context: Partial<RelationshipContext>) {
@@ -36,16 +37,13 @@ class GenerateRizzFormStore {
   }
 
   reset() {
-    this.form = {
-      relationshipContext: { duration: 0, objective: "", notes: "" },
-      blobUrl: "",
-    };
+    this.form = this.INITIAL_VALUE;
     this.error = null;
     this.generatedResponse = null;
   }
 
   get canGenerate() {
-    return this.form.blobUrl && !this.isGenerating;
+    return this.form.fileName && !this.isGenerating;
   }
 }
 

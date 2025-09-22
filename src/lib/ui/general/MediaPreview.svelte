@@ -3,21 +3,29 @@
   import Icon from "@iconify/svelte";
 
   interface Props {
-    blobUrl: string;
+    fileName: string;
     title: string;
   }
 
-  const { blobUrl, title }: Props = $props();
+  const { fileName, title }: Props = $props();
+
+  // Extract just the filename part without the user path for the download URL
+  const downloadFileName = $derived(() => {
+    const parts = fileName.split('/');
+    return parts[parts.length - 1]; // Get last part: "uuid.ext"
+  });
+
+  const downloadUrl = $derived(`/api/files/${downloadFileName}/download`);
 
   let hasError = $state(false);
 
   function handleMediaError(error: Event) {
     hasError = true;
     console.error("Media failed to load:", error);
-    console.error("Media URL:", blobUrl);
+    console.error("Media URL:", downloadUrl);
   }
 
-  const isVideo = $derived(isFileUrlMovie(blobUrl));
+  const isVideo = $derived(isFileUrlMovie(fileName));
 </script>
 
 <div class="mb-6 rounded-xl border border-gray-200 bg-gray-50/30 p-4">
@@ -39,7 +47,7 @@
     {#if isVideo && !hasError}
       <!-- svelte-ignore a11y_media_has_caption -->
       <video
-        src={blobUrl}
+        src={downloadUrl}
         controls
         preload="metadata"
         class="h-auto max-h-64 w-full rounded-xl object-contain"
@@ -47,7 +55,7 @@
       ></video>
     {:else if !hasError}
       <img
-        src={blobUrl}
+        src={downloadUrl}
         alt="Original conversation"
         class="h-auto max-h-64 w-full rounded-xl object-contain"
         onerror={handleMediaError}

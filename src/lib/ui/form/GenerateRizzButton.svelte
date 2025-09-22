@@ -9,8 +9,8 @@
 <!-- Hidden form inputs for the form action -->
 <input
   type="hidden"
-  name="blobUrl"
-  value={generateRizzFormStore.form.blobUrl}
+  name="fileName"
+  value={generateRizzFormStore.form.fileName}
 />
 <input
   type="hidden"

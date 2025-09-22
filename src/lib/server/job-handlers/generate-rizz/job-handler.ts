@@ -1,7 +1,7 @@
 import { databaseService } from "$lib/server/services/database.service";
 import { UsageService } from "$lib/server/services/usage.service";
 import { GeminiService } from "$lib/server/services/gemini.service";
-import { downloadFileFromUrl } from "$lib/server/utils/download-file-from-url.util";
+import { downloadFileFromFilename } from "$lib/server/utils/download-file-from-url.util";
 import type { GenerateRizzJobPayload } from "./job-payload.type";
 
 export class GenerateRizzJobHandler {
@@ -22,10 +22,10 @@ export class GenerateRizzJobHandler {
       )}`
     );
     this.ensureRequiredFieldsArePresent();
-    const { blobUrl, relationshipContext, conversationId } = this.jobPayload;
+    const { fileName, relationshipContext, conversationId } = this.jobPayload;
 
     try {
-      const file = await downloadFileFromUrl(blobUrl);
+      const file = await downloadFileFromFilename(fileName);
       const generateRizzResponse = await this.geminiService.generateRizz({
         relationshipContext,
         file,
@@ -59,10 +59,10 @@ export class GenerateRizzJobHandler {
   }
 
   private ensureRequiredFieldsArePresent() {
-    const { blobUrl, conversationId } = this.jobPayload;
+    const { fileName, conversationId } = this.jobPayload;
     const missingFields: string[] = [];
 
-    if (!blobUrl) missingFields.push("blobUrl");
+    if (!fileName) missingFields.push("fileName");
     if (!conversationId) missingFields.push("conversationId");
 
     if (missingFields.length > 0) {

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { generateRizzFormStore } from "$lib/stores/form.svelte";
+  import { userStore } from "$lib/stores/user.svelte";
   import { triggerClientFileUpload } from "$lib/utils/file/client-file-upload.util";
   import Icon from "@iconify/svelte";
   import FormStep from "./FormStep.svelte";
@@ -19,14 +20,18 @@
       const previewUrl = URL.createObjectURL(file);
       imagePreview = previewUrl;
 
-      const blobUrl = await triggerClientFileUpload(file);
-      console.log("Uploaded file succesfully: ", blobUrl);
+      if (!userStore.userId) {
+        throw new Error("User not authenticated");
+      }
 
-      generateRizzFormStore.updateBlobUrl(blobUrl);
+      const fileName = await triggerClientFileUpload(file, userStore.userId);
+      console.log("Uploaded file succesfully: ", fileName);
+
+      generateRizzFormStore.updateFileName(fileName);
     } catch (error) {
       console.error("Failed to upload file:", error);
       imagePreview = null;
-      generateRizzFormStore.updateBlobUrl("");
+      generateRizzFormStore.updateFileName("");
     } finally {
       isUploading = false;
     }
@@ -70,7 +75,7 @@
 
   function clearImage() {
     imagePreview = null;
-    generateRizzFormStore.updateBlobUrl("");
+    generateRizzFormStore.updateFileName("");
 
     if (fileInput) {
       fileInput.value = "";
