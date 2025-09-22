@@ -10,11 +10,7 @@
   const { fileName, title }: Props = $props();
 
   // Extract just the filename part without the user path for the download URL
-  const downloadFileName = $derived(() => {
-    const parts = fileName.split('/');
-    return parts[parts.length - 1]; // Get last part: "uuid.ext"
-  });
-
+  const downloadFileName = $derived(fileName.split("/").at(-1));
   const downloadUrl = $derived(`/api/files/${downloadFileName}/download`);
 
   let hasError = $state(false);
