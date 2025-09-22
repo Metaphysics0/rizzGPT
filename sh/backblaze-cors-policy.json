@@ -1,0 +1,16 @@
+[
+  {
+    "corsRuleName": "dev-upload",
+    "allowedOrigins": ["http://localhost:5173"],
+    "allowedOperations": ["b2_upload_file"],
+    "allowedHeaders": [
+      "authorization",
+      "X-Bz-File-Name",
+      "X-Bz-Content-Sha1",
+      "X-Bz-Info-*",
+      "content-type"
+    ],
+    "exposeHeaders": ["x-bz-upload-timestamp"],
+    "maxAgeSeconds": 3600
+  }
+]

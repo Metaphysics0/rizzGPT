@@ -8,9 +8,10 @@ A web app for generating responses for dating conversations, using modern web te
 - Tailwind v4 + shadcn-svelte + Iconify icons
 - Neon DB + Drizzle
 - BetterAuth (Google OAuth + Email)
-- Resend
-- Gemini Flash 2.0
-- Vercel + Vercel Blob Storage
+- Resend (for sending sign up email verification)
+- Gemini + Gemini Flash 2.0 (`@google/genai` sdk)
+- Vercel Deployment
+- Backblaze Object Storage (cheaper s3 / vercel blob alternative)
 - Gumroad (processing payments + pro subscription tier)
 
 ## How to run the app
@@ -22,5 +23,3 @@ A web app for generating responses for dating conversations, using modern web te
 
 - A clearly defined pro subscription tier, redirect to gumroad product page.
 - Improve the main form. Update to be a form action, rather than js fetch
-
-- Switch to backblaze B2 instead of Vercel Blob. (https://www.backblaze.com/cloud-storage)

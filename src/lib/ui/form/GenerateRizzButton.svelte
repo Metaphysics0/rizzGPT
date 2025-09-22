@@ -1,8 +1,7 @@
 <script lang="ts">
   import { generateRizzFormStore } from "$lib/stores/form.svelte";
 
-  // const canGenerateResponse = $derived(generateRizzFormStore.canGenerate);
-  const canGenerateResponse = true;
+  const canGenerateResponse = $derived(generateRizzFormStore.canGenerate);
 </script>
 
 <button

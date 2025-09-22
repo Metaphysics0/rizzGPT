@@ -36,16 +36,15 @@ export class ConversationGenerationService {
         this.params.userEmail
       );
 
-    // If no active subscription, check usage limits
-    // if (!activeSubscription) {
-    //   const hasExceeded = await this.usageService.hasExceededFreeLimit(
-    //     this.params.userId
-    //   );
+    if (!activeSubscription) {
+      const hasExceeded = await this.usageService.hasExceededFreeLimit(
+        this.params.userId
+      );
 
-    //   if (hasExceeded) {
-    //     throw new Error("ConversationGeneration - Ran out of free generations");
-    //   }
-    // }
+      if (hasExceeded) {
+        throw new Error("ConversationGeneration - Ran out of free generations");
+      }
+    }
 
     const conversation = await this.createInitialConversation();
     console.log(
