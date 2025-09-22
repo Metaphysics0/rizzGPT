@@ -1,6 +1,6 @@
-import { BackblazeStorageService } from "$lib/server/services/backblaze-storage.service";
 import { error, isRedirect, redirect } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
+import { backblazeStorageService } from "$lib/server/services/backblaze-storage.service";
 
 export const GET: RequestHandler = async ({ params, locals, setHeaders }) => {
   try {
@@ -14,7 +14,7 @@ export const GET: RequestHandler = async ({ params, locals, setHeaders }) => {
     });
 
     const filePath = `uploads/${locals.user.id}/${params.fileName}`;
-    const signedUrl = await new BackblazeStorageService().getSignedDownloadUrl(
+    const signedUrl = await backblazeStorageService.getSignedDownloadUrl(
       filePath
     );
 

@@ -3,6 +3,8 @@ import { userUsage } from "../database/schema";
 import { eq, and } from "drizzle-orm";
 
 export class UsageService {
+  static MAX_AMOUNT_OF_MONTHLY_GENERATIONS_FOR_FREE_TIER = 100005;
+
   private getCurrentMonthYear(): string {
     const now = new Date();
     const year = now.getFullYear();
@@ -17,10 +19,7 @@ export class UsageService {
       .select()
       .from(userUsage)
       .where(
-        and(
-          eq(userUsage.userId, userId),
-          eq(userUsage.monthYear, monthYear)
-        )
+        and(eq(userUsage.userId, userId), eq(userUsage.monthYear, monthYear))
       )
       .limit(1);
 
@@ -34,10 +33,7 @@ export class UsageService {
       .select()
       .from(userUsage)
       .where(
-        and(
-          eq(userUsage.userId, userId),
-          eq(userUsage.monthYear, monthYear)
-        )
+        and(eq(userUsage.userId, userId), eq(userUsage.monthYear, monthYear))
       )
       .limit(1);
 
@@ -50,10 +46,7 @@ export class UsageService {
           updatedAt: new Date(),
         })
         .where(
-          and(
-            eq(userUsage.userId, userId),
-            eq(userUsage.monthYear, monthYear)
-          )
+          and(eq(userUsage.userId, userId), eq(userUsage.monthYear, monthYear))
         );
     } else {
       await db.insert(userUsage).values({
@@ -66,11 +59,18 @@ export class UsageService {
 
   async hasExceededFreeLimit(userId: string): Promise<boolean> {
     const currentUsage = await this.getUserUsage(userId);
-    return currentUsage >= 5;
+    return (
+      currentUsage >=
+      UsageService.MAX_AMOUNT_OF_MONTHLY_GENERATIONS_FOR_FREE_TIER
+    );
   }
 
   async getRemainingFreeResponses(userId: string): Promise<number> {
     const currentUsage = await this.getUserUsage(userId);
-    return Math.max(0, 5 - currentUsage);
+    return Math.max(
+      0,
+      UsageService.MAX_AMOUNT_OF_MONTHLY_GENERATIONS_FOR_FREE_TIER -
+        currentUsage
+    );
   }
 }
