@@ -3,7 +3,7 @@ import { userUsage } from "../database/schema";
 import { eq, and } from "drizzle-orm";
 
 export class UsageService {
-  static MAX_AMOUNT_OF_MONTHLY_GENERATIONS_FOR_FREE_TIER = 100005;
+  static MAX_AMOUNT_OF_MONTHLY_GENERATIONS_FOR_FREE_TIER = 5;
 
   private getCurrentMonthYear(): string {
     const now = new Date();
