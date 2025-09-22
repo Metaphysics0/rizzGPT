@@ -76,15 +76,15 @@
     }
   });
 
-  function goBack() {
-    goto("/conversations");
-  }
-
   const isProcessing = $derived(conversation?.status === "processing");
   const isCompleted = $derived(conversation?.status === "completed");
   const hasResponses = $derived(
     conversation?.rizzResponses && conversation.rizzResponses.length > 0
   );
+
+  function goToConversationsPage() {
+    goto("/conversations");
+  }
 </script>
 
 <svelte:head>
@@ -97,7 +97,7 @@
 
 <div class="mx-auto max-w-4xl space-y-8">
   <button
-    onclick={goBack}
+    onclick={goToConversationsPage}
     class="mt-4 inline-flex items-center gap-2 rounded-lg px-4 py-2 text-purple-600 hover:bg-purple-50 transition-colors cursor-pointer"
   >
     <Icon icon="heroicons:arrow-left" class="h-4 w-4" />
@@ -216,7 +216,7 @@
         access to it.
       </p>
       <button
-        onclick={goBack}
+        onclick={goToConversationsPage}
         class="inline-flex items-center gap-2 rounded-xl bg-linear-to-r from-purple-600 to-pink-600 px-6 py-3 font-medium text-white shadow-lg transition-all duration-200 hover:scale-105"
       >
         <Icon icon="heroicons:arrow-left" class="h-4 w-4" />
