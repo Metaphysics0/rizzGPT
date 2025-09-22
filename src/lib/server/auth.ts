@@ -7,16 +7,17 @@ import { getRequestEvent } from "$app/server";
 import * as schema from "./database/schema";
 import { ResendService } from "./services/resend.service";
 
-import { base } from "$app/paths";
+const deployedOrigin =
+  process.env.PUBLIC_BASE_URL ??
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined);
 
 export const auth = betterAuth({
-  baseURL: process.env.PUBLIC_BASE_URL ?? "http://localhost:5173",
-  basePath: `${base}/api/auth`,
+  baseURL: deployedOrigin,
   trustedOrigins: [
     "http://localhost:5173",
     process.env.PUBLIC_BASE_URL!,
-    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "",
-  ],
+    deployedOrigin ?? "",
+  ].filter(Boolean),
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
