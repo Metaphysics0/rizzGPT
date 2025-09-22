@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { getSignedUrlFromFilePath } from "$lib/utils/file/client-file-upload.util";
   import { isFileUrlMovie } from "$lib/utils/file/is-file-url-movie.util";
   import Icon from "@iconify/svelte";
 
@@ -7,18 +8,14 @@
     title: string;
   }
 
-  const { fileName, title }: Props = $props();
-
-  // Extract just the filename part without the user path for the download URL
-  const downloadFileName = $derived(fileName.split("/").at(-1));
-  const downloadUrl = $derived(`/api/files/${downloadFileName}/download`);
-
   let hasError = $state(false);
+
+  const { fileName, title }: Props = $props();
+  const downloadUrl = $derived(getSignedUrlFromFilePath(fileName));
 
   function handleMediaError(error: Event) {
     hasError = true;
     console.error("Media failed to load:", error);
-    console.error("Media URL:", downloadUrl);
   }
 
   const isVideo = $derived(isFileUrlMovie(fileName));

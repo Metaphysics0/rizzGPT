@@ -12,7 +12,7 @@ export async function triggerClientFileUpload(
     headers: {
       "Content-Type": "b2/x-auto",
       Authorization: authorizationToken,
-      "X-Bz-File-Name": encodeURIComponent(constructFileName(file, userId)),
+      "X-Bz-File-Name": encodeURIComponent(constructFilePath(file, userId)),
       "X-Bz-Content-Sha1": fileHash,
     },
   });
@@ -57,7 +57,13 @@ async function getFileContentToUpload(file: File) {
   };
 }
 
-function constructFileName(file: File, userId: string): string {
+function constructFilePath(file: File, userId: string): string {
   const extension = file.name.split(".").pop() || "bin";
   return `uploads/${userId}/${crypto.randomUUID()}.${extension}`;
+}
+
+// our api returns a 302 pointing to the actual download link
+export function getSignedUrlFromFilePath(objectPath: string) {
+  const fileName = objectPath.split("/").at(-1);
+  return `/api/files/${fileName}/get-signed-download-url`;
 }
