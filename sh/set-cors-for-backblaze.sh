@@ -1,0 +1,1 @@
+b2 bucket update --cors-rules "$(<./backblaze-cors-policy.json)" rizz-gpt
