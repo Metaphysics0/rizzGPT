@@ -5,6 +5,9 @@ import {
 } from "$env/static/private";
 
 export class BackblazeStorageService {
+  BASE_API_URL = "https://api005.backblazeb2.com/b2api/v4";
+  PUBLIC_API_URL = "https://api.backblazeb2.com/b2api/v4";
+
   async getClientUploadUrl(): Promise<{
     authorizationToken: string;
     bucketId: string;
@@ -21,7 +24,7 @@ export class BackblazeStorageService {
   private async getAuthorizationToken(): Promise<string> {
     try {
       const response = await fetch(
-        "https://api.backblazeb2.com/b2api/v4/b2_authorize_account",
+        `${this.PUBLIC_API_URL}/b2_authorize_account`,
         {
           headers: {
             Authorization: `Basic ${Buffer.from(
@@ -47,10 +50,36 @@ export class BackblazeStorageService {
     endpoint: string;
   }) {
     const response = await fetch(
-      `https://api005.backblazeb2.com/b2api/v4/${endpoint}?bucketId=${BACKBLAZE_BUCKET_ID}`,
+      `${this.BASE_API_URL}/${endpoint}?bucketId=${BACKBLAZE_BUCKET_ID}`,
       { headers: { Authorization: token } }
     );
 
     return response.json();
+  }
+
+  async getSignedDownloadUrl(
+    fileName: string,
+    validDurationSeconds: number = 3600
+  ): Promise<string> {
+    const token = await this.getAuthorizationToken();
+
+    const response = await fetch(
+      `${this.BASE_API_URL}/b2_get_download_authorization`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          bucketId: BACKBLAZE_BUCKET_ID,
+          fileNamePrefix: fileName,
+          validDurationInSeconds: validDurationSeconds,
+        }),
+      }
+    );
+
+    const { authorizationToken } = await response.json();
+    return `https://f005.backblazeb2.com/file/rizz-gpt/${fileName}?Authorization=${authorizationToken}`;
   }
 }

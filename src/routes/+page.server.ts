@@ -19,10 +19,10 @@ export const actions = {
       }
 
       const formData = await request.formData();
-      const blobUrl = formData.get("blobUrl") as string;
+      const fileName = formData.get("fileName") as string;
 
-      if (!blobUrl) {
-        return fail(400, { error: "Image upload required" });
+      if (!fileName) {
+        return fail(400, { error: "File upload required" });
       }
 
       // Parse relationship context from form data
@@ -37,7 +37,7 @@ export const actions = {
         getRelationshipContextForUpload(relationshipContext);
 
       const { conversationId } = await new ConversationGenerationService({
-        blobUrl,
+        fileName,
         userId: locals.user.id,
         userEmail: locals.user.email,
         ...(processedContext && { relationshipContext: processedContext }),
