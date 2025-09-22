@@ -1,9 +1,11 @@
 <script lang="ts">
   import { generateRizzFormStore } from "$lib/stores/form.svelte";
   import { userStore } from "$lib/stores/user.svelte";
+  import { mediaCache } from "$lib/stores/image-preview.svelte";
   import { triggerClientFileUpload } from "$lib/utils/file/client-file-upload.util";
   import Icon from "@iconify/svelte";
   import FormStep from "./FormStep.svelte";
+  import MediaSkeleton from "$lib/ui/loading-animations/MediaSkeleton.svelte";
   import { fade } from "svelte/transition";
 
   let imagePreview = $state<string | null>("");
@@ -26,6 +28,9 @@
 
       const fileName = await triggerClientFileUpload(file, userStore.userId);
       console.log("Uploaded file succesfully: ", fileName);
+
+      // Cache the uploaded media
+      mediaCache.set(fileName, previewUrl, isVideo);
 
       generateRizzFormStore.setFileName(fileName);
     } catch (error) {
@@ -107,31 +112,10 @@
       <!-- Preview Section -->
       <div class="mb-4 flex-1">
         {#if isUploading}
-          <div class="relative">
-            <div
-              class="absolute inset-0 bg-black/50 rounded-xl flex items-center justify-center z-10"
-            >
-              <!-- <UploadProgress
-                progress={uploadProgress}
-                {isUploading}
-                message="Uploading new file..."
-              /> -->
-            </div>
-            {#if isVideo}
-              <!-- svelte-ignore a11y_media_has_caption -->
-              <video
-                src={imagePreview}
-                controls
-                class="h-auto max-h-60 w-full rounded-xl object-contain opacity-75"
-              ></video>
-            {:else}
-              <img
-                src={imagePreview}
-                alt="Preview"
-                class="h-auto max-h-60 w-full rounded-xl object-contain opacity-75"
-              />
-            {/if}
-          </div>
+          <MediaSkeleton
+            height="240px"
+            aspectRatio={isVideo ? "video" : "auto"}
+          />
         {:else if isVideo}
           <!-- svelte-ignore a11y_media_has_caption -->
           <video
