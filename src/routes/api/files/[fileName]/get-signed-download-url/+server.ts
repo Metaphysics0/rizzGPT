@@ -20,9 +20,7 @@ export const GET: RequestHandler = async ({ params, locals, setHeaders }) => {
 
     redirect(302, signedUrl);
   } catch (err) {
-    if (isRedirect(err)) {
-      throw err;
-    }
+    if (isRedirect(err)) throw err;
     console.error("File download error:", err);
     throw error(500, "Failed to access file");
   }

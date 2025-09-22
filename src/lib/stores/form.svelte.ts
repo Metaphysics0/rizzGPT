@@ -16,7 +16,7 @@ class GenerateRizzFormStore {
   error = $state<string | null>(null);
   generatedResponse = $state<GeneratedResponse | null>(null);
 
-  updateFileName(fileName: string) {
+  setFileName(fileName: string) {
     this.form.fileName = fileName;
   }
 
@@ -40,6 +40,16 @@ class GenerateRizzFormStore {
     this.form = this.INITIAL_VALUE;
     this.error = null;
     this.generatedResponse = null;
+  }
+
+  setFormData(formData: FormData) {
+    formData.append("fileName", this.form.fileName);
+    formData.append(
+      "duration",
+      this.form.relationshipContext.duration.toString()
+    );
+    formData.append("objective", this.form.relationshipContext.objective);
+    formData.append("notes", this.form.relationshipContext.notes);
   }
 
   get canGenerate() {

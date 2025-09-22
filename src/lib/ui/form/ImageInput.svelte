@@ -27,11 +27,11 @@
       const fileName = await triggerClientFileUpload(file, userStore.userId);
       console.log("Uploaded file succesfully: ", fileName);
 
-      generateRizzFormStore.updateFileName(fileName);
+      generateRizzFormStore.setFileName(fileName);
     } catch (error) {
       console.error("Failed to upload file:", error);
       imagePreview = null;
-      generateRizzFormStore.updateFileName("");
+      generateRizzFormStore.setFileName("");
     } finally {
       isUploading = false;
     }
@@ -75,7 +75,7 @@
 
   function clearImage() {
     imagePreview = null;
-    generateRizzFormStore.updateFileName("");
+    generateRizzFormStore.setFileName("");
 
     if (fileInput) {
       fileInput.value = "";
