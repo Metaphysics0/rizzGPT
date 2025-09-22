@@ -1,8 +1,8 @@
 import { databaseService } from "$lib/server/services/database.service";
 import { UsageService } from "$lib/server/services/usage.service";
 import { GeminiService } from "$lib/server/services/gemini.service";
-import { downloadFileFromFilename } from "$lib/server/utils/download-file-from-url.util";
 import type { GenerateRizzJobPayload } from "./job-payload.type";
+import { backblazeStorageService } from "$lib/server/services/backblaze-storage.service";
 
 export class GenerateRizzJobHandler {
   private readonly jobPayload: GenerateRizzJobPayload;
@@ -25,7 +25,7 @@ export class GenerateRizzJobHandler {
     const { fileName, relationshipContext, conversationId } = this.jobPayload;
 
     try {
-      const file = await downloadFileFromFilename(fileName);
+      const file = await backblazeStorageService.downloadFile(fileName);
       const generateRizzResponse = await this.geminiService.generateRizz({
         relationshipContext,
         file,

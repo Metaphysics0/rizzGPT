@@ -2,6 +2,7 @@ import {
   BACKBLAZE_APPLICATION_ID,
   BACKBLAZE_APPLICATION_KEY,
   BACKBLAZE_BUCKET_ID,
+  BACKBLAZE_BUCKET_NAME,
 } from "$env/static/private";
 
 interface CacheEntry {
@@ -9,12 +10,11 @@ interface CacheEntry {
   expiresAt: number;
 }
 
-export class BackblazeStorageService {
-  BASE_API_URL = "https://api005.backblazeb2.com/b2api/v4";
-  PUBLIC_API_URL = "https://api.backblazeb2.com/b2api/v4";
+class BackblazeStorageService {
+  readonly BASE_API_URL = "https://api005.backblazeb2.com/b2api/v4";
+  readonly PUBLIC_API_URL = "https://api.backblazeb2.com/b2api/v4";
 
-  // In-memory cache for signed URLs
-  private static urlCache = new Map<string, CacheEntry>();
+  private static signedUrlCacheMap = new Map<string, CacheEntry>();
 
   async getClientUploadUrl(): Promise<{
     authorizationToken: string;
@@ -71,7 +71,7 @@ export class BackblazeStorageService {
   ): Promise<string> {
     const cacheKey = `${fileName}:${validDurationInSeconds}`;
     const now = Date.now();
-    const cached = BackblazeStorageService.urlCache.get(cacheKey);
+    const cached = BackblazeStorageService.signedUrlCacheMap.get(cacheKey);
     if (cached && cached.expiresAt > now) {
       console.log(`[Backblaze] - Cache HIT for ${cacheKey}`);
       return cached.url;
@@ -95,11 +95,11 @@ export class BackblazeStorageService {
     );
 
     const { authorizationToken } = await response.json();
-    const signedUrl = `https://f005.backblazeb2.com/file/rizz-gpt/${fileName}?Authorization=${authorizationToken}`;
+    const signedUrl = `https://f005.backblazeb2.com/file/${BACKBLAZE_BUCKET_NAME}/${fileName}?Authorization=${authorizationToken}`;
 
     // Cache the URL (expire 5 minutes before Backblaze token expires for safety)
     const cacheExpiresAt = now + (validDurationInSeconds - 300) * 1000;
-    BackblazeStorageService.urlCache.set(cacheKey, {
+    BackblazeStorageService.signedUrlCacheMap.set(cacheKey, {
       url: signedUrl,
       expiresAt: cacheExpiresAt,
     });
@@ -109,12 +109,40 @@ export class BackblazeStorageService {
     return signedUrl;
   }
 
+  async downloadFile(fileName: string): Promise<File> {
+    try {
+      const signedUrl = await this.getSignedDownloadUrl(fileName);
+
+      const fileResponse = await fetch(signedUrl);
+      if (!fileResponse.ok) {
+        throw new Error(`Failed to download file: ${fileResponse.statusText}`);
+      }
+
+      const arrayBuffer = await fileResponse.arrayBuffer();
+      const contentType =
+        fileResponse.headers.get("content-type") || "image/jpeg";
+
+      // Extract original filename from fileName or use default
+      const filename = fileName.split("/").pop() || "uploaded-file";
+
+      return new File([arrayBuffer], filename, { type: contentType });
+    } catch (error) {
+      console.error("Failed to download file from storage:", error);
+      throw new Error("Failed to download file from storage");
+    }
+  }
+
   private cleanExpiredCache(): void {
     const now = Date.now();
-    for (const [key, entry] of BackblazeStorageService.urlCache.entries()) {
+    for (const [
+      key,
+      entry,
+    ] of BackblazeStorageService.signedUrlCacheMap.entries()) {
       if (entry.expiresAt <= now) {
-        BackblazeStorageService.urlCache.delete(key);
+        BackblazeStorageService.signedUrlCacheMap.delete(key);
       }
     }
   }
 }
+
+export const backblazeStorageService = new BackblazeStorageService();

@@ -27,7 +27,9 @@ export class ConversationGenerationService {
 
   async initiateConversationGeneration() {
     console.log(
-      `Starting conversation generation - ${JSON.stringify(this.params)}`
+      `[ConversationGenerationService] Starting conversation generation - ${JSON.stringify(
+        this.params
+      )}`
     );
 
     // Check if user has active subscription
@@ -42,7 +44,12 @@ export class ConversationGenerationService {
       );
 
       if (hasExceeded) {
-        throw new Error("ConversationGeneration - Ran out of free generations");
+        console.error(
+          `[ConversationGenerationService] Failed to initiate conversation generation - User has exceeded free limit - ${JSON.stringify(
+            this.params
+          )}`
+        );
+        throw new Error("Ran out of free generations!");
       }
     }
 
