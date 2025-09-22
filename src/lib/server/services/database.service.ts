@@ -1,7 +1,7 @@
 import type { ConversationsListItem, ConversationStatus } from "$lib/types";
 import { and, desc, eq } from "drizzle-orm";
 import { db } from "../database/connection";
-import { conversations } from "../database/schema";
+import { conversations, users } from "../database/schema";
 import type { Conversation, NewConversation } from "../database/types";
 
 class DatabaseService {
@@ -75,6 +75,18 @@ class DatabaseService {
     status: ConversationStatus
   ): Promise<Conversation | null> {
     return await this.updateConversation(conversationId, { status });
+  }
+
+  async isSuperUser(userId: string) {
+    const result = await db
+      .select({
+        isSuperUser: users.isSuperUser,
+      })
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+
+    return result[0];
   }
 }
 

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import type { ConversationsListItem, ConversationStatus } from "$lib/types";
-  import { formatRelativeTime } from "$lib/utils/date-format";
+  import { formatRelativeTime } from "$lib/utils/date.util";
   import { truncateText } from "$lib/utils/string/truncate-text.util";
 
   let { conversation }: { conversation: ConversationsListItem } = $props();
