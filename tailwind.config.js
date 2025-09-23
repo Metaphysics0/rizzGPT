@@ -3,7 +3,13 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Valera Round", "ui-sans-serif", "system-ui", "sans-serif"],
+        sans: [
+          "Celebes Regular",
+          // "Valera Round",
+          "ui-sans-serif",
+          "system-ui",
+          "sans-serif",
+        ],
       },
       animation: {
         "fade-in-up": "fadeInUp 0.5s ease-out",
