@@ -1,5 +1,4 @@
 <script lang="ts">
-  import LinkButton from "$lib/ui/general/LinkButton.svelte";
   import HowItWorks from "$lib/ui/landing-page/components/HowItWorks.svelte";
   import StepByStepWalkthrough from "$lib/ui/landing-page/components/StepByStepWalkthrough.svelte";
   import Testimonials from "$lib/ui/landing-page/components/Testimonials.svelte";
@@ -10,8 +9,6 @@
   import FAQ from "$lib/ui/landing-page/components/FAQ.svelte";
   import Footer from "$lib/ui/landing-page/components/Footer.svelte";
   import TryItForFreeButton from "$lib/ui/landing-page/components/TryItForFreeButton.svelte";
-
-  console.log("hello");
 </script>
 
 <HeroSection />

@@ -1,10 +1,9 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
-  import type { User } from "better-auth";
   import { cn } from "$lib/utils/string/cn.util";
   import { page } from "$app/state";
   import SubscriptionTierStatusBadge from "../general/SubscriptionTierStatusBadge.svelte";
-  import type { Subscription } from "$lib/server/database/schema";
+  import type { UserWithActiveSubscription } from "$lib/server/database/types";
   import {
     getDisplayName,
     getUserInitials,
@@ -15,7 +14,7 @@
   let isDropdownOpen = $state(false);
 
   interface Props {
-    user: User & { subscription?: Subscription };
+    user: UserWithActiveSubscription;
   }
 
   let { user }: Props = $props();
@@ -137,7 +136,7 @@
                         {getDisplayName({ user })}
                       </p>
                       <SubscriptionTierStatusBadge
-                        status={user.subscription?.status === "active"
+                        status={user.subscriptions?.find(sub => sub.status === "active")
                           ? "pro"
                           : "trial"}
                       />

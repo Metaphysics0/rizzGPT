@@ -1,10 +1,9 @@
-import type { Subscription } from "$lib/server/database/schema";
-import type { User } from "better-auth/types";
+import type { UserWithActiveSubscription } from "$lib/server/database/types";
 
 class UserStore {
-  user = $state<(User & { subscription?: Subscription }) | null>(null);
+  user = $state<UserWithActiveSubscription | null>(null);
 
-  setUser(user: (User & { subscription?: Subscription }) | null) {
+  setUser(user: UserWithActiveSubscription | null) {
     this.user = user;
   }
 
@@ -18,6 +17,14 @@ class UserStore {
 
   get userEmail() {
     return this.user?.email;
+  }
+
+  get activeSubscription() {
+    return this.user?.subscriptions?.find(sub => sub.status === "active") || null;
+  }
+
+  get isProUser() {
+    return !!this.activeSubscription;
   }
 }
 

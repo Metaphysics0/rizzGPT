@@ -19,9 +19,16 @@ A web app for generating responses for dating conversations, using modern web te
 1. Make sure you have envs defined in `.env.example`. See docs/env-setup.md for more info.
 2. cd into the project, `bun i` then `bun dev`
 
+## Troubleshooting
+
+- if you get a `failed to load config from /Users/ryan/Desktop/dev/rizzGPT/vite.config.ts` error, try rm -rf node_modules
+
 ## TODO:
+
+1. Block history page for non-paying users
+2. AI Profile Optimizer page (pro only)
+3. Create pricing tiers, reflect in profile dropdown.
 
 - E2E Gumroad subscription flow
 - Refactoring the DB to have a relationship of user.subscriptions, instead of the code duplcation for user & { subscription: Subscription }
-- Landing page!!
 - Capacitor mobile app

@@ -1,4 +1,5 @@
 import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 import type { ConversationStatus, RelationshipContext } from "$lib/types";
 import { jsonb } from "drizzle-orm/pg-core";
 
@@ -63,6 +64,7 @@ export const verifications = pgTable("verification", {
 
 export const subscriptions = pgTable("subscription", {
   id: uuid().primaryKey().defaultRandom(),
+  userId: text().references(() => users.id, { onDelete: "cascade" }),
   email: text().notNull(),
   gumroadSaleId: text().unique().notNull(),
   productId: text().notNull(),
@@ -114,3 +116,47 @@ export const conversations = pgTable("conversation", {
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
 });
+
+// Relations
+export const usersRelations = relations(users, ({ many, one }) => ({
+  sessions: many(sessions),
+  accounts: many(accounts),
+  subscriptions: many(subscriptions),
+  userUsage: many(userUsage),
+  conversations: many(conversations),
+}));
+
+export const subscriptionsRelations = relations(subscriptions, ({ one }) => ({
+  user: one(users, {
+    fields: [subscriptions.userId],
+    references: [users.id],
+  }),
+}));
+
+export const userUsageRelations = relations(userUsage, ({ one }) => ({
+  user: one(users, {
+    fields: [userUsage.userId],
+    references: [users.id],
+  }),
+}));
+
+export const conversationsRelations = relations(conversations, ({ one }) => ({
+  user: one(users, {
+    fields: [conversations.userId],
+    references: [users.id],
+  }),
+}));
+
+export const sessionsRelations = relations(sessions, ({ one }) => ({
+  user: one(users, {
+    fields: [sessions.userId],
+    references: [users.id],
+  }),
+}));
+
+export const accountsRelations = relations(accounts, ({ one }) => ({
+  user: one(users, {
+    fields: [accounts.userId],
+    references: [users.id],
+  }),
+}));

@@ -1,6 +1,6 @@
-import type { User } from "better-auth";
+import type { UserWithRelations } from "$lib/server/database/types";
 
-export function getUserInitials(user: User): string {
+export function getUserInitials(user: UserWithRelations): string {
   if (!user) return "U";
   const firstName = user.name?.split(" ")[0] || "";
   const lastName = user.name?.split(" ")[1] || "";
@@ -18,7 +18,7 @@ export function getDisplayName({
   user,
   fullName = false,
 }: {
-  user: User;
+  user: UserWithRelations;
   fullName?: boolean;
 }): string {
   if (!user) return "User";

@@ -1,8 +1,8 @@
 import type { ConversationsListItem, ConversationStatus } from "$lib/types";
 import { and, desc, eq } from "drizzle-orm";
 import { db } from "../database/connection";
-import { conversations, users } from "../database/schema";
-import type { Conversation, NewConversation } from "../database/types";
+import { conversations, users, subscriptions, userUsage } from "../database/schema";
+import type { Conversation, NewConversation, UserWithActiveSubscription } from "../database/types";
 
 class DatabaseService {
   async createConversation(
@@ -87,6 +87,42 @@ class DatabaseService {
       .limit(1);
 
     return result[0];
+  }
+
+  async getUserWithRelations(userId: string) {
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId),
+      with: {
+        subscriptions: {
+          where: eq(subscriptions.status, "active"),
+          orderBy: desc(subscriptions.createdAt),
+          limit: 1,
+        },
+        userUsage: {
+          orderBy: desc(userUsage.createdAt),
+        },
+      },
+    });
+
+    return user || null;
+  }
+
+  async getUserByEmail(email: string) {
+    const user = await db.query.users.findFirst({
+      where: eq(users.email, email),
+      with: {
+        subscriptions: {
+          where: eq(subscriptions.status, "active"),
+          orderBy: desc(subscriptions.createdAt),
+          limit: 1,
+        },
+        userUsage: {
+          orderBy: desc(userUsage.createdAt),
+        },
+      },
+    });
+
+    return user || null;
   }
 }
 
