@@ -25,7 +25,7 @@
 >
   <Navbar />
   {#key page.url.pathname}
-    <div in:fade={{ duration: 100, delay: 100 }} out:fade={{ duration: 200 }}>
+    <div in:fade={{ duration: 100, delay: 100 }} out:fade={{ duration: 200 }} class="pt-20">
       {@render children()}
     </div>
   {/key}

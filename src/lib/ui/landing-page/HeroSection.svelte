@@ -17,7 +17,7 @@
       We've tested 100,000+ messages and trained our AI to land you more dates.
       And we're going to let you try it free for 7 days.
     </p>
-    <DownloadAppButtons className="h-16" />
+    <DownloadAppButtons className="h-12 md:h-16" />
   </div>
   <div class="lg:row-span-2 lg:col-start-2 lg:row-start-1 aos-init aos-animate">
     <IPhoneAnimatedGif />
