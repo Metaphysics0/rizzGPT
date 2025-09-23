@@ -1,23 +1,15 @@
 import type { RequestEvent } from "@sveltejs/kit";
-import { getUserSubscriptionStatus } from "$lib/utils/subscription.util";
-import type { Subscription } from "$lib/server/database/schema";
+import { databaseService } from "$lib/server/services/database.service";
 import type { LayoutServerLoad } from "./$types";
 
 export const load: LayoutServerLoad = async ({ locals }: RequestEvent) => {
-  let activeSubscription: Subscription | undefined = undefined;
-  if (locals.user?.email) {
-    const sub = await getUserSubscriptionStatus(locals.user.email);
-    activeSubscription = sub || undefined;
+  if (!locals.user?.id) {
+    return { user: null };
   }
 
-  console.log("LOCALS USER", locals);
+  const userWithRelations = await databaseService.getUserWithRelations(locals.user.id);
 
   return {
-    user: locals.user
-      ? {
-          ...locals.user,
-          subscription: activeSubscription,
-        }
-      : null,
+    user: userWithRelations,
   };
 };

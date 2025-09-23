@@ -1,13 +1,12 @@
 <script lang="ts">
   import ProfilePicture from "./ProfilePicure.svelte";
-  import type { Subscription } from "$lib/server/database/schema";
+  import type { UserWithActiveSubscription } from "$lib/server/database/types";
   import { getDisplayName } from "$lib/utils/user/user-info.util";
-  import type { User } from "better-auth";
   import SubscriptionTierStatusBadge from "../general/SubscriptionTierStatusBadge.svelte";
   import Icon from "@iconify/svelte";
 
   interface Props {
-    user: User & { subscription?: Subscription };
+    user: UserWithActiveSubscription;
   }
 
   let { user }: Props = $props();
@@ -23,7 +22,7 @@
           {getDisplayName({ user })}
         </h1>
         <SubscriptionTierStatusBadge
-          status={user.subscription?.status === "active" ? "pro" : "trial"}
+          status={user.subscriptions?.find(sub => sub.status === "active") ? "pro" : "trial"}
         />
       </div>
       <p class="text-gray-600 truncate">{user.email}</p>

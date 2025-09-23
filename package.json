@@ -12,6 +12,7 @@
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "format": "biome format --write .",
     "lint": "biome check .",
+    "build:tsc": "tsgo --project tsconfig.json --noEmit",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio"
   },
