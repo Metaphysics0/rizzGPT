@@ -171,6 +171,19 @@
                   </a>
                 {/each}
 
+                <!-- Upgrade Button for non-pro users -->
+                {#if !user.subscriptions?.find((sub) => sub.status === "active")}
+                  <a
+                    href="/upgrade"
+                    class="flex items-center justify-between gap-2 rounded-lg px-3 py-2 mt-1 mb-3 text-sm bg-gradient-to-r from-purple-500 to-pink-500 text-white transition-all hover:from-purple-600 hover:to-pink-600 hover:shadow-lg transform hover:scale-[1.02] group"
+                  >
+                    <div class="flex items-center gap-2">
+                      <Icon icon="mingcute:crown-fill" class="h-4 w-4" />
+                      Upgrade to Pro
+                    </div>
+                  </a>
+                {/if}
+
                 <!-- Separator -->
                 <div class="border-t border-gray-200 my-1"></div>
 
