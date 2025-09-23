@@ -5,6 +5,12 @@
   import type { PageData } from "./$types";
 
   const { data }: { data: PageData } = $props();
+
+  let conversations = $state(data.conversations);
+
+  function handleDelete(conversationId: string) {
+    conversations = conversations.filter(conv => conv.id !== conversationId);
+  }
 </script>
 
 <svelte:head>
@@ -19,7 +25,7 @@
           Conversation History
         </h1>
         <p class="text-sm text-gray-600 mt-1">
-          {pluralizeWithCount(data.conversations.length, "conversation")}
+          {pluralizeWithCount(conversations.length, "conversation")}
         </p>
       </div>
       <NewConversationButton />
@@ -27,8 +33,8 @@
   </div>
 
   <div class="divide-y divide-gray-100">
-    {#each data.conversations as conversation (conversation.id)}
-      <ConversationListItem {conversation} />
+    {#each conversations as conversation (conversation.id)}
+      <ConversationListItem {conversation} onDelete={handleDelete} />
     {/each}
   </div>
 </div>
