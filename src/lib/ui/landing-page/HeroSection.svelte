@@ -6,11 +6,11 @@
 </script>
 
 <section
-  class="grid lg:grid-cols-2 lg:grid-rows-2 gap-x-4 gap-y-24 lg:gap-y-10 px-5 pt-10"
+  class="grid lg:grid-cols-2 lg:grid-rows-2 gap-x-4 gap-y-24 lg:gap-y-10 px-20 pt-10"
 >
   <div class="flex flex-col justify-center gap-4">
     <TrustpilotScore />
-    <h4 class="text-6xl font-bold tracking-wide leading-20">
+    <h4 class="text-6xl font-bold tracking-wide leading-16">
       Land 3.5x More Dates Using RizzGPT. Guaranteed.
     </h4>
     <p class="text-2xl mb-3">
@@ -19,10 +19,12 @@
     </p>
     <DownloadAppButtons className="h-16" />
   </div>
-  <div>
+  <div class="lg:row-span-2 lg:col-start-2 lg:row-start-1 aos-init aos-animate">
     <IPhoneAnimatedGif />
   </div>
-  <div>
+  <div
+    class="z-10 order-3 lg:col-start-1 lg:row-start-2 flex flex-col items-center lg:items-start aos-init aos-animate"
+  >
     <SatisfiedUsers />
   </div>
 </section>
