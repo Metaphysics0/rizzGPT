@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
   import { authClient } from "$lib/auth-client";
 
   interface Props {
@@ -12,7 +13,10 @@
     try {
       isLoading = true;
       error = "";
-      await authClient.signIn.social({ provider: "google" });
+      await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "/generate",
+      });
     } catch (err) {
       error = "Google sign in failed";
       console.error("Google sign in error:", err);

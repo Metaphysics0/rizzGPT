@@ -37,9 +37,9 @@ export const actions: Actions = {
         },
       });
 
-      // If sign-in is successful, redirect to home page
+      // If sign-in is successful, redirect to generate page
       if (result) {
-        throw redirect(302, "/");
+        throw redirect(302, "/generate");
       }
 
       return result;
