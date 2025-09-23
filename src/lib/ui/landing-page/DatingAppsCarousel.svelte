@@ -20,7 +20,7 @@
   ];
 </script>
 
-<section class="py-20 bg-secondary">
+<section class="py-10 pt-15 bg-secondary">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-shadow-lg">
     <div class="text-center mb-16">
       <h2 class="text-4xl font-bold text-white mb-4">
@@ -28,10 +28,10 @@
       </h2>
     </div>
 
-    <Carousel.Root>
-      <Carousel.Content>
+    <Carousel.Root opts={{ loop: false, containScroll: "trimSnaps" }}>
+      <Carousel.Content class="ml-0">
         {#each datingApps as { name, logo }}
-          <Carousel.Item class="basis-1/4">
+          <Carousel.Item class="basis-1/4 pl-2 pr-2 flex-shrink-0">
             <img
               src={logo}
               alt={name + " Logo"}
@@ -40,6 +40,7 @@
           </Carousel.Item>
         {/each}
       </Carousel.Content>
+      <Carousel.Dots class="mt-10" />
     </Carousel.Root>
   </div>
 </section>
