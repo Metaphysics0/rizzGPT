@@ -22,7 +22,7 @@
   ] as const;
 </script>
 
-<nav class="flex w-full justify-around items-center">
+<nav class="flex w-full justify-around items-center p-4">
   <Logo />
 
   <div class="flex gap-10">
