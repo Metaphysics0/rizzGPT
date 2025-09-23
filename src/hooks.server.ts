@@ -44,7 +44,7 @@ function isProtectedRoute(pathname: string) {
     "/profile",
     "/conversations",
     "/settings",
-    "/dashboard",
+    "/generate",
   ];
   return protectedRoutes.some((route) => pathname.startsWith(route));
 }

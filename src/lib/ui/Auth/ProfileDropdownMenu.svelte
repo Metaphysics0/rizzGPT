@@ -11,6 +11,7 @@
   } from "$lib/utils/user/user-info.util";
   import { authClient } from "$lib/auth-client";
   import { goto } from "$app/navigation";
+  import { userStore } from "$lib/stores/user.svelte";
   let isDropdownOpen = $state(false);
 
   interface Props {
@@ -30,7 +31,7 @@
     {
       label: "Generate Rizz",
       icon: "mdi:sparkles",
-      href: "/",
+      href: "/generate",
     },
     {
       label: "History",
@@ -42,28 +43,15 @@
       icon: "mdi:account",
       href: "/profile",
     },
-    // {
-    //   label: "Sign Out",
-    //   icon: "mdi:logout",
-    //   onClick: async () => {
-    //     await authClient.signOut({
-    //       fetchOptions: {
-    //         onSuccess: () => {
-    //           goto("/sign-in");
-    //           isDropdownOpen = false;
-    //         },
-    //       },
-    //     });
-    //   },
-    // },
   ] as const;
 
   async function signOut() {
     await authClient.signOut({
       fetchOptions: {
         onSuccess: () => {
-          goto("/sign-in");
+          goto("/");
           isDropdownOpen = false;
+          userStore.setUser(null);
         },
       },
     });
