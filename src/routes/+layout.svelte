@@ -20,7 +20,7 @@
 {/if}
 
 <div
-  class="min-h-screen p-4"
+  class="min-h-screen"
   style="background-image: radial-gradient(at 0% 25%, color-mix(in oklab, rgb(139 69 19) 10%, transparent) 0px, transparent 30%), radial-gradient(at 15% 6%, color-mix(in oklab, rgb(34 197 94) 5%, transparent) 0px, transparent 30%), linear-gradient(to bottom right, rgb(252 231 243), rgb(250 245 255), rgb(254 249 195))"
 >
   <Navbar />
