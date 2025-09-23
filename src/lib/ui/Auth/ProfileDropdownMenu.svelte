@@ -40,7 +40,7 @@
     {
       label: "AI Profile Optimizer",
       icon: "mingcute:quill-pen-ai-fill",
-      href: "/ai-profile-optimizer",
+      href: "/optimizer",
     },
     {
       label: "Account",
