@@ -10,10 +10,7 @@
   import { authClient } from "$lib/auth-client";
   import { goto } from "$app/navigation";
   import { userStore } from "$lib/stores/user.svelte";
-  import type {
-    UserWithActiveSubscription,
-    UserWithRelations,
-  } from "$lib/server/database/types";
+  import type { UserWithRelations } from "$lib/server/database/types";
   let isDropdownOpen = $state(false);
 
   interface Props {
@@ -169,10 +166,13 @@
                   </a>
                 {/each}
 
+                <!-- Separator -->
+                <div class="border-t border-gray-200 my-1"></div>
+
                 <!-- Sign Out Button -->
                 <button
                   onclick={signOut}
-                  class="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-slate-100 cursor-pointer"
+                  class="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-600 transition-colors hover:bg-red-50 hover:text-red-700 cursor-pointer"
                 >
                   <Icon icon="mdi:logout" class="h-4 w-4" />
                   Log Out

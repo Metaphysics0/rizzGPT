@@ -3,8 +3,18 @@
   import type { ConversationsListItem, ConversationStatus } from "$lib/types";
   import { formatRelativeTime } from "$lib/utils/date.util";
   import { truncateText } from "$lib/utils/string/truncate-text.util";
+  import Icon from "@iconify/svelte";
+  import * as Dialog from "$lib/ui/dialog";
+  import DeleteConfirmationModal from "../modals/DeleteConfirmationModal.svelte";
 
-  let { conversation }: { conversation: ConversationsListItem } = $props();
+  let {
+    conversation,
+    onDelete,
+  }: { conversation: ConversationsListItem; onDelete?: (id: string) => void } =
+    $props();
+
+  let showDeleteDialog = $state(false);
+  let isDeleting = $state(false);
 
   function getStatusInfo(status: ConversationStatus | null) {
     switch (status) {
@@ -51,13 +61,50 @@
     goto(`/conversations/${conversation.id}`);
   }
 
+  async function handleDelete() {
+    isDeleting = true;
+    try {
+      const response = await fetch(`/conversations/${conversation.id}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        onDelete?.(conversation.id);
+        showDeleteDialog = false;
+      } else {
+        console.error("Failed to delete conversation");
+      }
+    } catch (error) {
+      console.error("Error deleting conversation:", error);
+    } finally {
+      isDeleting = false;
+    }
+  }
+
+  function handleDeleteClick(event: Event) {
+    event.stopPropagation();
+    showDeleteDialog = true;
+  }
+
+  function handleKeyDown(event: KeyboardEvent) {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      navigateToConversationPage();
+    }
+  }
+
   const statusInfo = $derived(getStatusInfo(conversation.status));
   const timeAgo = $derived(formatRelativeTime(conversation.updatedAt));
 </script>
 
-<button
+<div
   onclick={navigateToConversationPage}
+  onkeydown={handleKeyDown}
   class="bg-white/20 mb-3 w-full p-4 text-left hover:bg-gray-50 transition-colors duration-200 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset group sm:p-5 cursor-pointer rounded-2xl"
+  aria-label="View conversation"
+  aria-keyshortcuts="enter"
+  tabindex="0"
+  role="button"
 >
   <div class="flex items-start justify-between space-x-3">
     <div class="flex-1 min-w-0">
@@ -85,8 +132,27 @@
         {timeAgo}
       </p>
     </div>
+
+    <!-- Delete button -->
+    <div class="flex-shrink-0">
+      <button
+        onclick={handleDeleteClick}
+        class="p-2 text-gray-400 hover:text-red-600 transition-colors duration-200 rounded-lg hover:bg-red-50"
+        title="Delete conversation"
+      >
+        <Icon icon="mdi:delete" class="w-4 h-4" />
+      </button>
+    </div>
   </div>
-</button>
+</div>
+
+<DeleteConfirmationModal
+  {showDeleteDialog}
+  {handleDelete}
+  {isDeleting}
+  dialogDescription={`Are you sure you want to delete this conversation with ${conversation.matchName}? This action cannot be undone.`}
+  dialogTitle="Delete Conversation"
+/>
 
 <style>
   .line-clamp-2 {
