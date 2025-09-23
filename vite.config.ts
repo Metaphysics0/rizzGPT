@@ -6,7 +6,10 @@ export default defineConfig(() => {
   return {
     plugins: [sveltekit(), tailwindcss()],
     server: {
-      allowedHosts: ["eager-weeks-teach.loca.lt"], // testing webhook
+      allowedHosts: [
+        "eager-weeks-teach.loca.lt", // replace with your localtunnel domain
+        "bitter-olives-wave.loca.lt",
+      ],
     },
     optimizeDeps: {
       include: ["bits-ui"],

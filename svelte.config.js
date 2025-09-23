@@ -12,7 +12,7 @@ const config = {
         "https://gumroad.com",
         "https://api.gumroad.com",
         "https://webhooks.gumroad.com",
-        "https://eager-weeks-teach.loca.lt",
+        "https://bitter-olives-wave.loca.lt", // replace with your localtunnel domain
       ],
     },
   },

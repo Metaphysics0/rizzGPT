@@ -5,6 +5,8 @@ import { auth } from "$lib/server/auth";
 
 export const handle: Handle = async ({ event, resolve }) => {
   try {
+    console.log("INCOMING REQUEST", event.url.toString());
+
     if (isChromeDevToolsRequest(event.url)) {
       return new Response(null, { status: 204 });
     }
