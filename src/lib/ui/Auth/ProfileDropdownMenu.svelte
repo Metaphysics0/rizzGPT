@@ -3,7 +3,6 @@
   import { cn } from "$lib/utils/string/cn.util";
   import { page } from "$app/state";
   import SubscriptionTierStatusBadge from "../general/SubscriptionTierStatusBadge.svelte";
-  import type { UserWithActiveSubscription } from "$lib/server/database/types";
   import {
     getDisplayName,
     getUserInitials,
@@ -11,10 +10,14 @@
   import { authClient } from "$lib/auth-client";
   import { goto } from "$app/navigation";
   import { userStore } from "$lib/stores/user.svelte";
+  import type {
+    UserWithActiveSubscription,
+    UserWithRelations,
+  } from "$lib/server/database/types";
   let isDropdownOpen = $state(false);
 
   interface Props {
-    user: UserWithActiveSubscription;
+    user: UserWithRelations;
   }
 
   let { user }: Props = $props();
@@ -136,7 +139,9 @@
                         {getDisplayName({ user })}
                       </p>
                       <SubscriptionTierStatusBadge
-                        status={user.subscriptions?.find(sub => sub.status === "active")
+                        status={user.subscriptions?.find(
+                          (sub) => sub.status === "active"
+                        )
                           ? "pro"
                           : "trial"}
                       />
