@@ -20,8 +20,10 @@ export const POST: RequestHandler = async ({ request }) => {
       formData.entries()
     ) as any;
 
+    console.log(
+      `[GUMROAD] webhook received, data: ${JSON.stringify(webhookData)}`
+    );
     if (webhookData.test) {
-      console.log("[GUMROAD] Test webhook received");
       return json({ success: true }, { status: 200 });
     }
 
