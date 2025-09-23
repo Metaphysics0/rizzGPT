@@ -21,5 +21,7 @@ A web app for generating responses for dating conversations, using modern web te
 
 ## TODO:
 
-- A clearly defined pro subscription tier, redirect to gumroad product page.
-- Improve the main form. Update to be a form action, rather than js fetch
+- E2E Gumroad subscription flow
+- Refactoring the DB to have a relationship of user.subscriptions, instead of the code duplcation for user & { subscription: Subscription }
+- Landing page!!
+- Capacitor mobile app

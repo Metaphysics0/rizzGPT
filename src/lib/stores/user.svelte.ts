@@ -1,9 +1,10 @@
+import type { Subscription } from "$lib/server/database/schema";
 import type { User } from "better-auth/types";
 
 class UserStore {
-  user = $state<User | null>(null);
+  user = $state<(User & { subscription?: Subscription }) | null>(null);
 
-  setUser(user: User | null) {
+  setUser(user: (User & { subscription?: Subscription }) | null) {
     this.user = user;
   }
 
