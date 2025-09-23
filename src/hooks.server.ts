@@ -40,9 +40,11 @@ function isChromeDevToolsRequest(url: URL) {
 }
 
 function isProtectedRoute(pathname: string) {
-  const protectedRoutes = ["/profile", "/conversations", "/settings"];
-  return (
-    pathname === "/" ||
-    protectedRoutes.some((route) => pathname.startsWith(route))
-  );
+  const protectedRoutes = [
+    "/profile",
+    "/conversations",
+    "/settings",
+    "/dashboard",
+  ];
+  return protectedRoutes.some((route) => pathname.startsWith(route));
 }
