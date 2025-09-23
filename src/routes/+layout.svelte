@@ -1,9 +1,7 @@
 <script lang="ts">
   import { page } from "$app/state";
-  import Header from "$lib/ui/layout/Header.svelte";
   import { fade } from "svelte/transition";
   import "../app.css";
-  import ProfileDropdownMenu from "$lib/ui/Auth/ProfileDropdownMenu.svelte";
   import { userStore } from "$lib/stores/user.svelte";
   import type { PageData } from "./$types";
   import Navbar from "$lib/ui/layout/Navbar.svelte";
@@ -11,7 +9,7 @@
   let { children, data }: { children: any; data: PageData } = $props();
 
   $effect(() => {
-    userStore.setUser(data.user);
+    userStore.setUser(data.user || null);
   });
 </script>
 

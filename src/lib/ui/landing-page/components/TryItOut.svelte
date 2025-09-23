@@ -1,7 +1,7 @@
 <script lang="ts">
   import GeneratedResponseItem from "$lib/ui/generated-response/GeneratedResponseItem.svelte";
   import TinderBioScreenshot from "$lib/assets/leah-app.webp";
-  import LinkButton from "../general/LinkButton.svelte";
+  import LinkButton from "$lib/ui/general/LinkButton.svelte";
 
   const sampleResponses = [
     "Squat rack and dog dates? You've got an interesting idea of romance, don't you?",

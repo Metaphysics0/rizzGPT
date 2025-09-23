@@ -2,14 +2,7 @@ import { fail, isRedirect, redirect } from "@sveltejs/kit";
 import { ConversationGenerationService } from "$lib/server/services/conversation-generation.service";
 import type { RelationshipContext } from "$lib/types";
 import { areAllObjectValuesEmpty } from "$lib/utils/object/are-all-object-values-empty.util";
-import type { PageServerLoad, Actions } from "./$types";
-
-export const load: PageServerLoad = async ({ locals }) => {
-  return {
-    session: locals.session,
-    user: locals.user,
-  };
-};
+import type { Actions } from "./$types";
 
 export const actions = {
   generateRizz: async ({ request, locals }) => {

@@ -1,8 +1,8 @@
 <script>
-  import DownloadAppButtons from "./components/DownloadAppButtons.svelte";
-  import IPhoneAnimatedGif from "./components/IPhoneAnimatedGif.svelte";
-  import SatisfiedUsers from "./components/SatisfiedUsers.svelte";
-  import TrustpilotScore from "./components/TrustpilotScore.svelte";
+  import DownloadAppButtons from "./DownloadAppButtons.svelte";
+  import IPhoneAnimatedGif from "./IPhoneAnimatedGif.svelte";
+  import SatisfiedUsers from "./SatisfiedUsers.svelte";
+  import TrustpilotScore from "./TrustpilotScore.svelte";
 </script>
 
 <section
