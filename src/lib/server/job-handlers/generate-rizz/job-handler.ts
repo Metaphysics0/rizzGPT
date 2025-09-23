@@ -1,8 +1,10 @@
 import { databaseService } from "$lib/server/services/database.service";
 import { UsageService } from "$lib/server/services/usage.service";
-import { GeminiService } from "$lib/server/services/gemini.service";
 import type { GenerateRizzJobPayload } from "./job-payload.type";
 import { backblazeStorageService } from "$lib/server/services/backblaze-storage.service";
+import { GeminiService } from "$lib/server/services/llm/gemini";
+import { PromptHelper } from "$lib/server/services/llm/prompt-helper";
+import { LLMInferenceType } from "$lib/server/services/llm/types";
 
 export class GenerateRizzJobHandler {
   private readonly jobPayload: GenerateRizzJobPayload;
@@ -26,8 +28,14 @@ export class GenerateRizzJobHandler {
 
     try {
       const file = await backblazeStorageService.downloadFile(fileName);
-      const generateRizzResponse = await this.geminiService.generateRizz({
-        relationshipContext,
+
+      const prompt = PromptHelper.generatePrompt({
+        type: LLMInferenceType.GENERATE_RIZZ_RESPONSE,
+        data: relationshipContext,
+      });
+
+      const generateRizzResponse = await this.geminiService.generateContent({
+        prompt,
         file,
       });
 
