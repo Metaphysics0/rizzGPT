@@ -1,9 +1,12 @@
-<script>
+<script lang="ts">
   import AppStoreButton from "$lib/assets/app-store.svg";
   import GooglePlayButton from "$lib/assets/google-play.svg";
+  import { cn } from "$lib/utils";
+
+  let { className }: { className?: string } = $props();
 </script>
 
-<div class="flex items-center gap-2 h-12">
-  <img src={AppStoreButton} alt="app-store-button" class="h-full" />
+<div class={cn("flex items-center gap-2", className)}>
   <img src={GooglePlayButton} alt="google-play-store-button" class="h-full" />
+  <img src={AppStoreButton} alt="app-store-button" class="h-full" />
 </div>

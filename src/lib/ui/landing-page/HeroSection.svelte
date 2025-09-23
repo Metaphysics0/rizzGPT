@@ -4,17 +4,17 @@
   import TrustpilotScore from "./components/TrustpilotScore.svelte";
 </script>
 
-<section class="grid grid-cols-2 px-5">
+<section class="grid grid-cols-2 px-5 pt-10">
   <div class="flex flex-col justify-center gap-4">
     <TrustpilotScore />
-    <h4 class="text-5xl font-extrabold">
-      Land 3.5x More Dates Using RizzGPT. Guaranteed
+    <h4 class="text-6xl font-bold tracking-wide leading-20">
+      Land 3.5x More Dates Using RizzGPT. Guaranteed.
     </h4>
-    <p class="text-2xl">
+    <p class="text-2xl mb-3">
       We've tested 100,000+ messages and trained our AI to land you more dates.
       And we're going to let you try it free for 7 days.
     </p>
-    <DownloadAppButtons />
+    <DownloadAppButtons className="h-16" />
   </div>
   <div>
     <IPhoneAnimatedGif />
