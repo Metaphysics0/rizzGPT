@@ -13,7 +13,7 @@
     <CircleAndEmojiSvg />
   </div>
   <h4
-    class="w-[200px] md:w-[360px] mx-auto absolute bottom-[-78px] lg:bottom-28 left-10 md:left-32 lg:left-10 text-2xl lg:text-3xl font-bold"
+    class="w-[200px] md:w-[360px] mx-auto absolute bottom-[-78px] left-24 text-2xl lg:text-3xl font-bold"
   >
     Upload their Bio &amp; Get suggestions for chats...
   </h4>
