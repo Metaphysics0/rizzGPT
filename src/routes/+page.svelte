@@ -13,7 +13,7 @@
 <DatingAppsCarousel />
 <Testimonials />
 
-<div class="flex justify-center pb-32">
+<div class="flex justify-center pb-24">
   <LinkButton label="Try it for free" href="/sign-in" />
 </div>
 
