@@ -1,4 +1,4 @@
-import type { UserWithActiveSubscription } from "$lib/server/database/types";
+import type { UserWithRelations } from "$lib/server/database/types";
 import type { User, Session } from "better-auth/types";
 
 declare global {
@@ -9,7 +9,7 @@ declare global {
     }
 
     interface PageData {
-      user: UserWithActiveSubscription | null;
+      user: UserWithRelations | null;
     }
   }
 }
