@@ -4,7 +4,7 @@ module.exports = {
     extend: {
       fontFamily: {
         sans: [
-          "Celebes Regular",
+          "Celebes",
           // "Valera Round",
           "ui-sans-serif",
           "system-ui",

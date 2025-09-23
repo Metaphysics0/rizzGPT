@@ -10,120 +10,120 @@
 }
 
 @font-face {
-  font-family: "Celebes Regular";
+  font-family: "Celebes";
   font-style: normal;
-  font-weight: normal;
-  src: local("Celebes Regular"),
-    url("/fonts/celebes/Celebes-Regular.woff") format("woff");
-}
-
-@font-face {
-  font-family: "Celebes Italic";
-  font-style: normal;
-  font-weight: normal;
-  src: local("Celebes Italic"),
-    url("/fonts/celebes/Celebes-Italic.woff") format("woff");
-}
-
-@font-face {
-  font-family: "Celebes Thin";
-  font-style: normal;
-  font-weight: normal;
+  font-weight: 100;
   src: local("Celebes Thin"),
     url("/fonts/celebes/Celebes-Thin.woff") format("woff");
 }
 
 @font-face {
-  font-family: "Celebes Thin Italic";
-  font-style: normal;
-  font-weight: normal;
+  font-family: "Celebes";
+  font-style: italic;
+  font-weight: 100;
   src: local("Celebes Thin Italic"),
     url("/fonts/celebes/Celebes-ThinItalic.woff") format("woff");
 }
 
 @font-face {
-  font-family: "Celebes Light";
+  font-family: "Celebes";
   font-style: normal;
-  font-weight: normal;
+  font-weight: 300;
   src: local("Celebes Light"),
     url("/fonts/celebes/Celebes-Light.woff") format("woff");
 }
 
 @font-face {
-  font-family: "Celebes Light Italic";
-  font-style: normal;
-  font-weight: normal;
+  font-family: "Celebes";
+  font-style: italic;
+  font-weight: 300;
   src: local("Celebes Light Italic"),
     url("/fonts/celebes/Celebes-LightItalic.woff") format("woff");
 }
 
 @font-face {
-  font-family: "Celebes SemiBold";
+  font-family: "Celebes";
   font-style: normal;
-  font-weight: normal;
+  font-weight: 400;
+  src: local("Celebes Regular"),
+    url("/fonts/celebes/Celebes-Regular.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Celebes";
+  font-style: italic;
+  font-weight: 400;
+  src: local("Celebes Italic"),
+    url("/fonts/celebes/Celebes-Italic.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Celebes";
+  font-style: normal;
+  font-weight: 600;
   src: local("Celebes SemiBold"),
     url("/fonts/celebes/Celebes-SemiBold.woff") format("woff");
 }
 
 @font-face {
-  font-family: "Celebes SemiBold Italic";
-  font-style: normal;
-  font-weight: normal;
+  font-family: "Celebes";
+  font-style: italic;
+  font-weight: 600;
   src: local("Celebes SemiBold Italic"),
     url("/fonts/celebes/Celebes-SemiBoldItalic.woff") format("woff");
 }
 
 @font-face {
-  font-family: "Celebes Bold";
+  font-family: "Celebes";
   font-style: normal;
-  font-weight: normal;
+  font-weight: 700;
   src: local("Celebes Bold"),
     url("/fonts/celebes/Celebes-Bold.woff") format("woff");
 }
 
 @font-face {
-  font-family: "Celebes Bold Italic";
-  font-style: normal;
-  font-weight: normal;
+  font-family: "Celebes";
+  font-style: italic;
+  font-weight: 700;
   src: local("Celebes Bold Italic"),
     url("/fonts/celebes/Celebes-BoldItalic.woff") format("woff");
 }
 
 @font-face {
-  font-family: "Celebes ExtraBold";
+  font-family: "Celebes";
   font-style: normal;
-  font-weight: normal;
+  font-weight: 800;
   src: local("Celebes ExtraBold"),
     url("/fonts/celebes/Celebes-ExtraBold.woff") format("woff");
 }
 
 @font-face {
-  font-family: "Celebes ExtraBold Italic";
-  font-style: normal;
-  font-weight: normal;
+  font-family: "Celebes";
+  font-style: italic;
+  font-weight: 800;
   src: local("Celebes ExtraBold Italic"),
     url("/fonts/celebes/Celebes-ExtraBoldItalic.woff") format("woff");
 }
 
 @font-face {
-  font-family: "Celebes Black";
+  font-family: "Celebes";
   font-style: normal;
-  font-weight: normal;
+  font-weight: 900;
   src: local("Celebes Black"),
     url("/fonts/celebes/Celebes-Black.woff") format("woff");
 }
 
 @font-face {
-  font-family: "Celebes Black Italic";
-  font-style: normal;
-  font-weight: normal;
+  font-family: "Celebes";
+  font-style: italic;
+  font-weight: 900;
   src: local("Celebes Black Italic"),
     url("/fonts/celebes/Celebes-BlackItalic.woff") format("woff");
 }
 
 html,
 body {
-  font-family: "Celebes Regular", "Valera Round", ui-sans-serif, system-ui,
+  font-family: "Celebes", "Valera Round", ui-sans-serif, system-ui,
     -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Noto Sans, Ubuntu,
     Cantarell, Helvetica Neue, Arial, sans-serif, Apple Color Emoji,
     Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
