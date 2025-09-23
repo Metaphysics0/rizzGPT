@@ -1,18 +1,18 @@
 <script lang="ts">
   import { authClient } from "$lib/auth-client";
 
-  export let isLoading = false;
-  export let error = "";
+  interface Props {
+    isLoading: boolean;
+    error?: string;
+  }
+
+  let { isLoading, error }: Props = $props();
 
   async function handleGoogleSignIn() {
-    isLoading = true;
-    error = "";
-
     try {
-      await authClient.signIn.social({
-        provider: "google",
-        callbackURL: "/",
-      });
+      isLoading = true;
+      error = "";
+      await authClient.signIn.social({ provider: "google" });
     } catch (err) {
       error = "Google sign in failed";
       console.error("Google sign in error:", err);
