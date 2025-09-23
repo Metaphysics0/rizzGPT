@@ -8,6 +8,32 @@
   import MediaSkeleton from "$lib/ui/loading-animations/MediaSkeleton.svelte";
   import { fade } from "svelte/transition";
 
+  interface Props {
+    title?: string;
+    subtitle?: string;
+    tooltip?: string;
+    collapsible?: boolean;
+    defaultCollapsed?: boolean;
+    uploadLabel?: string;
+    uploadDescription?: string;
+    uploadSubDescription?: string;
+    acceptedTypes?: string;
+    maxSizeText?: string;
+  }
+
+  let {
+    title = "Conversation Upload",
+    subtitle,
+    tooltip = "Upload a screen recording or screenshot of your conversation with your partner.",
+    collapsible = false,
+    defaultCollapsed = false,
+    uploadLabel = "Upload a file",
+    uploadDescription = "Drag and drop or click to upload",
+    uploadSubDescription = "Accepts images and videos up to 50MB",
+    acceptedTypes = "image/*, video/mp4, video/quicktime, video/x-msvideo",
+    maxSizeText = "Accepts images and videos up to 50MB",
+  }: Props = $props();
+
   let imagePreview = $state<string | null>("");
 
   let fileInput = $state<HTMLInputElement>();
@@ -89,11 +115,7 @@
   }
 </script>
 
-<FormStep
-  title="Conversation Upload"
-  collapsible={false}
-  tooltip="Upload a screen recording or screenshot of your conversation with your partner."
->
+<FormStep {title} {subtitle} {tooltip} {collapsible} {defaultCollapsed}>
   {#snippet headerAction()}
     {#if imagePreview}
       <button
@@ -107,7 +129,7 @@
       </button>
     {/if}
   {/snippet}
-  <div class="flex h-max flex-col">
+  <div class="flex h-max flex-col pt-4">
     {#if imagePreview}
       <!-- Preview Section -->
       <div class="mb-4 flex-1">
@@ -164,12 +186,12 @@
                 icon="mingcute:upload-2-line"
                 class="h-10 w-10 text-gray-500 bg-gray-200 border border-gray-300 rounded-md p-2"
               />
-              <p class="text-gray-500 my-2">Upload a file</p>
+              <p class="text-gray-500 my-2">{uploadLabel}</p>
               <p class="text-gray-800 text-sm">
-                Drag and drop or click to upload
+                {uploadDescription}
               </p>
               <p class="text-gray-800 text-sm">
-                Accepts images and videos up to 50MB
+                {uploadSubDescription}
               </p>
             {/if}
           </div>
@@ -180,7 +202,7 @@
     <!-- Hidden File Input -->
     <input
       type="file"
-      accept="image/*, video/mp4, video/quicktime, video/x-msvideo"
+      accept={acceptedTypes}
       onchange={processImage}
       class="hidden"
       bind:this={fileInput}

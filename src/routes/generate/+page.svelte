@@ -32,7 +32,7 @@
 <div class="mx-auto max-w-xl space-y-8">
   <form method="POST" action="?/generateRizz" use:enhance={handleEnhance}>
     <div class="space-y-6">
-      <ImageInput />
+      <ImageInput collapsible={true} defaultCollapsed={false} />
       <RelationshipContext />
     </div>
 

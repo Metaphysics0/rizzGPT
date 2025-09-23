@@ -3,7 +3,6 @@
   import Icon from "@iconify/svelte";
   import type { Snippet } from "svelte";
   import { slide } from "svelte/transition";
-  // import { TooltipContent, TooltipProvider, TooltipTrigger } from "../tooltip";
 
   interface Props {
     title?: string;
@@ -35,8 +34,22 @@
       onclick={() => (isOpen = !isOpen)}
       class="flex w-full items-center justify-between text-left focus:outline-none rounded-lg p-2 -m-2 cursor-pointer"
     >
-      <h2 class="text-lg font-semibold text-gray-700">
-        {title}
+      <h2 class="text-lg font-semibold text-gray-700 flex items-center gap-2">
+        <span>{title}</span>
+
+        {#if tooltip}
+          <Tooltip.Provider delayDuration={0}>
+            <Tooltip.Root>
+              <Tooltip.Trigger>
+                <Icon icon="mdi:information" class="h-4 w-4 text-gray-500" />
+              </Tooltip.Trigger>
+              <Tooltip.Content>
+                <p>{tooltip}</p>
+              </Tooltip.Content>
+            </Tooltip.Root>
+          </Tooltip.Provider>
+        {/if}
+
         {#if subtitle}
           <span class="text-gray-400">{subtitle}</span>
         {/if}
@@ -57,7 +70,7 @@
   {:else}
     <div class="mb-4 flex items-center justify-between">
       <h2 class="text-lg font-semibold text-gray-700 flex items-center gap-2">
-        <span> {title} </span>
+        <span>{title}</span>
 
         {#if tooltip}
           <Tooltip.Provider delayDuration={0}>
@@ -71,6 +84,7 @@
             </Tooltip.Root>
           </Tooltip.Provider>
         {/if}
+
         {#if subtitle}
           <span class="text-gray-400">{subtitle}</span>
         {/if}
