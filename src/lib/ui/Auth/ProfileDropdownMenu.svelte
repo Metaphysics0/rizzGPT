@@ -29,17 +29,22 @@
   const MENU_ITEMS = [
     {
       label: "Generate Rizz",
-      icon: "mdi:sparkles",
+      icon: "mingcute:ai-fill",
       href: "/generate",
     },
     {
       label: "History",
-      icon: "mdi:history",
+      icon: "mingcute:history-fill",
       href: "/conversations",
     },
     {
+      label: "AI Profile Optimizer",
+      icon: "mingcute:quill-pen-ai-fill",
+      href: "/ai-profile-optimizer",
+    },
+    {
       label: "Account",
-      icon: "mdi:account",
+      icon: "mingcute:user-3-fill",
       href: "/profile",
     },
   ] as const;
