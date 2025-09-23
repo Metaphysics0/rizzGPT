@@ -7,6 +7,6 @@
 </script>
 
 <div class={cn("flex items-center gap-2", className)}>
-  <img src={GooglePlayButton} alt="google-play-store-button" class="h-full" />
-  <img src={AppStoreButton} alt="app-store-button" class="h-full" />
+  <img src={GooglePlayButton} alt="google-play-store-button" class="h-full w-auto" />
+  <img src={AppStoreButton} alt="app-store-button" class="h-full w-auto" />
 </div>
