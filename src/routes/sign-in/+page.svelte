@@ -170,7 +170,5 @@
         <SignInWithGoogleButton {isLoading} {error} />
       </div>
     </form>
-
-    <SocialMediaIcons />
   </div>
 </div>
