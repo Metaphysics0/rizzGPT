@@ -6,7 +6,7 @@
   import Logo from "./Logo.svelte";
   import { onMount } from "svelte";
 
-  const NAV_ITEMS = [
+  const landingPageNavItems = [
     {
       label: "Home",
       href: "#home",
@@ -24,6 +24,13 @@
       href: "#reviews",
     },
   ] as const;
+
+  const signedInNavItems = [
+    {
+      label: "Generate Rizz!",
+      href: "/generate",
+    },
+  ];
 
   let scrolled = $state(false);
 
@@ -49,7 +56,7 @@
 
     {#if !user && page.url.pathname !== "/sign-in"}
       <div class="hidden md:flex gap-10">
-        {#each NAV_ITEMS as { href, label }}
+        {#each landingPageNavItems as { href, label }}
           <a class="hover:text-primary duration-100" {href}>{label}</a>
         {/each}
       </div>
@@ -57,6 +64,11 @@
 
     <div class="flex gap-5 items-center">
       {#if user}
+        <div class="mr-24">
+          {#if page.url.pathname === "/"}
+            <LinkButton label="Generate Rizz!" href="/generate" />
+          {/if}
+        </div>
         <ProfileDropdownMenu {user} />
       {:else}
         <!-- Desktop login link -->

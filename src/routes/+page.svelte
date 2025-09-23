@@ -6,6 +6,10 @@
   import DatingAppsCarousel from "$lib/ui/landing-page/components/DatingAppsCarousel.svelte";
   import HeroSection from "$lib/ui/landing-page/HeroSection.svelte";
   import TryItOut from "$lib/ui/landing-page/TryItOut.svelte";
+  import Pricing from "$lib/ui/landing-page/components/Pricing.svelte";
+  import FAQ from "$lib/ui/landing-page/components/FAQ.svelte";
+  import Footer from "$lib/ui/landing-page/components/Footer.svelte";
+  import TryItForFreeButton from "$lib/ui/landing-page/components/TryItForFreeButton.svelte";
 
   console.log("hello");
 </script>
@@ -15,24 +19,20 @@
 
 <section class="py-20 bg-white">
   <Testimonials />
-  <div class="flex justify-center pt-24 pb-10">
-    <LinkButton label="Try it for free" href="/sign-in" />
-  </div>
+  <TryItForFreeButton className="pt-24 pb-10" />
 </section>
 
 <HowItWorks />
 <StepByStepWalkthrough />
-
-<div class="flex justify-center py-36">
-  <LinkButton label="Try it for free" href="/sign-in" />
-</div>
+<TryItForFreeButton className="py-36" />
 
 <section class="py-16 px-4 bg-gray-50">
   <TryItOut />
 
-  <div class="flex justify-center py-32">
-    <LinkButton label="Try it for free" href="/sign-in" />
-  </div>
+  <TryItForFreeButton className="py-32" />
 </section>
-<!-- <div class="flex justify-center py-36">
-</div> -->
+
+<Pricing />
+<FAQ />
+<TryItForFreeButton className="pb-20" />
+<Footer />
