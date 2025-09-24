@@ -1,5 +1,5 @@
 <script lang="ts">
-  import * as Carousel from "$lib/ui/carousel";
+  import * as Carousel from "$lib/components/carousel";
 
   import BadooLogo from "$lib/assets/dating-app-logos/badoo.svg";
   import BumbleLogo from "$lib/assets/dating-app-logos/bumble.svg";

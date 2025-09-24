@@ -1,6 +1,6 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
-  import * as Dialog from "$lib/ui/dialog/index.js";
+  import * as Dialog from "$lib/components/dialog/index.js";
   import SubscribeToProCard from "./SubscribeToProCard.svelte";
 
   interface Props {

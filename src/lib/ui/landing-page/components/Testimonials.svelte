@@ -1,5 +1,5 @@
 <script lang="ts">
-  import * as Carousel from "$lib/ui/carousel";
+  import * as Carousel from "$lib/components/carousel";
   import Icon from "@iconify/svelte";
 
   const testimonials = [
