@@ -4,7 +4,7 @@
   import { formatRelativeTime } from "$lib/utils/date.util";
   import { truncateText } from "$lib/utils/string/truncate-text.util";
   import Icon from "@iconify/svelte";
-  import * as Dialog from "$lib/ui/dialog";
+  import * as Dialog from "$lib/components/dialog";
   import DeleteConfirmationModal from "../modals/DeleteConfirmationModal.svelte";
 
   let {

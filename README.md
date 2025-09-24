@@ -25,9 +25,10 @@ A web app for generating responses for dating conversations, using modern web te
 
 ## TODO:
 
-1. Block history page for non-paying users
-2. AI Profile Optimizer page (pro only)
-3. Create pricing tiers, reflect in profile dropdown.
+1. Ability to upload matches bio
+2. Block history page for non-paying users
+3. AI Profile Optimizer page (pro only)
+4. Create pricing tiers, reflect in profile dropdown.
 
 - E2E Gumroad subscription flow
 - Refactoring the DB to have a relationship of user.subscriptions, instead of the code duplcation for user & { subscription: Subscription }

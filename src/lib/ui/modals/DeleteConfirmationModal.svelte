@@ -1,5 +1,5 @@
 <script lang="ts">
-  import * as Dialog from "$lib/ui/dialog";
+  import * as Dialog from "$lib/components/dialog";
 
   let {
     showDeleteDialog,
