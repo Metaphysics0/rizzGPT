@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { generateRizzFormStore } from "$lib/stores/form.svelte";
   import { userStore } from "$lib/stores/user.svelte";
   import { mediaCache } from "$lib/stores/image-preview.svelte";
   import { triggerClientFileUpload } from "$lib/utils/file/client-file-upload.util";
@@ -19,6 +18,9 @@
     uploadSubDescription?: string;
     acceptedTypes?: string;
     maxSizeText?: string;
+    onFileUpload: (fileName: string) => void;
+    onFileClear: () => void;
+    isProcessing?: boolean;
   }
 
   let {
@@ -31,7 +33,9 @@
     uploadDescription = "Drag and drop or click to upload",
     uploadSubDescription = "Accepts images and videos up to 50MB",
     acceptedTypes = "image/*, video/mp4, video/quicktime, video/x-msvideo",
-    maxSizeText = "Accepts images and videos up to 50MB",
+    onFileUpload,
+    onFileClear,
+    isProcessing = false,
   }: Props = $props();
 
   let imagePreview = $state<string | null>("");
@@ -43,14 +47,12 @@
 
   async function handleFile(file: File) {
     try {
+      if (!userStore.userId) throw new Error("User not authenticated");
+
       isUploading = true;
       isVideo = file.type.startsWith("video/");
       const previewUrl = URL.createObjectURL(file);
       imagePreview = previewUrl;
-
-      if (!userStore.userId) {
-        throw new Error("User not authenticated");
-      }
 
       const fileName = await triggerClientFileUpload(file, userStore.userId);
       console.log("Uploaded file succesfully: ", fileName);
@@ -58,11 +60,11 @@
       // Cache the uploaded media
       mediaCache.set(fileName, previewUrl, isVideo);
 
-      generateRizzFormStore.setFileName(fileName);
+      onFileUpload(fileName);
     } catch (error) {
       console.error("Failed to upload file:", error);
       imagePreview = null;
-      generateRizzFormStore.setFileName("");
+      onFileUpload?.("");
     } finally {
       isUploading = false;
     }
@@ -99,14 +101,14 @@
   }
 
   function triggerFileInput() {
-    if (!isUploading && !generateRizzFormStore.isGenerating) {
+    if (!isUploading && !isProcessing) {
       fileInput?.click();
     }
   }
 
   function clearImage() {
     imagePreview = null;
-    generateRizzFormStore.setFileName("");
+    onFileClear?.();
 
     if (fileInput) {
       fileInput.value = "";
@@ -159,7 +161,7 @@
           class="
             group flex h-full min-h-[200px] flex-col items-center justify-center rounded-xl
             border-2 border-dashed transition-all duration-200 py-5 bg-gray-100
-            {isUploading || generateRizzFormStore.isGenerating
+            {isUploading || isProcessing
             ? 'cursor-not-allowed opacity-50'
             : 'cursor-pointer'}
             {isDragOver
@@ -206,7 +208,7 @@
       onchange={processImage}
       class="hidden"
       bind:this={fileInput}
-      disabled={generateRizzFormStore.isGenerating || isUploading}
+      disabled={isProcessing || isUploading}
     />
   </div>
 </FormStep>
