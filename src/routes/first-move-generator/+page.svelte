@@ -7,6 +7,7 @@
   import RelationshipContext from "$lib/ui/form/RelationshipContext.svelte";
   import type { SubmitFunction } from "@sveltejs/kit";
   import Dropzone from "$lib/ui/form/Dropzone.svelte";
+  import NewDropzone from "$lib/ui/form/NewDropzone.svelte";
 
   const handleEnhance: SubmitFunction = ({ formData }) => {
     firstMoveGeneratorFormStore.setFormData(formData);
@@ -45,7 +46,8 @@
         onFileClear={() => firstMoveGeneratorFormStore.clearAllImages()}
         isProcessing={firstMoveGeneratorFormStore.isGenerating}
       /> -->
-      <Dropzone />
+      <NewDropzone />
+      <!-- <Dropzone /> -->
       <RelationshipContext
         title="Match Context"
         subtitle="(optional)"
