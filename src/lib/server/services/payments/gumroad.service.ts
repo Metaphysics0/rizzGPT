@@ -11,14 +11,20 @@ export class GumroadService {
     }
   }
 
-  async getAllActiveSubscribers() {
+  async getAllActiveSubscribers(): Promise<GumroadSubscribersResponse> {
     try {
-      const endpoint = this.createEndpoint(`${GUMROAD_PRODUCT_ID}/subscribers`);
+      const endpoint = this.createEndpoint(
+        `products/${GUMROAD_PRODUCT_ID}/subscribers`
+      );
       const response = await fetch(endpoint);
       const data = await response.json();
+      if (!data || !data.success) {
+        throw new Error("Subscribers response failed");
+      }
       return data as GumroadSubscribersResponse;
     } catch (error) {
       console.error(`Gumroad service failed ${error}`);
+      return { success: false, subscribers: [] };
     }
   }
 
