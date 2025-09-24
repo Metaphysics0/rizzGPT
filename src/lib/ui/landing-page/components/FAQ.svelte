@@ -1,8 +1,9 @@
 <script lang="ts">
-  import * as Accordion from "$lib/ui/accordion";
+  import * as Accordion from "$lib/components/accordion";
 
   const accordionUiContent = [
     {
+      value: "how_does_rizzgpt_work",
       title: "How does RizzGPT work?",
       content: `
             RizzGPT leverages state-of-the-art AI to analyze screenshots of dating
@@ -12,6 +13,7 @@
             `,
     },
     {
+      value: "what_kind_of_results_can_i_expect",
       title: "What kind of results can I expect with RizzGPT?",
       content: `
             Our users consistently report a significant increase in matches,
@@ -21,6 +23,7 @@
             `,
     },
     {
+      value: "can_i_use_rizzgpt_for_any_dating_app",
       title: "Can I use RizzGPT for any dating app or platform?",
       content: `
             Absolutely! RizzGPT's flexibility is its strength. Since it works by
@@ -30,6 +33,7 @@
             `,
     },
     {
+      value: "is_my_data_safe",
       title: "Is my data safe?",
       content: `
             Your privacy is our top priority. We do not store, sell, or share
@@ -39,6 +43,7 @@
             `,
     },
     {
+      value: "will_the_recipient_find_out_im_using_ai",
       title: "Will the recipient find out I'm using AI?",
       content: `
             Not at all! RizzGPT is designed to generate natural, human-sounding
@@ -48,6 +53,7 @@
             `,
     },
     {
+      value: "does_it_work_on_text_or_images",
       title: "Does it work on text or images?",
       content: `
             RizzGPT excels with both! Our AI can read and understand text from
@@ -56,7 +62,7 @@
             opener.
             `,
     },
-  ];
+  ] as const;
 </script>
 
 <!-- FAQs Section -->
@@ -74,6 +80,7 @@
     >
       {#each accordionUiContent as item, index}
         <Accordion.Item
+          value={item.value}
           class={index === accordionUiContent.length - 1
             ? "border-gray-200 border-b-0"
             : "border-gray-200"}

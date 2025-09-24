@@ -1,5 +1,5 @@
 <script lang="ts">
-  import * as Tooltip from "$lib/components/tooltip/index";
+  import * as Tooltip from "$lib/components/tooltip";
   import Icon from "@iconify/svelte";
   import type { Snippet } from "svelte";
   import { slide } from "svelte/transition";
@@ -38,7 +38,7 @@
         <span>{title}</span>
 
         {#if tooltip}
-          <!-- <Tooltip.Provider delayDuration={0}>
+          <Tooltip.Provider delayDuration={0}>
             <Tooltip.Root>
               <Tooltip.Trigger>
                 <Icon icon="mdi:information" class="h-4 w-4 text-gray-500" />
@@ -47,7 +47,7 @@
                 <p>{tooltip}</p>
               </Tooltip.Content>
             </Tooltip.Root>
-          </Tooltip.Provider> -->
+          </Tooltip.Provider>
         {/if}
 
         {#if subtitle}

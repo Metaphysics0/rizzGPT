@@ -25,6 +25,8 @@ A web app for generating responses for dating conversations, using modern web te
 
 ## TODO:
 
+Fix the shadcn bug
+
 1. Ability to upload matches bio
 2. Block history page for non-paying users
 3. AI Profile Optimizer page (pro only)

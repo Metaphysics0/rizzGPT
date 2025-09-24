@@ -27,7 +27,7 @@
     "@types/node": "^24.0.10",
     "@typescript-eslint/eslint-plugin": "^8.25.0",
     "@typescript-eslint/parser": "^8.25.0",
-    "bits-ui": "^2.11.0",
+    "bits-ui": "^2.11.2",
     "clsx": "^2.1.1",
     "drizzle-kit": "^0.31.4",
     "embla-carousel-svelte": "^8.6.0",

@@ -30,6 +30,6 @@
 </section>
 
 <Pricing />
-<!-- <FAQ /> -->
+<FAQ />
 <TryItForFreeButton className="pb-20" />
 <Footer />
