@@ -39,7 +39,11 @@
         onFileClear={() => generateRizzFormStore.setFileName("")}
         isProcessing={generateRizzFormStore.isGenerating}
       />
-      <RelationshipContext />
+      <RelationshipContext
+        value={generateRizzFormStore.form.relationshipContext}
+        onUpdate={(context) => generateRizzFormStore.updateRelationshipContext(context)}
+        showDuration={true}
+      />
     </div>
 
     <div class="flex justify-center pt-4">

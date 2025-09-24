@@ -1,10 +1,28 @@
 <script lang="ts">
   import { relationshipObjectives } from "$lib/constants/relationship-objectives.constant";
-  import { generateRizzFormStore } from "$lib/stores/response-helper-form.svelte";
-
-  const { form } = generateRizzFormStore;
-
+  import type { RelationshipContext } from "$lib/types";
   import FormStep from "./FormStep.svelte";
+  import DurationSlider from "./relationship-context/DurationSlider.svelte";
+
+  interface Props {
+    title?: string;
+    subtitle?: string;
+    collapsible?: boolean;
+    defaultCollapsed?: boolean;
+    value: Partial<RelationshipContext>;
+    onUpdate: (context: Partial<RelationshipContext>) => void;
+    showDuration?: boolean;
+  }
+
+  let {
+    title = "Additional Context",
+    subtitle = "(optional)",
+    collapsible = true,
+    defaultCollapsed = true,
+    value,
+    onUpdate,
+    showDuration = true,
+  }: Props = $props();
 
   function getDurationLabel(duration: number): string {
     if (duration === 0) return "Just started talking";
@@ -13,48 +31,26 @@
     if (duration <= 75) return "Getting to know each other";
     return "Long established conversation";
   }
+
+  function updateDuration(duration: number) {
+    onUpdate({ duration });
+  }
+
+  function updateObjective(objective: string) {
+    onUpdate({ objective });
+  }
+
+  function updateNotes(notes: string) {
+    onUpdate({ notes });
+  }
 </script>
 
-<FormStep
-  title="Additional Context"
-  subtitle="(optional)"
-  collapsible={true}
-  defaultCollapsed={true}
->
+<FormStep {title} {subtitle} {collapsible} {defaultCollapsed}>
   <div class="space-y-6">
     <!-- Duration of Communication -->
-    <div class="mt-4">
-      <label
-        class="mb-3 block text-sm font-medium text-gray-700"
-        for="duration"
-      >
-        Duration of communication
-      </label>
-
-      <div class="relative">
-        <input
-          id="duration"
-          type="range"
-          min="0"
-          max="100"
-          step="1"
-          bind:value={form.relationshipContext.duration}
-          class="
-            h-2 w-full cursor-pointer appearance-none rounded-lg
-            bg-gray-200 accent-purple-500
-          "
-        />
-
-        <!-- Slider Labels -->
-        <div class="mt-2 flex justify-between text-xs text-gray-500">
-          <span class="text-left">Just started talking</span>
-          <span class="text-center font-medium text-pink-500"
-            >{getDurationLabel(form.relationshipContext.duration)}</span
-          >
-          <span class="text-right">Long established</span>
-        </div>
-      </div>
-    </div>
+    {#if showDuration}
+      <DurationSlider value={value.duration!} {onUpdate} />
+    {/if}
 
     <!-- Relationship Objective -->
     <div>
@@ -71,7 +67,7 @@
               group relative flex cursor-pointer items-center gap-3 rounded-xl border-2
               border-gray-200 bg-white p-4 text-sm transition-all duration-200
               hover:scale-105 hover:border-gray-300 hover:shadow-md
-              {form.relationshipContext.objective === objective.id
+              {value.objective === objective.id
               ? 'border-purple-400 bg-purple-50 ring-2 shadow-lg ring-purple-200'
               : ''}
             "
@@ -80,7 +76,8 @@
               type="radio"
               name="objective"
               value={objective.id}
-              bind:group={form.relationshipContext.objective}
+              checked={value.objective === objective.id}
+              onchange={() => updateObjective(objective.id)}
               class="sr-only"
             />
             <div
@@ -103,7 +100,8 @@
       </label>
       <textarea
         id="notes"
-        bind:value={form.relationshipContext.notes}
+        value={value.notes}
+        oninput={(e) => updateNotes((e.target as HTMLTextAreaElement).value)}
         placeholder="Add any additional context about your conversation, their personality, shared interests, or what kind of vibe you're going for..."
         class="
           w-full rounded-xl border-2 border-gray-200

@@ -1,13 +1,32 @@
 <script lang="ts">
   import { applyAction, enhance } from "$app/forms";
   import { goto } from "$app/navigation";
-  import { generateRizzFormStore } from "$lib/stores/response-helper-form.svelte";
+  import { firstMoveGeneratorFormStore } from "$lib/stores/first-move-generator-form.svelte";
   import GenerateResponseButton from "$lib/ui/form/SubmitFormButton.svelte";
   import ImageInput from "$lib/ui/form/ImageInput.svelte";
   import RelationshipContext from "$lib/ui/form/RelationshipContext.svelte";
   import type { SubmitFunction } from "@sveltejs/kit";
 
-  const handleEnhance: SubmitFunction = ({ formData }) => {};
+  const handleEnhance: SubmitFunction = ({ formData }) => {
+    firstMoveGeneratorFormStore.setFormData(formData);
+    firstMoveGeneratorFormStore.setGenerating(true);
+    return async ({ result }) => {
+      firstMoveGeneratorFormStore.setGenerating(false);
+      if (result.type === "redirect") {
+        goto(result.location);
+        return;
+      }
+      if (result.type === "failure") {
+        const errorMessage =
+          typeof result.data?.error === "string"
+            ? result.data.error
+            : "Generation failed";
+        firstMoveGeneratorFormStore.setError(errorMessage);
+        return;
+      }
+      await applyAction(result);
+    };
+  };
 </script>
 
 <div class="mx-auto max-w-xl space-y-8">
@@ -16,25 +35,40 @@
       <ImageInput
         title="Profile Analysis"
         tooltip="Upload screenshots of their profile, bio, or photos for AI analysis"
+        uploadDescription="Drag and drop or click to upload profile images"
+        uploadSubDescription="Upload up to 5 images for better analysis"
         collapsible={true}
         defaultCollapsed={false}
-        onFileUpload={(fileName) => generateRizzFormStore.setFileName(fileName)}
-        onFileClear={() => generateRizzFormStore.setFileName("")}
-        isProcessing={generateRizzFormStore.isGenerating}
+        multiple={true}
+        maxFiles={5}
+        currentFiles={firstMoveGeneratorFormStore.form.imageFileNames}
+        onFileUpload={(fileName) =>
+          firstMoveGeneratorFormStore.addImageFileName(fileName)}
+        onFileClear={() => firstMoveGeneratorFormStore.clearAllImages()}
+        onFileRemove={(fileName) =>
+          firstMoveGeneratorFormStore.removeImageFileName(fileName)}
+        isProcessing={firstMoveGeneratorFormStore.isGenerating}
       />
-      <RelationshipContext />
+      <RelationshipContext
+        title="Match Context"
+        subtitle="(optional)"
+        value={firstMoveGeneratorFormStore.form.relationshipContext}
+        onUpdate={(context) =>
+          firstMoveGeneratorFormStore.updateRelationshipContext(context)}
+        showDuration={false}
+      />
     </div>
 
     <div class="flex justify-center pt-4">
-      <GenerateResponseButton text="Generate Rizz" />
+      <GenerateResponseButton text="Generate!" />
     </div>
   </form>
 
-  {#if generateRizzFormStore.error}
+  {#if firstMoveGeneratorFormStore.error}
     <div class="rounded-xl border border-red-200 bg-red-50 p-4">
       <div class="flex items-center gap-2 text-red-800">
         <span class="font-medium">Error:</span>
-        <span>{generateRizzFormStore.error}</span>
+        <span>{firstMoveGeneratorFormStore.error}</span>
       </div>
     </div>
   {/if}
