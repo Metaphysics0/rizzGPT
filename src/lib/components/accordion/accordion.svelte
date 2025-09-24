@@ -6,7 +6,6 @@
     value = $bindable(),
     ...restProps
   }: AccordionPrimitive.RootProps = $props();
-  console.log("REST PROPS", restProps);
 </script>
 
 <AccordionPrimitive.Root
