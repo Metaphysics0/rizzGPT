@@ -3,6 +3,7 @@
   import Icon from "@iconify/svelte";
   import type { Snippet } from "svelte";
   import { slide } from "svelte/transition";
+  import InfoTooltip from "../general/InfoTooltip.svelte";
 
   interface Props {
     title?: string;
@@ -29,8 +30,12 @@
 
 <div class="rounded-2xl bg-white/70 p-6 shadow">
   {#if collapsible}
-    <button
-      type="button"
+    <div
+      role="button"
+      tabindex="0"
+      aria-label="View conversation"
+      onkeydown={() => {}}
+      aria-keyshortcuts="enter"
       onclick={() => (isOpen = !isOpen)}
       class="flex w-full items-center justify-between text-left focus:outline-none rounded-lg p-2 -m-2 cursor-pointer"
     >
@@ -38,16 +43,7 @@
         <span>{title}</span>
 
         {#if tooltip}
-          <Tooltip.Provider delayDuration={0}>
-            <Tooltip.Root>
-              <Tooltip.Trigger>
-                <Icon icon="mdi:information" class="h-4 w-4 text-gray-500" />
-              </Tooltip.Trigger>
-              <Tooltip.Content>
-                <p>{tooltip}</p>
-              </Tooltip.Content>
-            </Tooltip.Root>
-          </Tooltip.Provider>
+          <InfoTooltip content={tooltip} />
         {/if}
 
         {#if subtitle}
@@ -60,7 +56,7 @@
           ? 'rotate-180'
           : ''}"
       />
-    </button>
+    </div>
 
     {#if isOpen}
       <div transition:slide={{ duration: 300 }}>
