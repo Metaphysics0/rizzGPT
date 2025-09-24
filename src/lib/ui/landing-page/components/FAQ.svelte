@@ -88,10 +88,10 @@
           <Accordion.Trigger
             class="text-xl font-semibold text-gray-900 px-8 py-6 hover:bg-gray-50"
           >
-            {item.title}
+            <span> {item.title} </span>
           </Accordion.Trigger>
           <Accordion.Content class="px-8 pb-6 text-gray-600">
-            {item.content.trim()}
+            <div>{item.content.trim()}</div>
           </Accordion.Content>
         </Accordion.Item>
       {/each}
