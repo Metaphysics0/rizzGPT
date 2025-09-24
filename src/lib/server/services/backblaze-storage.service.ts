@@ -29,42 +29,6 @@ class BackblazeStorageService {
     });
   }
 
-  private async getAuthorizationToken(): Promise<string> {
-    try {
-      const response = await fetch(
-        `${this.PUBLIC_API_URL}/b2_authorize_account`,
-        {
-          headers: {
-            Authorization: `Basic ${Buffer.from(
-              `${BACKBLAZE_APPLICATION_ID}:${BACKBLAZE_APPLICATION_KEY}`
-            ).toString("base64")}`,
-          },
-        }
-      );
-
-      const data = await response.json();
-      return data.authorizationToken as string;
-    } catch (e) {
-      console.error("Backblaze - Failed getting authorization token");
-      throw new Error("Failed generating backblaze auth api token");
-    }
-  }
-
-  private async makeAuthorizedApiRequest({
-    token,
-    endpoint,
-  }: {
-    token: string;
-    endpoint: string;
-  }) {
-    const response = await fetch(
-      `${this.BASE_API_URL}/${endpoint}?bucketId=${BACKBLAZE_BUCKET_ID}`,
-      { headers: { Authorization: token } }
-    );
-
-    return response.json();
-  }
-
   async getSignedDownloadUrl(
     fileName: string,
     validDurationInSeconds: number = 86400 // 24 hours since images never change
@@ -130,6 +94,70 @@ class BackblazeStorageService {
       console.error("Failed to download file from storage:", error);
       throw new Error("Failed to download file from storage");
     }
+  }
+
+  // mainly for server side uploads
+  async uploadFile({ file, userId }: { file: File; userId: string }) {
+    const { authorizationToken, uploadUrl } = await this.getClientUploadUrl();
+
+    const fileContent = await file.arrayBuffer();
+    const hashBuffer = await crypto.subtle.digest("SHA-1", fileContent);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const fileHash = hashArray
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
+
+    const extension = file.name.split(".").pop() || "bin";
+    const filePath = `uploads/${userId}/${crypto.randomUUID()}.${extension}`;
+
+    const uploadResponse = await fetch(uploadUrl, {
+      method: "POST",
+      mode: "cors",
+      body: fileContent,
+      headers: {
+        "Content-Type": "b2/x-auto",
+        Authorization: authorizationToken,
+        "X-Bz-File-Name": encodeURIComponent(filePath),
+        "X-Bz-Content-Sha1": fileHash,
+      },
+    });
+    return uploadResponse.json();
+  }
+
+  private async getAuthorizationToken(): Promise<string> {
+    try {
+      const response = await fetch(
+        `${this.PUBLIC_API_URL}/b2_authorize_account`,
+        {
+          headers: {
+            Authorization: `Basic ${Buffer.from(
+              `${BACKBLAZE_APPLICATION_ID}:${BACKBLAZE_APPLICATION_KEY}`
+            ).toString("base64")}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+      return data.authorizationToken as string;
+    } catch (e) {
+      console.error("Backblaze - Failed getting authorization token");
+      throw new Error("Failed generating backblaze auth api token");
+    }
+  }
+
+  private async makeAuthorizedApiRequest({
+    token,
+    endpoint,
+  }: {
+    token: string;
+    endpoint: string;
+  }) {
+    const response = await fetch(
+      `${this.BASE_API_URL}/${endpoint}?bucketId=${BACKBLAZE_BUCKET_ID}`,
+      { headers: { Authorization: token } }
+    );
+
+    return response.json();
   }
 
   private cleanExpiredCache(): void {
