@@ -1,7 +1,8 @@
 <script lang="ts">
-  import { generateRizzFormStore } from "$lib/stores/form.svelte";
-
+  import { generateRizzFormStore } from "$lib/stores/response-helper-form.svelte";
   const canGenerateResponse = $derived(generateRizzFormStore.canGenerate);
+
+  let { text }: { text: string } = $props();
 </script>
 
 <button
@@ -22,6 +23,6 @@
       Starting...
     </span>
   {:else}
-    Generate Rizz
+    {text}
   {/if}
 </button>

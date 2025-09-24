@@ -1,6 +1,6 @@
 <script lang="ts">
   import { relationshipObjectives } from "$lib/constants/relationship-objectives.constant";
-  import { generateRizzFormStore } from "$lib/stores/form.svelte";
+  import { generateRizzFormStore } from "$lib/stores/response-helper-form.svelte";
 
   const { form } = generateRizzFormStore;
 

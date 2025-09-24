@@ -3,8 +3,28 @@ export async function triggerClientFileUpload(
   userId: string
 ): Promise<string> {
   const { authorizationToken, uploadUrl } = await getClientUploadUrl();
-  const { fileContent, fileHash } = await getFileContentToUpload(file);
+  const uploadResult = await uploadFileToBackblaze({
+    uploadUrl,
+    authorizationToken,
+    file,
+    userId,
+  });
 
+  return uploadResult.fileName;
+}
+
+async function uploadFileToBackblaze({
+  uploadUrl,
+  authorizationToken,
+  file,
+  userId,
+}: {
+  uploadUrl: string;
+  authorizationToken: string;
+  file: File;
+  userId: string;
+}) {
+  const { fileContent, fileHash } = await getFileContentToUpload(file);
   const uploadResponse = await fetch(uploadUrl, {
     method: "POST",
     mode: "cors",
@@ -16,14 +36,12 @@ export async function triggerClientFileUpload(
       "X-Bz-Content-Sha1": fileHash,
     },
   });
-
   const uploadResult = await uploadResponse.json();
 
   if (!uploadResponse.ok) {
     throw new Error(`Upload failed: ${uploadResponse.statusText}`);
   }
-
-  return uploadResult.fileName;
+  return uploadResult;
 }
 
 async function getClientUploadUrl(): Promise<{

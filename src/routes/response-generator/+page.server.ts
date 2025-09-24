@@ -10,7 +10,6 @@ export const actions = {
       if (!locals.user) return fail(401, { error: "Unauthorized" });
 
       const formData = await request.formData();
-      console.log("FORM DATA", JSON.stringify(Object.fromEntries(formData)));
 
       const fileName = formData.get("fileName") as string;
       if (!fileName) return fail(400, { error: "File upload missing" });

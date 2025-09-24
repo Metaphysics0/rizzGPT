@@ -28,9 +28,14 @@
 
   const MENU_ITEMS = [
     {
-      label: "Generate Rizz",
-      icon: "mingcute:ai-fill",
-      href: "/generate",
+      label: "First Move Generator",
+      icon: "mingcute:hand-heart-fill",
+      href: "/first-move-generator",
+    },
+    {
+      label: "Response Helper",
+      icon: "ri:chat-ai-fill",
+      href: "/response-generator",
     },
     {
       label: "History",
