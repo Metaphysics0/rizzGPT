@@ -6,6 +6,7 @@
   import ImageInput from "$lib/ui/form/ImageInput.svelte";
   import RelationshipContext from "$lib/ui/form/RelationshipContext.svelte";
   import type { SubmitFunction } from "@sveltejs/kit";
+  import Dropzone from "$lib/ui/form/Dropzone.svelte";
 
   const handleEnhance: SubmitFunction = ({ formData }) => {
     firstMoveGeneratorFormStore.setFormData(formData);
@@ -32,23 +33,19 @@
 <div class="mx-auto max-w-xl space-y-8">
   <form method="POST" action="?/generateFirstMove" use:enhance={handleEnhance}>
     <div class="space-y-6">
-      <ImageInput
+      <!-- <ImageInput
         title="Profile Analysis"
         tooltip="Upload screenshots of their profile, bio, or photos for AI analysis"
         uploadDescription="Drag and drop or click to upload profile images"
         uploadSubDescription="Upload up to 5 images for better analysis"
         collapsible={true}
         defaultCollapsed={false}
-        multiple={true}
-        maxFiles={5}
-        currentFiles={firstMoveGeneratorFormStore.form.imageFileNames}
         onFileUpload={(fileName) =>
           firstMoveGeneratorFormStore.addImageFileName(fileName)}
         onFileClear={() => firstMoveGeneratorFormStore.clearAllImages()}
-        onFileRemove={(fileName) =>
-          firstMoveGeneratorFormStore.removeImageFileName(fileName)}
         isProcessing={firstMoveGeneratorFormStore.isGenerating}
-      />
+      /> -->
+      <Dropzone />
       <RelationshipContext
         title="Match Context"
         subtitle="(optional)"

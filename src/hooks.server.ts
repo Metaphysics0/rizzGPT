@@ -46,6 +46,7 @@ function isProtectedRoute(pathname: string) {
     "/settings",
     "/response-generator",
     "/optimizer",
+    "/api",
   ];
   return protectedRoutes.some((route) => pathname.startsWith(route));
 }

@@ -3,6 +3,7 @@ export async function triggerClientFileUpload(
   userId: string
 ): Promise<string> {
   const { authorizationToken, uploadUrl } = await getClientUploadUrl();
+
   const uploadResult = await uploadFileToBackblaze({
     uploadUrl,
     authorizationToken,
