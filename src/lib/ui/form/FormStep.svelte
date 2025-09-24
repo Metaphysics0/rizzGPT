@@ -6,7 +6,7 @@
   import InfoTooltip from "../general/InfoTooltip.svelte";
 
   interface Props {
-    title?: string;
+    title: string;
     subtitle?: string;
     tooltip?: string;
     collapsible?: boolean;
