@@ -1,8 +1,9 @@
 <script lang="ts">
-  import { responseHelperForm } from "$lib/stores/response-helper-form.svelte";
-
-  let { text, disabled = false }: { text: string; disabled?: boolean } =
-    $props();
+  let {
+    text,
+    disabled = false,
+    isLoading,
+  }: { text: string; disabled?: boolean; isLoading?: boolean } = $props();
 </script>
 
 <button
@@ -15,7 +16,7 @@
           disabled:transform-none disabled:cursor-not-allowed disabled:opacity-50
         "
 >
-  {#if responseHelperForm.isGenerating}
+  {#if isLoading}
     <span class="flex items-center gap-2">
       <div
         class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"

@@ -9,9 +9,9 @@
 
   const handleEnhance: SubmitFunction = ({ formData }) => {
     firstMoveGeneratorFormStore.setFormData(formData);
-    firstMoveGeneratorFormStore.setGenerating(true);
+    firstMoveGeneratorFormStore.isGenerating = true;
     return async ({ result }) => {
-      firstMoveGeneratorFormStore.setGenerating(false);
+      firstMoveGeneratorFormStore.isGenerating = false;
       if (result.type === "redirect") {
         goto(result.location);
         return;
@@ -21,7 +21,7 @@
           typeof result.data?.error === "string"
             ? result.data.error
             : "Generation failed";
-        firstMoveGeneratorFormStore.setError(errorMessage);
+        firstMoveGeneratorFormStore.error = errorMessage;
         return;
       }
       await applyAction(result);
