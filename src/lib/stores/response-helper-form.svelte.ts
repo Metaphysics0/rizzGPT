@@ -2,7 +2,7 @@ import { applyAction } from "$app/forms";
 import { goto } from "$app/navigation";
 import type { SubmitFunction } from "@sveltejs/kit";
 
-class ResponseHelperFormStore {
+class ResponseHelperForm {
   public form = $state({
     relationshipContext: { duration: 0, objective: "", notes: "" },
     fileName: "",
@@ -39,4 +39,4 @@ class ResponseHelperFormStore {
   }
 }
 
-export const responseHelperForm = new ResponseHelperFormStore();
+export const responseHelperForm = new ResponseHelperForm();
