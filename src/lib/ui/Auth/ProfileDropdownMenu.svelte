@@ -9,15 +9,7 @@
   } from "$lib/utils/user/user-info.util";
   import { authClient } from "$lib/auth-client";
   import { goto } from "$app/navigation";
-  import { userStore } from "$lib/stores/user.svelte";
-  import type { UserWithRelations } from "$lib/server/database/types";
   let isDropdownOpen = $state(false);
-
-  interface Props {
-    user: UserWithRelations;
-  }
-
-  let { user }: Props = $props();
 
   function handleClickOutside(event: MouseEvent) {
     const target = event.target as Element;
@@ -60,7 +52,6 @@
         onSuccess: () => {
           goto("/");
           isDropdownOpen = false;
-          userStore.user = null;
         },
       },
     });
@@ -74,6 +65,8 @@
       };
     }
   });
+
+  const user = page.data.user;
 </script>
 
 {#if user}

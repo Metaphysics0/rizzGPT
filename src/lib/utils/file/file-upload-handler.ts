@@ -1,4 +1,3 @@
-import { userStore } from "$lib/stores/user.svelte";
 import { mediaCache } from "$lib/stores/image-preview.svelte";
 import { triggerClientFileUpload } from "./client-file-upload.util";
 
@@ -14,20 +13,19 @@ export type UploadedFile = {
 export class FileUploadHandler {
   private onFileUploaded: (fileName: string) => void;
   private onFileUploadError: (error: string) => void;
+  private userId: string;
 
-  constructor(options: {
+  constructor(params: {
     onFileUploaded: (fileName: string) => void;
     onFileUploadError: (error: string) => void;
+    userId: string;
   }) {
-    this.onFileUploaded = options.onFileUploaded;
-    this.onFileUploadError = options.onFileUploadError;
+    this.onFileUploaded = params.onFileUploaded;
+    this.onFileUploadError = params.onFileUploadError;
+    this.userId = params.userId;
   }
 
   async uploadFile(file: File): Promise<UploadedFile> {
-    if (!userStore.user) {
-      throw new Error("User not authenticated");
-    }
-
     const previewUrl = URL.createObjectURL(file);
     const isVideo = file.type.startsWith("video/");
 
@@ -60,10 +58,7 @@ export class FileUploadHandler {
     isVideo: boolean
   ): Promise<{ previewUrl: string; fileName: string }> {
     try {
-      if (!userStore.user) {
-        throw new Error("No user, unable to perform upload");
-      }
-      const fileName = await triggerClientFileUpload(file, userStore.user.id);
+      const fileName = await triggerClientFileUpload(file, this.userId);
 
       // Cache the uploaded media
       mediaCache.set(fileName, previewUrl, isVideo);

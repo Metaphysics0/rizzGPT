@@ -2,7 +2,6 @@ import { type Handle } from "@sveltejs/kit";
 import { svelteKitHandler } from "better-auth/svelte-kit";
 import { building } from "$app/environment";
 import { auth } from "$lib/server/auth";
-import { actions } from "$lib/server/services/db-actions.service";
 
 export const handle: Handle = async ({ event, resolve }) => {
   try {
@@ -24,7 +23,7 @@ export const handle: Handle = async ({ event, resolve }) => {
     // Make session and user available on server
     if (session) {
       event.locals.session = session.session;
-      event.locals.user = await actions.getUserWithRelations(session.user.id);
+      event.locals.user = session.user;
     }
 
     return svelteKitHandler({ event, resolve, auth, building });
