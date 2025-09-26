@@ -1,4 +1,5 @@
 import { backblazeStorageService } from "./backblaze-storage.service";
+import ffmpegInstaller from "@ffmpeg-installer/ffmpeg";
 import ffmpeg from "fluent-ffmpeg";
 import { writeFile, unlink, mkdir, readFile } from "fs/promises";
 import { join } from "path";
@@ -116,6 +117,7 @@ export class ImageCombinerService {
       console.log(`[ImageCombinerService] Using filter: ${hstackFilter}`);
 
       // Create fluent-ffmpeg command
+      ffmpeg.setFfmpegPath(ffmpegInstaller.path);
       let command = ffmpeg();
 
       // Add all input files
