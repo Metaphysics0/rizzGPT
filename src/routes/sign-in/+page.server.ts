@@ -38,7 +38,7 @@ export const actions: Actions = {
       });
 
       // If sign-in is successful, redirect to generate page
-      if (result) throw redirect(302, "/response-generator");
+      if (result) throw redirect(302, "/response-helper");
 
       return result;
     } catch (error) {

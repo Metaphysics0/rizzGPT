@@ -27,6 +27,7 @@ A web app for generating responses for dating conversations, using modern web te
 
 1. Localization! Add language selector + init project in user's device language.
 2. AI Profile Optimizer page (pro only)
+3. Fix UI flicker when not signed
 
 - E2E Gumroad subscription flow
 - Refactoring the DB to have a relationship of user.subscriptions, instead of the code duplcation for user & { subscription: Subscription }
