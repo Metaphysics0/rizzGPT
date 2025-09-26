@@ -11,7 +11,7 @@
     FileUploadHandler,
     type UploadedFile,
   } from "$lib/utils/file/file-upload-handler";
-  import { firstMoveGeneratorFormStore } from "$lib/stores/first-move-generator-form.svelte";
+  import { firstMoveGeneratorForm } from "$lib/stores/first-move-generator-form.svelte";
   import XIcon from "@lucide/svelte/icons/x";
   import { onDestroy } from "svelte";
   import { SvelteDate } from "svelte/reactivity";
@@ -53,7 +53,7 @@
       if (onFileUpload) {
         onFileUpload(fileName);
       } else {
-        firstMoveGeneratorFormStore.addImageFileName(fileName);
+        firstMoveGeneratorForm.addImageFileName(fileName);
       }
     },
     onFileUploadError: (error) => {
@@ -99,7 +99,7 @@
         if (onFileClear) {
           onFileClear();
         } else {
-          firstMoveGeneratorFormStore.removeImageFileName(file.fileName);
+          firstMoveGeneratorForm.removeImageFileName(file.fileName);
         }
       }
 
@@ -132,20 +132,14 @@
   });
 </script>
 
-<FormStep
-  {title}
-  {subtitle}
-  {tooltip}
-  {collapsible}
-  {defaultCollapsed}
->
+<FormStep {title} {subtitle} {tooltip} {collapsible} {defaultCollapsed}>
   <div class="flex w-full flex-col gap-2 p-6">
     <FileDropZone
       {onUpload}
       {onFileRejected}
-      maxFileSize={maxFileSize}
-      accept={accept}
-      maxFiles={maxFiles}
+      {maxFileSize}
+      {accept}
+      {maxFiles}
       fileCount={files.length}
       disabled={uploading || isProcessing}
     />

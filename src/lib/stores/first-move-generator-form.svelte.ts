@@ -1,23 +1,34 @@
-import type { GeneratedResponse, RelationshipContext } from "$lib/types";
+import { applyAction } from "$app/forms";
+import { goto } from "$app/navigation";
+import type { SubmitFunction } from "@sveltejs/kit";
 
-const DEFAULT_FORM = {
-  relationshipContext: {
-    objective: "",
-    notes: "",
-  },
-  imageFileNames: [] as string[],
-};
-
-class FirstMoveGeneratorFormStore {
-  public form = $state({ ...DEFAULT_FORM });
-  public isGenerating = $state(false);
-  public error = $state<string | null>(null);
-  public generatedResponse = $state<GeneratedResponse | null>(null);
-
+class FirstMoveGeneratorForm {
+  public form = $state({
+    relationshipContext: { objective: "", notes: "" },
+    imageFileNames: [] as string[],
+  });
+  public response = $state({ loading: false, error: "" });
   public canGenerate = $derived(
-    () => this.form.imageFileNames.length > 0 && !this.isGenerating
+    this.form.imageFileNames.length > 0 && !this.response?.loading
   );
-  public hasMaxImages = $derived(() => this.form.imageFileNames.length >= 5);
+
+  public handleEnhance: SubmitFunction = async ({ formData }) => {
+    this.setFormData(formData);
+    this.response.loading = true;
+    return async ({ result }) => {
+      this.response.loading = false;
+      if (result.type === "redirect") {
+        goto(result.location);
+        return;
+      }
+      if (result.type === "failure") {
+        console.error("Generation failed", result.data);
+        firstMoveGeneratorForm.response.error = "Generation Failed";
+        return;
+      }
+      await applyAction(result);
+    };
+  };
 
   addImageFileName(fileName: string) {
     if (this.form.imageFileNames.length < 5) {
@@ -32,29 +43,15 @@ class FirstMoveGeneratorFormStore {
     }
   }
 
-  clearAllImages() {
-    this.form.imageFileNames = [];
-  }
-
-  updateRelationshipContext(
-    context: Partial<Omit<RelationshipContext, "duration">>
-  ) {
-    Object.assign(this.form.relationshipContext, context);
-  }
-
-  reset() {
-    this.form = { ...DEFAULT_FORM };
-    this.error = null;
-    this.generatedResponse = null;
-  }
-
-  setFormData(formData: FormData) {
+  private setFormData(formData: FormData) {
     this.form.imageFileNames.forEach((fileName) => {
       formData.append("imageFileNames", fileName);
     });
-    formData.append("objective", this.form.relationshipContext.objective);
-    formData.append("notes", this.form.relationshipContext.notes);
+    formData.append(
+      "relationshipContext",
+      JSON.stringify(this.form.relationshipContext)
+    );
   }
 }
 
-export const firstMoveGeneratorFormStore = new FirstMoveGeneratorFormStore();
+export const firstMoveGeneratorForm = new FirstMoveGeneratorForm();
