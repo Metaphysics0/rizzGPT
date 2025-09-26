@@ -2,7 +2,7 @@
   import { applyAction, enhance } from "$app/forms";
   import { goto } from "$app/navigation";
   import { responseHelperForm } from "$lib/stores/response-helper-form.svelte";
-  import ImageInput from "$lib/ui/form/ImageInput.svelte";
+  import Dropzone from "$lib/ui/form/Dropzone.svelte";
   import RelationshipContext from "$lib/ui/form/RelationshipContext.svelte";
   import type { SubmitFunction } from "@sveltejs/kit";
   import SubmitFormButton from "$lib/ui/form/SubmitFormButton.svelte";
@@ -32,7 +32,12 @@
 <div class="mx-auto max-w-xl space-y-8">
   <form method="POST" action="?/generateRizz" use:enhance={handleEnhance}>
     <div class="space-y-6">
-      <ImageInput
+      <Dropzone
+        title="Conversation Upload"
+        tooltip="Upload a screen recording or screenshot of your conversation with your partner."
+        maxFiles={1}
+        maxFileSize={50 * 1024 * 1024}
+        accept="image/*, video/mp4, video/quicktime, video/x-msvideo"
         collapsible={true}
         defaultCollapsed={false}
         onFileUpload={(fileName) => responseHelperForm.setFileName(fileName)}
