@@ -14,11 +14,9 @@ export const actions = {
       const fileName = formData.get("fileName") as string;
       if (!fileName) return fail(400, { error: "File upload missing" });
 
-      const relationshipContext: RelationshipContext = {
-        duration: Number(formData.get("duration")),
-        objective: (formData.get("objective") as string) || "",
-        notes: (formData.get("notes") as string) || "",
-      };
+      const relationshipContext: RelationshipContext = JSON.parse(
+        formData.get("relationshipContext") as string
+      );
 
       const { conversationId } = await new ConversationGenerationService({
         fileName,

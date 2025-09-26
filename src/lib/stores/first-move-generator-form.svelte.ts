@@ -1,20 +1,23 @@
 import type { GeneratedResponse, RelationshipContext } from "$lib/types";
 
-export interface FirstMoveGeneratorForm {
-  relationshipContext: Omit<RelationshipContext, 'duration'>;
-  imageFileNames: string[];
-}
+const DEFAULT_FORM = {
+  relationshipContext: {
+    objective: "",
+    notes: "",
+  },
+  imageFileNames: [] as string[],
+};
 
 class FirstMoveGeneratorFormStore {
-  private readonly INITIAL_VALUE: FirstMoveGeneratorForm = {
-    relationshipContext: { objective: "", notes: "" },
-    imageFileNames: [],
-  };
-  form = $state<FirstMoveGeneratorForm>(this.INITIAL_VALUE);
+  public form = $state({ ...DEFAULT_FORM });
+  public isGenerating = $state(false);
+  public error = $state<string | null>(null);
+  public generatedResponse = $state<GeneratedResponse | null>(null);
 
-  isGenerating = $state(false);
-  error = $state<string | null>(null);
-  generatedResponse = $state<GeneratedResponse | null>(null);
+  public canGenerate = $derived(
+    () => this.form.imageFileNames.length > 0 && !this.isGenerating
+  );
+  public hasMaxImages = $derived(() => this.form.imageFileNames.length >= 5);
 
   addImageFileName(fileName: string) {
     if (this.form.imageFileNames.length < 5) {
@@ -33,42 +36,24 @@ class FirstMoveGeneratorFormStore {
     this.form.imageFileNames = [];
   }
 
-  updateRelationshipContext(context: Partial<Omit<RelationshipContext, 'duration'>>) {
+  updateRelationshipContext(
+    context: Partial<Omit<RelationshipContext, "duration">>
+  ) {
     Object.assign(this.form.relationshipContext, context);
   }
 
-  setGenerating(isGenerating: boolean) {
-    this.isGenerating = isGenerating;
-  }
-
-  setError(error: string | null) {
-    this.error = error;
-  }
-
-  setGeneratedResponse(response: GeneratedResponse | null) {
-    this.generatedResponse = response;
-  }
-
   reset() {
-    this.form = { ...this.INITIAL_VALUE };
+    this.form = { ...DEFAULT_FORM };
     this.error = null;
     this.generatedResponse = null;
   }
 
   setFormData(formData: FormData) {
-    this.form.imageFileNames.forEach(fileName => {
+    this.form.imageFileNames.forEach((fileName) => {
       formData.append("imageFileNames", fileName);
     });
     formData.append("objective", this.form.relationshipContext.objective);
     formData.append("notes", this.form.relationshipContext.notes);
-  }
-
-  get canGenerate() {
-    return this.form.imageFileNames.length > 0 && !this.isGenerating;
-  }
-
-  get hasMaxImages() {
-    return this.form.imageFileNames.length >= 5;
   }
 }
 
