@@ -13,17 +13,17 @@ export const handle: Handle = async ({ event, resolve }) => {
       headers: event.request.headers,
     });
 
-    // Make session and user available on server
-    if (session) {
-      event.locals.session = session.session;
-      event.locals.user = session.user;
-    }
-
-    if (isProtectedRoute(event.url.pathname) && !session) {
+    if (doesPathnameRequireSignedInUser(event.url.pathname) && !session) {
       return new Response(null, {
         status: 302,
         headers: { Location: "/sign-in" },
       });
+    }
+
+    // Make session and user available on server
+    if (session) {
+      event.locals.session = session.session;
+      event.locals.user = session.user;
     }
 
     return svelteKitHandler({ event, resolve, auth, building });
@@ -39,7 +39,12 @@ function isChromeDevToolsRequest(url: URL) {
   );
 }
 
-function isProtectedRoute(pathname: string) {
+function doesPathnameRequireSignedInUser(pathname: string) {
+  const publicRoutes = ["/api/cron", "/api/webhooks", "/api/auth"];
+  if (publicRoutes.some((route) => pathname.startsWith(route))) {
+    return false;
+  }
+
   const protectedRoutes = [
     "/profile",
     "/conversations",
