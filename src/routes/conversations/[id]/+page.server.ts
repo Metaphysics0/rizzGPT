@@ -1,6 +1,6 @@
 import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
-import { databaseService } from "$lib/server/services/database.service";
+import { actions } from "$lib/server/services/db-actions.service";
 
 export const load = (async ({ params, setHeaders }) => {
   setHeaders({ "cache-control": "max-age=120" });
@@ -8,9 +8,7 @@ export const load = (async ({ params, setHeaders }) => {
 
   if (!conversationId) throw error(400, "Conversation ID is required");
 
-  const conversation = await databaseService.getConversationById(
-    conversationId
-  );
+  const conversation = await actions.getConversationById(conversationId);
 
   if (!conversation) {
     throw error(404, "Conversation not found");

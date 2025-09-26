@@ -1,4 +1,4 @@
-import { databaseService } from "$lib/server/services/database.service";
+import { actions } from "$lib/server/services/db-actions.service";
 import { UsageService } from "$lib/server/services/usage.service";
 import type { GenerateRizzJobPayload } from "./job-payload.type";
 import { backblazeStorageService } from "$lib/server/services/backblaze-storage.service";
@@ -39,7 +39,7 @@ export class GenerateRizzJobHandler {
         file,
       });
 
-      await databaseService.updateConversation(conversationId, {
+      await actions.updateConversation(conversationId, {
         rizzResponses: generateRizzResponse.responses,
         rizzResponseDescription: generateRizzResponse.explanation,
         matchName: generateRizzResponse.matchName,
@@ -52,7 +52,7 @@ export class GenerateRizzJobHandler {
       return generateRizzResponse;
     } catch (processingError) {
       console.error("Error generating rizz", processingError);
-      await databaseService.updateConversation(conversationId, {
+      await actions.updateConversation(conversationId, {
         rizzResponses: [],
         rizzResponseDescription: `Error: ${
           processingError instanceof Error

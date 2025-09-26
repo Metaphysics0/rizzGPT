@@ -1,6 +1,6 @@
 import { error, json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
-import { databaseService } from "$lib/server/services/database.service";
+import { actions } from "$lib/server/services/db-actions.service";
 
 export const DELETE: RequestHandler = async ({ params }) => {
   const conversationId = params.id;
@@ -10,7 +10,7 @@ export const DELETE: RequestHandler = async ({ params }) => {
   }
 
   try {
-    await databaseService.deleteConversation(conversationId);
+    await actions.deleteConversation(conversationId);
     return json({ success: true });
   } catch (err) {
     console.error("Error deleting conversation:", err);
