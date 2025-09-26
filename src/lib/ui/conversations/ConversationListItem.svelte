@@ -115,6 +115,19 @@
         >
           {conversation.matchName}
         </h3>
+        {#if conversation.conversationType}
+          <span
+            class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 shrink-0"
+          >
+            {#if conversation.conversationType === "first-move"}
+              <Icon icon="mdi:message-star" class="w-3 h-3 mr-1" />
+              First Move
+            {:else if conversation.conversationType === "response-helper"}
+              <Icon icon="mdi:message-reply" class="w-3 h-3 mr-1" />
+              Response
+            {/if}
+          </span>
+        {/if}
         <span
           class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium {statusInfo.bgColor} {statusInfo.color} shrink-0"
         >

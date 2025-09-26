@@ -1,33 +1,36 @@
-import type { RelationshipContext } from "$lib/types";
+import type { ConversationType, RelationshipContext } from "$lib/types";
 import type { Conversation } from "../database/types";
 import { GenerateRizzJobHandler } from "../job-handlers/generate-rizz/job-handler";
+import { AnalyzeBioJobHandler } from "../job-handlers/analyze-bio/job-handler";
 import type { GenerateRizzJobPayload } from "../job-handlers/generate-rizz/job-payload.type";
+import type { AnalyzeBioJobPayload } from "../job-handlers/analyze-bio/job-payload.type";
 import { actions } from "./db-actions.service";
 import { UsageService } from "./usage.service";
 import { SubscriptionService } from "./subscription.service";
 import { INITIAL_CONVERSATION_DESCRIPTION } from "$lib/constants/initial-conversation.constant";
 
-export interface ConversationGenerationRequest {
+export interface ConversationProcessorRequest {
   fileName: string;
-  relationshipContext?: RelationshipContext;
   userId: string;
   userEmail: string;
+  conversationType: ConversationType;
+  relationshipContext?: RelationshipContext;
 }
 
-export class ConversationGenerationService {
-  private readonly params: ConversationGenerationRequest;
+export class ConversationProcessorService {
+  private readonly params: ConversationProcessorRequest;
   private readonly usageService: UsageService;
   private readonly subscriptionService: SubscriptionService;
 
-  constructor(params: ConversationGenerationRequest) {
+  constructor(params: ConversationProcessorRequest) {
     this.params = params;
     this.usageService = new UsageService();
     this.subscriptionService = new SubscriptionService();
   }
 
-  async initiateConversationGeneration() {
+  async initiateConversationProcessing() {
     console.log(
-      `[ConversationGenerationService] Starting conversation generation - ${JSON.stringify(
+      `[ConversationProcessorService] Starting ${this.params.conversationType} processing - ${JSON.stringify(
         this.params
       )}`
     );
@@ -45,7 +48,7 @@ export class ConversationGenerationService {
 
       if (hasExceeded) {
         console.error(
-          `[ConversationGenerationService] Failed to initiate conversation generation - User has exceeded free limit - ${JSON.stringify(
+          `[ConversationProcessorService] Failed to initiate processing - User has exceeded free limit - ${JSON.stringify(
             this.params
           )}`
         );
@@ -66,18 +69,30 @@ export class ConversationGenerationService {
   }
 
   private processInBackground(conversation: Conversation): void {
-    const jobPayload: GenerateRizzJobPayload = {
-      conversationId: conversation.id,
-      fileName: this.params.fileName,
-      relationshipContext: this.params.relationshipContext,
-      userId: this.params.userId,
-    };
+    if (this.params.conversationType === "response-helper") {
+      const jobPayload: GenerateRizzJobPayload = {
+        conversationId: conversation.id,
+        fileName: this.params.fileName,
+        relationshipContext: this.params.relationshipContext,
+        userId: this.params.userId,
+      };
 
-    // We don't await the call() method, allowing it to run in the background
-    new GenerateRizzJobHandler(jobPayload).call().catch((error) => {
-      console.error("Background job failed:", error);
-      actions.updateConversationStatus(conversation.id, "failed");
-    });
+      new GenerateRizzJobHandler(jobPayload).call().catch((error) => {
+        console.error("Background job failed:", error);
+        actions.updateConversationStatus(conversation.id, "failed");
+      });
+    } else if (this.params.conversationType === "first-move") {
+      const jobPayload: AnalyzeBioJobPayload = {
+        conversationId: conversation.id,
+        fileName: this.params.fileName,
+        userId: this.params.userId,
+      };
+
+      new AnalyzeBioJobHandler(jobPayload).call().catch((error) => {
+        console.error("Background bio analysis job failed:", error);
+        actions.updateConversationStatus(conversation.id, "failed");
+      });
+    }
   }
 
   private async createInitialConversation(): Promise<Conversation> {
@@ -91,6 +106,7 @@ export class ConversationGenerationService {
       }),
       matchName: "Processing...",
       status: "processing",
+      conversationType: this.params.conversationType,
     });
   }
 }

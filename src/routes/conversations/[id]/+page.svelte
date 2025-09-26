@@ -141,13 +141,34 @@
       <div class="mb-6 flex items-center justify-between">
         <h1 class="text-2xl font-bold text-gray-800">
           {#if conversation.matchName && conversation.matchName !== "Processing..."}
-            Conversation with {conversation.matchName}
+            {#if conversation.conversationType === "first-move"}
+              First Move for {conversation.matchName}
+            {:else}
+              Conversation with {conversation.matchName}
+            {/if}
           {:else}
-            <span class="text-gray-500">Processing Conversation...</span>
+            <span class="text-gray-500">Processing...</span>
           {/if}
         </h1>
 
         <div class="flex items-center gap-2">
+          {#if conversation.conversationType}
+            <span
+              class="inline-flex items-center gap-1 rounded-full bg-purple-100 px-3 py-1 text-sm font-medium text-purple-800"
+            >
+              {#if conversation.conversationType === "first-move"}
+                <Icon icon="mdi:message-star" class="h-4 w-4" />
+                First Move
+              {:else if conversation.conversationType === "response-helper"}
+                <Icon icon="mdi:message-reply" class="h-4 w-4" />
+                Response Helper
+              {:else}
+                <Icon icon="mdi:message-text" class="h-4 w-4" />
+                Conversation
+              {/if}
+            </span>
+          {/if}
+
           {#if isProcessing}
             <span
               class="inline-flex items-center gap-1 rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800"
@@ -175,8 +196,13 @@
           <h3
             class="flex items-center gap-2 text-lg font-semibold text-gray-800"
           >
-            <Icon icon="mdi:message-text" class="h-5 w-5 text-purple-600" />
-            Response Options
+            {#if conversation.conversationType === "first-move"}
+              <Icon icon="mdi:message-star" class="h-5 w-5 text-purple-600" />
+              First Message Options
+            {:else}
+              <Icon icon="mdi:message-text" class="h-5 w-5 text-purple-600" />
+              Response Options
+            {/if}
           </h3>
 
           {#each conversation.rizzResponses as response, index}
