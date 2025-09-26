@@ -15,59 +15,27 @@ export class PromptHelper {
     }
   }
 
-  private static generateRizzResponsePrompt(relationshipContext?: RelationshipContext): string {
-    // If no relationship context provided, skip the context section
-    if (!relationshipContext) {
-      return `
-${this.RIZZ_GLOBAL_CONTEXT}
+  private static generateRizzResponsePrompt(
+    relationshipContext?: RelationshipContext
+  ): string {
+    return dedent`
+      You are RizzGPT, a witty and charming AI wingman for dating apps. Your goal is to help users craft the perfect response to keep conversations engaging, fun, and aligned with their dating objectives.
+      Analyze the provided conversation screenshot/video and the user's context, then generate 3 unique, clever, and context-aware responses.
+      In the provided screenshot/video, messages on the right are from the user, and messages on the left are from their match. The last message is likely from the match.
 
-${this.RIZZ_RESPONSE_FORMAT}
-`;
-    }
+      ${convertRelationshipContextToLLMPrompt(relationshipContext)}
 
-    const { duration, objective, notes } = relationshipContext;
-
-    // Check if user has provided any meaningful relationship context
-    const hasContext = Boolean(objective?.trim() || notes?.trim());
-
-    // Convert objective ID to human-readable label if provided
-    const objectiveData = getObjectiveById(objective);
-    const objectiveLabel = objectiveData?.label || objective;
-
-    let contextSection = "";
-    if (hasContext) {
-      contextSection = dedent`
-User's Context:
-- Communication Duration: ${duration}% on a scale from 'just started' to 'long established'.
-- Relationship Objective: ${objectiveLabel}
-- Additional Notes from user: ${notes || "None"}
-
-`;
-    }
-
-    return `
-${this.RIZZ_GLOBAL_CONTEXT}
-
-${contextSection}
-
-${this.RIZZ_RESPONSE_FORMAT}
-`;
+      ${this.RIZZ_RESPONSE_FORMAT}
+    `;
   }
 
   private static generateBioAnalysisPrompt(bioContext?: any): string {
-    // Placeholder for future bio analysis prompt
     return `
 ${this.BIO_GLOBAL_CONTEXT}
 
 ${this.BIO_RESPONSE_FORMAT}
 `;
   }
-
-  private static readonly RIZZ_GLOBAL_CONTEXT = dedent`
-You are RizzGPT, a witty and charming AI wingman for dating apps. Your goal is to help users craft the perfect response to keep conversations engaging, fun, and aligned with their dating objectives.
-Analyze the provided conversation screenshot/video and the user's context, then generate 3 unique, clever, and context-aware responses.
-In the provided screenshot/video, messages on the right are from the user, and messages on the left are from their match. The last message is likely from the match.
-`;
 
   private static readonly RIZZ_RESPONSE_FORMAT = dedent`
 Based on the conversation in the image, provide a brief analysis of the current conversation vibe and an explanation of why your suggested responses are a good fit. Then, provide 3 distinct response options for me to send next. Make the responses flirty, funny, or romantic, depending on the context. Keep them concise and natural-sounding.
@@ -87,21 +55,79 @@ Example:
 `;
 
   private static readonly BIO_GLOBAL_CONTEXT = dedent`
-You are RizzGPT, a dating profile expert. Your goal is to analyze dating profile bios and provide insights to help users improve their dating success.
-Analyze the provided dating profile screenshot and provide constructive feedback.
+You are RizzGPT, an expert dating coach specializing in crafting compelling first messages for dating apps.
+Your expertise lies in analyzing dating profiles to identify conversation hooks, personality traits, and interests that can spark engaging conversations.
+
+Instructions for profile analysis:
+1. Look for specific details in photos (hobbies, locations, activities, pets, etc.)
+2. Pay attention to bio text for interests, humor style, career, and personality indicators
+3. Identify conversation starters that show genuine interest rather than generic compliments
+4. Consider the overall vibe - is it playful, serious, adventurous, intellectual, etc.
+5. Avoid cliché openers like "Hey beautiful" or generic questions like "How's your day?"
+
+Generate 3 distinct first message options that:
+- Reference something specific from their profile
+- Show personality and wit
+- Ask engaging questions or make interesting observations
+- Are appropriate length (1-2 sentences max)
+- Match the energy level of their profile
 `;
 
   private static readonly BIO_RESPONSE_FORMAT = dedent`
-Based on the dating profile in the image, provide an analysis of the bio's strengths and areas for improvement.
-Consider factors like personality showcase, conversation starters, red flags, and overall appeal.
+Based on the dating profile in the image, provide a thorough analysis and craft 3 personalized first message options.
 
-Return the response as a valid JSON object with the following structure:
+Your analysis should cover:
+- Key interests, hobbies, or activities visible in photos or bio
+- Personality indicators (humor style, energy level, lifestyle)
+- Conversation hooks (specific details that could spark discussion)
+- Overall vibe and what type of opener would work best
+
+Then provide 3 distinct first message options that demonstrate different approaches:
+1. Interest-based: Reference a specific hobby, activity, or detail from their profile
+2. Observational/Witty: Make a clever observation or light joke based on their photos/bio
+3. Question-based: Ask an engaging question that encourages a meaningful response
+
+Each message should be 1-2 sentences, feel natural and conversational, and avoid generic compliments.
+
+Return the response as a valid JSON object with three keys: "explanation" (a string), "responses" (an array of 3 strings), and "matchName" (a string).
+
+Example:
 {
-  "profileName": "Name from profile or 'Unknown'",
-  "overallScore": 75,
-  "strengths": ["Array of positive aspects"],
-  "improvements": ["Array of suggested improvements"],
-  "analysis": "Detailed analysis of the profile"
+  "matchName": "Sarah",
+  "explanation": "Sarah's profile shows she's adventurous (hiking photos), has a sense of humor (witty bio about coffee addiction), and loves travel (photos from various cities). She seems approachable but appreciates substance over surface-level compliments. These openers reference specific elements while showing personality and genuine interest.",
+  "responses": [
+    "I see you're a fellow coffee addict - what's your go-to order when you need to fuel up for those hiking adventures?",
+    "Your travel photos are making me seriously jealous! That sunset shot from Santorini is incredible - was that trip as amazing as it looks?",
+    "Okay, I have to ask - in your bio you mention being 'professionally awkward at small talk' but your adventures suggest otherwise. What's the real story there? 😄"
+  ]
 }
 `;
+}
+
+function convertRelationshipContextToLLMPrompt(
+  relationshipContext?: RelationshipContext
+): string {
+  if (!relationshipContext) return "";
+
+  const { duration, objective, notes } = relationshipContext;
+  const userContext: string[] = [];
+  if (duration) {
+    userContext.push(
+      `- Communication Duration: ${duration}% on a scale from 'just started' to 'long established'`
+    );
+  }
+  if (objective) {
+    const objectiveData = getObjectiveById(objective);
+    const objectiveLabel = objectiveData?.label || objective;
+    userContext.push(`- Relationship Objective: ${objectiveLabel}`);
+  }
+  if (notes) {
+    userContext.push(`- Additional Notes from user: ${notes || "None"}`);
+  }
+
+  if (!userContext.length) return "";
+  return dedent`
+        User's Context:
+        ${userContext.join("\n")}
+      `;
 }

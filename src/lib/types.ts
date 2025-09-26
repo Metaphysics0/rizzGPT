@@ -33,6 +33,7 @@ export type ConversationsListItem = Pick<
   | "updatedAt"
   | "status"
   | "rizzResponseDescription"
+  | "conversationType"
 >;
 
 export type ConversationRole = "user" | "assistant";
