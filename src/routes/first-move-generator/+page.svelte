@@ -13,7 +13,10 @@
     use:enhance={firstMoveGeneratorForm.handleEnhance}
   >
     <div class="space-y-6">
-      <Dropzone />
+      <Dropzone
+        title="Match Profile Analysis"
+        tooltip="Upload screenshots of your match bio"
+      />
       <RelationshipContext
         title="Match Context"
         subtitle="(optional)"
