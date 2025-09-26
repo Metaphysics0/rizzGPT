@@ -1,12 +1,10 @@
 <script lang="ts">
-  type Gender = "men" | "women";
-
   const { amountOfUsersToDisplay = 5 }: { amountOfUsersToDisplay?: number } =
     $props();
 
   function generateRandomAvatars(count: number) {
     return Array.from({ length: count }, (_, idx) => {
-      const gender: Gender = Math.random() > 0.5 ? "men" : "women";
+      const gender = Math.random() > 0.5 ? "men" : "women";
       const userNumber = Math.floor(Math.random() * 99) + 1; // 1-99 for more variety
       return {
         id: idx,

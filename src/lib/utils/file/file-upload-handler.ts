@@ -12,16 +12,13 @@ export type UploadedFile = {
 
 export class FileUploadHandler {
   private onFileUploaded: (fileName: string) => void;
-  private onFileUploadError: (error: string) => void;
   private userId: string;
 
   constructor(params: {
     onFileUploaded: (fileName: string) => void;
-    onFileUploadError: (error: string) => void;
     userId: string;
   }) {
     this.onFileUploaded = params.onFileUploaded;
-    this.onFileUploadError = params.onFileUploadError;
     this.userId = params.userId;
   }
 
@@ -71,9 +68,7 @@ export class FileUploadHandler {
     } catch (error) {
       console.error("Failed to upload file:", error);
       URL.revokeObjectURL(previewUrl);
-      this.onFileUploadError?.(
-        error instanceof Error ? error.message : "Upload failed"
-      );
+      console.error(error instanceof Error ? error.message : "Upload failed");
       throw error;
     }
   }
