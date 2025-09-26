@@ -107,7 +107,7 @@
   {#if conversation.initialUploadedConversationFileName}
     <MediaPreview
       fileName={conversation.initialUploadedConversationFileName}
-      title="Uploaded Conversation"
+      title={`Uploaded ${conversation.conversationType === "first-move" ? "Bio" : "Conversation"}`}
     />
   {/if}
 
