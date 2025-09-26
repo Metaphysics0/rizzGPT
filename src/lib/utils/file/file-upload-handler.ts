@@ -24,7 +24,7 @@ export class FileUploadHandler {
   }
 
   async uploadFile(file: File): Promise<UploadedFile> {
-    if (!userStore.userId) {
+    if (!userStore.user) {
       throw new Error("User not authenticated");
     }
 
@@ -60,7 +60,10 @@ export class FileUploadHandler {
     isVideo: boolean
   ): Promise<{ previewUrl: string; fileName: string }> {
     try {
-      const fileName = await triggerClientFileUpload(file, userStore.userId!);
+      if (!userStore.user) {
+        throw new Error("No user, unable to perform upload");
+      }
+      const fileName = await triggerClientFileUpload(file, userStore.user.id);
 
       // Cache the uploaded media
       mediaCache.set(fileName, previewUrl, isVideo);
