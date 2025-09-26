@@ -11,7 +11,6 @@
     FileUploadHandler,
     type UploadedFile,
   } from "$lib/utils/file/file-upload-handler";
-  import { firstMoveGeneratorForm } from "$lib/stores/first-move-generator-form.svelte";
   import Icon from "@iconify/svelte";
   import { onDestroy } from "svelte";
   import { SvelteDate } from "svelte/reactivity";
@@ -27,8 +26,8 @@
     maxFiles?: number;
     maxFileSize?: number;
     accept?: string;
-    onFileUpload?: (fileName: string) => void;
-    onFileClear?: () => void;
+    onFileUpload: (fileName: string) => void;
+    onFileClear: (fileName: string) => void;
     isProcessing?: boolean;
   }
 
@@ -51,16 +50,7 @@
 
   const fileUploadHandler = new FileUploadHandler({
     userId: page.data.user!.id,
-    onFileUploaded: (fileName) => {
-      if (onFileUpload) {
-        onFileUpload(fileName);
-      } else {
-        firstMoveGeneratorForm.addImageFileName(fileName);
-      }
-    },
-    onFileUploadError: (error) => {
-      console.error("Upload error:", error);
-    },
+    onFileUploaded: onFileUpload,
   });
 
   const onUpload: FileDropZoneProps["onUpload"] = async (uploadFiles) => {
@@ -97,13 +87,7 @@
     try {
       const url = await file.url;
       FileUploadHandler.revokeObjectURL(url);
-      if (file.fileName) {
-        if (onFileClear) {
-          onFileClear();
-        } else {
-          firstMoveGeneratorForm.removeImageFileName(file.fileName);
-        }
-      }
+      onFileClear(file.fileName);
 
       // Remove from form store if it was successfully uploaded
       files.splice(index, 1);

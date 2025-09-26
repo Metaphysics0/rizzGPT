@@ -16,6 +16,8 @@
       <Dropzone
         title="Match Profile Analysis"
         tooltip="Upload screenshots of your match bio"
+        onFileUpload={firstMoveGeneratorForm.addImageFileName}
+        onFileClear={firstMoveGeneratorForm.removeImageFileName}
       />
       <RelationshipContext
         title="Match Context"
