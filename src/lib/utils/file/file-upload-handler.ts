@@ -1,6 +1,6 @@
 import { userStore } from "$lib/stores/user.svelte";
 import { mediaCache } from "$lib/stores/image-preview.svelte";
-import { triggerClientFileUpload, getSignedUrlFromFilePath } from "./client-file-upload.util";
+import { triggerClientFileUpload } from "./client-file-upload.util";
 
 export type UploadedFile = {
   name: string;
@@ -12,13 +12,13 @@ export type UploadedFile = {
 };
 
 export class FileUploadHandler {
-  private onFileUploaded?: (fileName: string) => void;
-  private onFileUploadError?: (error: string) => void;
+  private onFileUploaded: (fileName: string) => void;
+  private onFileUploadError: (error: string) => void;
 
   constructor(options: {
-    onFileUploaded?: (fileName: string) => void;
-    onFileUploadError?: (error: string) => void;
-  } = {}) {
+    onFileUploaded: (fileName: string) => void;
+    onFileUploadError: (error: string) => void;
+  }) {
     this.onFileUploaded = options.onFileUploaded;
     this.onFileUploadError = options.onFileUploadError;
   }
@@ -39,20 +39,26 @@ export class FileUploadHandler {
       uploadedAt: Date.now(),
       size: file.size,
       fileName: "", // will be set after upload
-      url: uploadPromise.then(result => result.previewUrl)
+      url: uploadPromise.then((result) => result.previewUrl),
     };
 
     // Set fileName after upload completes
-    uploadPromise.then(result => {
-      uploadedFile.fileName = result.fileName;
-    }).catch(() => {
-      // Error already handled in performUpload
-    });
+    uploadPromise
+      .then((result) => {
+        uploadedFile.fileName = result.fileName;
+      })
+      .catch(() => {
+        // Error already handled in performUpload
+      });
 
     return uploadedFile;
   }
 
-  private async performUpload(file: File, previewUrl: string, isVideo: boolean): Promise<{ previewUrl: string; fileName: string }> {
+  private async performUpload(
+    file: File,
+    previewUrl: string,
+    isVideo: boolean
+  ): Promise<{ previewUrl: string; fileName: string }> {
     try {
       const fileName = await triggerClientFileUpload(file, userStore.userId!);
 
@@ -60,14 +66,16 @@ export class FileUploadHandler {
       mediaCache.set(fileName, previewUrl, isVideo);
 
       // Notify about successful upload
-      this.onFileUploaded?.(fileName);
+      this.onFileUploaded(fileName);
 
       // Return both the preview URL and server fileName
       return { previewUrl, fileName };
     } catch (error) {
       console.error("Failed to upload file:", error);
       URL.revokeObjectURL(previewUrl);
-      this.onFileUploadError?.(error instanceof Error ? error.message : "Upload failed");
+      this.onFileUploadError?.(
+        error instanceof Error ? error.message : "Upload failed"
+      );
       throw error;
     }
   }

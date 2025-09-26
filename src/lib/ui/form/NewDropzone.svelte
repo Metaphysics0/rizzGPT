@@ -58,20 +58,19 @@
 
   const removeFile = async (index: number) => {
     const file = files[index];
-    if (file) {
-      try {
-        const url = await file.url;
-        FileUploadHandler.revokeObjectURL(url);
-      } catch {
-        // URL might not be ready yet
-      }
+    if (!file) return;
 
-      // Remove from form store if it was successfully uploaded
+    try {
+      const url = await file.url;
+      FileUploadHandler.revokeObjectURL(url);
       if (file.fileName) {
         firstMoveGeneratorFormStore.removeImageFileName(file.fileName);
       }
 
+      // Remove from form store if it was successfully uploaded
       files.splice(index, 1);
+    } catch {
+      // URL might not be ready yet
     }
   };
 
