@@ -42,3 +42,5 @@ export type ConversationStatus =
   | "refining"
   | "completed"
   | "failed";
+
+export type ConversationType = "response-helper" | "first-move";

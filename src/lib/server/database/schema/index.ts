@@ -1,6 +1,10 @@
 import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import type { ConversationStatus, RelationshipContext } from "$lib/types";
+import type {
+  ConversationType,
+  ConversationStatus,
+  RelationshipContext,
+} from "$lib/types";
 import { jsonb } from "drizzle-orm/pg-core";
 
 export const users = pgTable("user", {
@@ -111,6 +115,7 @@ export const conversations = pgTable("conversation", {
   relationshipContext: jsonb().$type<RelationshipContext>(),
   matchName: text().notNull(),
   status: text().$type<ConversationStatus>().default("initial"),
+  conversationType: text().$type<ConversationType>(),
   createdAt: timestamp().defaultNow().notNull(),
   updatedAt: timestamp()
     .$onUpdate(() => /* @__PURE__ */ new Date())
