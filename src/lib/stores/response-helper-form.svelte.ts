@@ -1,16 +1,16 @@
 import type { GeneratedResponse, RelationshipContext } from "$lib/types";
 
-export interface GenerateRizzForm {
+export interface ResponseHelperForm {
   relationshipContext: RelationshipContext;
   fileName: string;
 }
 
-class GenerateRizzFormStore {
-  private readonly INITIAL_VALUE: GenerateRizzForm = {
+class ResponseHelperFormStore {
+  private readonly INITIAL_VALUE: ResponseHelperForm = {
     relationshipContext: { duration: 0, objective: "", notes: "" },
     fileName: "",
   };
-  form = $state<GenerateRizzForm>(this.INITIAL_VALUE);
+  form = $state<ResponseHelperForm>(this.INITIAL_VALUE);
 
   isGenerating = $state(false);
   error = $state<string | null>(null);
@@ -53,8 +53,8 @@ class GenerateRizzFormStore {
   }
 
   get canGenerate() {
-    return this.form.fileName && !this.isGenerating;
+    return !!this.form.fileName && !this.isGenerating;
   }
 }
 
-export const generateRizzFormStore = new GenerateRizzFormStore();
+export const responseHelperForm = new ResponseHelperFormStore();
