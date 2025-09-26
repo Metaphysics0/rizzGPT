@@ -12,7 +12,7 @@ const config = {
         "https://gumroad.com",
         "https://api.gumroad.com",
         "https://webhooks.gumroad.com",
-        "https://bitter-olives-wave.loca.lt", // replace with your localtunnel domain
+        "https://bitter-olives-wave.loca.lt", // replace with your localtunnel domain (for gumroad webook testing)
       ],
     },
   },

@@ -1,7 +1,7 @@
 [
   {
-    "corsRuleName": "dev-upload",
-    "allowedOrigins": ["http://localhost:5173"],
+    "corsRuleName": "prod-upload",
+    "allowedOrigins": ["https://www.rizzb0t.com"],
     "allowedOperations": ["b2_upload_file"],
     "allowedHeaders": [
       "authorization",
