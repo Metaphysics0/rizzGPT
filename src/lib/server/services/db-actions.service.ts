@@ -9,7 +9,8 @@ import {
 } from "../database/schema";
 import type { Conversation, NewConversation } from "../database/types";
 
-class DatabaseService {
+// A general place to put DB actions.
+class DbActionsService {
   async createConversation(
     conversationData: NewConversation
   ): Promise<Conversation> {
@@ -127,4 +128,4 @@ class DatabaseService {
   }
 }
 
-export const databaseService = new DatabaseService();
+export const actions = new DbActionsService();

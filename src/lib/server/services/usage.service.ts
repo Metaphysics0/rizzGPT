@@ -2,7 +2,7 @@ import { getCurrentMonthYear } from "$lib/utils/date.util";
 import { db } from "../database/connection";
 import { userUsage } from "../database/schema";
 import { eq, and } from "drizzle-orm";
-import { databaseService } from "./database.service";
+import { actions } from "./db-actions.service";
 
 export class UsageService {
   static readonly MAX_AMOUNT_OF_MONTHLY_GENERATIONS_FOR_FREE_TIER = 5;
@@ -59,7 +59,7 @@ export class UsageService {
   }
 
   async hasExceededFreeLimit(userId: string): Promise<boolean> {
-    const isSuperUser = await databaseService.isSuperUser(userId);
+    const isSuperUser = await actions.isSuperUser(userId);
     if (isSuperUser) return false;
 
     const currentUsage = await this.getUserUsage(userId);

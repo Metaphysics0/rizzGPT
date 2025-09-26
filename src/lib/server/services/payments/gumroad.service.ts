@@ -13,10 +13,10 @@ export class GumroadService {
 
   async getAllActiveSubscribers(): Promise<GumroadSubscribersResponse> {
     try {
-      const endpoint = this.createEndpoint(
+      const url = this.createApiUrl(
         `products/${GUMROAD_PRODUCT_ID}/subscribers`
       );
-      const response = await fetch(endpoint);
+      const response = await fetch(url);
       const data = await response.json();
       if (!data || !data.success) {
         throw new Error("Subscribers response failed");
@@ -28,8 +28,8 @@ export class GumroadService {
     }
   }
 
-  private createEndpoint(endpoint: string) {
-    const baseUrl = "https://api.gumroad.com/v2";
-    return `${baseUrl}/${endpoint}?access_token=${GUMROAD_ACCESS_TOKEN}`;
+  private createApiUrl(endpoint: string) {
+    const baseApiUrl = "https://api.gumroad.com/v2";
+    return `${baseApiUrl}/${endpoint}?access_token=${GUMROAD_ACCESS_TOKEN}`;
   }
 }

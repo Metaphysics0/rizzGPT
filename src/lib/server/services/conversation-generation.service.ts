@@ -2,7 +2,7 @@ import type { RelationshipContext } from "$lib/types";
 import type { Conversation } from "../database/types";
 import { GenerateRizzJobHandler } from "../job-handlers/generate-rizz/job-handler";
 import type { GenerateRizzJobPayload } from "../job-handlers/generate-rizz/job-payload.type";
-import { databaseService } from "./database.service";
+import { actions } from "./db-actions.service";
 import { UsageService } from "./usage.service";
 import { SubscriptionService } from "./subscription.service";
 import { INITIAL_CONVERSATION_DESCRIPTION } from "$lib/constants/initial-conversation.constant";
@@ -76,12 +76,12 @@ export class ConversationGenerationService {
     // We don't await the call() method, allowing it to run in the background
     new GenerateRizzJobHandler(jobPayload).call().catch((error) => {
       console.error("Background job failed:", error);
-      databaseService.updateConversationStatus(conversation.id, "failed");
+      actions.updateConversationStatus(conversation.id, "failed");
     });
   }
 
   private async createInitialConversation(): Promise<Conversation> {
-    return databaseService.createConversation({
+    return actions.createConversation({
       userId: this.params.userId,
       rizzResponses: [],
       rizzResponseDescription: INITIAL_CONVERSATION_DESCRIPTION,
