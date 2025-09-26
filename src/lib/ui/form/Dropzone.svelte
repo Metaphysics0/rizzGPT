@@ -16,6 +16,7 @@
   import { onDestroy } from "svelte";
   import { SvelteDate } from "svelte/reactivity";
   import FormStep from "./FormStep.svelte";
+  import { page } from "$app/state";
 
   interface Props {
     title: string;
@@ -49,6 +50,7 @@
   let uploading = $state(false);
 
   const fileUploadHandler = new FileUploadHandler({
+    userId: page.data.user!.id,
     onFileUploaded: (fileName) => {
       if (onFileUpload) {
         onFileUpload(fileName);

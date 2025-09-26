@@ -1,6 +1,5 @@
 <script lang="ts">
   import { page } from "$app/state";
-  import { userStore } from "$lib/stores/user.svelte";
   import ProfileDropdownMenu from "../Auth/ProfileDropdownMenu.svelte";
   import LinkButton from "../general/LinkButton.svelte";
   import Logo from "./Logo.svelte";
@@ -25,13 +24,6 @@
     },
   ] as const;
 
-  const signedInNavItems = [
-    {
-      label: "Generate Rizz!",
-      href: "/response-helper",
-    },
-  ];
-
   let scrolled = $state(false);
 
   onMount(() => {
@@ -42,8 +34,6 @@
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   });
-
-  const user = $derived(userStore.user);
 </script>
 
 <nav
@@ -54,7 +44,7 @@
   <div class="flex w-full justify-between items-center p-4 max-w-7xl mx-auto">
     <Logo />
 
-    {#if !user && page.url.pathname !== "/sign-in"}
+    {#if !page.data.user && page.url.pathname !== "/sign-in"}
       <div class="hidden md:flex gap-10">
         {#each landingPageNavItems as { href, label }}
           <a class="hover:text-primary duration-100" {href}>{label}</a>
@@ -63,13 +53,13 @@
     {/if}
 
     <div class="flex gap-5 items-center">
-      {#if user}
+      {#if page.data.user}
         <div class="mr-24">
           {#if page.url.pathname === "/"}
             <LinkButton label="Generate Rizz!" href="/response-helper" />
           {/if}
         </div>
-        <ProfileDropdownMenu {user} />
+        <ProfileDropdownMenu />
       {:else}
         <!-- Desktop login link -->
         <a

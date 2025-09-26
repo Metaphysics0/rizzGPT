@@ -2,15 +2,10 @@
   import { page } from "$app/state";
   import { fade } from "svelte/transition";
   import "../app.css";
-  import { userStore } from "$lib/stores/user.svelte";
   import type { PageData } from "./$types";
   import Navbar from "$lib/ui/layout/Navbar.svelte";
 
-  let { children, data }: { children: any; data: PageData } = $props();
-
-  $effect(() => {
-    userStore.user = data.user || null;
-  });
+  let { children }: { children: any; data: PageData } = $props();
 </script>
 
 <div
