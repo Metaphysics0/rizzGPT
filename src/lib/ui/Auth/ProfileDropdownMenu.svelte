@@ -35,7 +35,7 @@
     {
       label: "Response Helper",
       icon: "ri:chat-ai-fill",
-      href: "/response-generator",
+      href: "/response-helper",
     },
     {
       label: "History",

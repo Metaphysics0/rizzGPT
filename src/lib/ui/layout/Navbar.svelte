@@ -28,7 +28,7 @@
   const signedInNavItems = [
     {
       label: "Generate Rizz!",
-      href: "/response-generator",
+      href: "/response-helper",
     },
   ];
 
@@ -66,7 +66,7 @@
       {#if user}
         <div class="mr-24">
           {#if page.url.pathname === "/"}
-            <LinkButton label="Generate Rizz!" href="/response-generator" />
+            <LinkButton label="Generate Rizz!" href="/response-helper" />
           {/if}
         </div>
         <ProfileDropdownMenu {user} />

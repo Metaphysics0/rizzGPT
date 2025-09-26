@@ -7,6 +7,7 @@
 </script>
 
 <div class="mx-auto max-w-xl space-y-8">
+  <h1>Response Helper 🚀</h1>
   <form
     method="POST"
     action="?/generateRizz"
