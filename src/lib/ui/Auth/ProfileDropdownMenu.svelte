@@ -60,7 +60,7 @@
         onSuccess: () => {
           goto("/");
           isDropdownOpen = false;
-          userStore.setUser(null);
+          userStore.user = null;
         },
       },
     });

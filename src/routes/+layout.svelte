@@ -9,7 +9,7 @@
   let { children, data }: { children: any; data: PageData } = $props();
 
   $effect(() => {
-    userStore.setUser(data.user || null);
+    userStore.user = data.user || null;
   });
 </script>
 
