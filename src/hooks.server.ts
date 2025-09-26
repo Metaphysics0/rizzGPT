@@ -50,6 +50,7 @@ function doesPathnameRequireSignedInUser(pathname: string) {
     "/conversations",
     "/settings",
     "/response-generator",
+    "/first-move-generator",
     "/optimizer",
     "/api",
   ];
