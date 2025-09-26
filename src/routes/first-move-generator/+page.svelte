@@ -5,7 +5,7 @@
   import GenerateResponseButton from "$lib/ui/form/SubmitFormButton.svelte";
   import RelationshipContext from "$lib/ui/form/RelationshipContext.svelte";
   import type { SubmitFunction } from "@sveltejs/kit";
-  import NewDropzone from "$lib/ui/form/NewDropzone.svelte";
+  import Dropzone from "$lib/ui/form/Dropzone.svelte";
 
   const handleEnhance: SubmitFunction = ({ formData }) => {
     firstMoveGeneratorFormStore.setFormData(formData);
@@ -32,7 +32,7 @@
 <div class="mx-auto max-w-xl space-y-8">
   <form method="POST" action="?/generateFirstMove" use:enhance={handleEnhance}>
     <div class="space-y-6">
-      <NewDropzone />
+      <Dropzone />
       <RelationshipContext
         title="Match Context"
         subtitle="(optional)"
