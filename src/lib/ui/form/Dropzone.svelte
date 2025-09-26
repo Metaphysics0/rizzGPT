@@ -38,7 +38,7 @@
     collapsible = false,
     defaultCollapsed = false,
     maxFiles = 5,
-    maxFileSize = 2 * MEGABYTE,
+    maxFileSize = 20 * MEGABYTE,
     accept = "image/*",
     onFileUpload,
     onFileClear,
