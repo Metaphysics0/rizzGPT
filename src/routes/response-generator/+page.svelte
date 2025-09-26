@@ -19,7 +19,7 @@
         maxFiles={1}
         maxFileSize={50 * 1024 * 1024}
         accept="image/*, video/*"
-        collapsible={true}
+        collapsible={false}
         defaultCollapsed={false}
         onFileUpload={(fileName) =>
           (responseHelperForm.form.fileName = fileName)}

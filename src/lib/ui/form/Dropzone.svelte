@@ -12,13 +12,13 @@
     type UploadedFile,
   } from "$lib/utils/file/file-upload-handler";
   import { firstMoveGeneratorForm } from "$lib/stores/first-move-generator-form.svelte";
-  import XIcon from "@lucide/svelte/icons/x";
+  import Icon from "@iconify/svelte";
   import { onDestroy } from "svelte";
   import { SvelteDate } from "svelte/reactivity";
   import FormStep from "./FormStep.svelte";
 
   interface Props {
-    title?: string;
+    title: string;
     subtitle?: string;
     tooltip?: string;
     collapsible?: boolean;
@@ -32,9 +32,9 @@
   }
 
   let {
-    title = "Match Profile Analysis",
+    title,
     subtitle,
-    tooltip = "Upload screenshots of your match bio",
+    tooltip,
     collapsible = false,
     defaultCollapsed = false,
     maxFiles = 5,
@@ -171,7 +171,7 @@
             />
           {:then url}
             <Button variant="outline" size="icon" onclick={() => removeFile(i)}>
-              <XIcon />
+              <Icon icon="mingcute:close-fill" />
             </Button>
           {/await}
         </div>
