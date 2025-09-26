@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { generateRizzFormStore } from "$lib/stores/response-helper-form.svelte";
-  const canGenerateResponse = $derived(generateRizzFormStore.canGenerate);
+  import { responseHelperForm } from "$lib/stores/response-helper-form.svelte";
 
-  let { text }: { text: string } = $props();
+  let { text, disabled = false }: { text: string; disabled?: boolean } =
+    $props();
 </script>
 
 <button
   type="submit"
-  disabled={!canGenerateResponse}
+  {disabled}
   class="
           rounded-xl bg-linear-to-r from-purple-600 to-pink-600 px-8 py-3 font-medium
           text-white shadow-lg transition-all duration-200
@@ -15,7 +15,7 @@
           disabled:transform-none disabled:cursor-not-allowed disabled:opacity-50
         "
 >
-  {#if generateRizzFormStore.isGenerating}
+  {#if responseHelperForm.isGenerating}
     <span class="flex items-center gap-2">
       <div
         class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"

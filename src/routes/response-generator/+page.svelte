@@ -1,17 +1,17 @@
 <script lang="ts">
   import { applyAction, enhance } from "$app/forms";
   import { goto } from "$app/navigation";
-  import { generateRizzFormStore } from "$lib/stores/response-helper-form.svelte";
+  import { responseHelperForm } from "$lib/stores/response-helper-form.svelte";
   import ImageInput from "$lib/ui/form/ImageInput.svelte";
   import RelationshipContext from "$lib/ui/form/RelationshipContext.svelte";
   import type { SubmitFunction } from "@sveltejs/kit";
   import SubmitFormButton from "$lib/ui/form/SubmitFormButton.svelte";
 
   const handleEnhance: SubmitFunction = ({ formData }) => {
-    generateRizzFormStore.setFormData(formData);
-    generateRizzFormStore.setGenerating(true);
+    responseHelperForm.setFormData(formData);
+    responseHelperForm.setGenerating(true);
     return async ({ result }) => {
-      generateRizzFormStore.setGenerating(false);
+      responseHelperForm.setGenerating(false);
       if (result.type === "redirect") {
         goto(result.location);
         return;
@@ -21,7 +21,7 @@
           typeof result.data?.error === "string"
             ? result.data.error
             : "Generation failed";
-        generateRizzFormStore.setError(errorMessage);
+        responseHelperForm.setError(errorMessage);
         return;
       }
       await applyAction(result);
@@ -35,27 +35,31 @@
       <ImageInput
         collapsible={true}
         defaultCollapsed={false}
-        onFileUpload={(fileName) => generateRizzFormStore.setFileName(fileName)}
-        onFileClear={() => generateRizzFormStore.setFileName("")}
-        isProcessing={generateRizzFormStore.isGenerating}
+        onFileUpload={(fileName) => responseHelperForm.setFileName(fileName)}
+        onFileClear={() => responseHelperForm.setFileName("")}
+        isProcessing={responseHelperForm.isGenerating}
       />
       <RelationshipContext
-        value={generateRizzFormStore.form.relationshipContext}
-        onUpdate={(context) => generateRizzFormStore.updateRelationshipContext(context)}
+        value={responseHelperForm.form.relationshipContext}
+        onUpdate={(context) =>
+          responseHelperForm.updateRelationshipContext(context)}
         showDuration={true}
       />
     </div>
 
     <div class="flex justify-center pt-4">
-      <SubmitFormButton text="Get response" />
+      <SubmitFormButton
+        text="Get response"
+        disabled={responseHelperForm.canGenerate}
+      />
     </div>
   </form>
 
-  {#if generateRizzFormStore.error}
+  {#if responseHelperForm.error}
     <div class="rounded-xl border border-red-200 bg-red-50 p-4">
       <div class="flex items-center gap-2 text-red-800">
         <span class="font-medium">Error:</span>
-        <span>{generateRizzFormStore.error}</span>
+        <span>{responseHelperForm.error}</span>
       </div>
     </div>
   {/if}

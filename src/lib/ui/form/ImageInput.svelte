@@ -55,7 +55,6 @@
       imagePreview = previewUrl;
 
       const fileName = await triggerClientFileUpload(file, userStore.userId);
-      console.log("Uploaded file succesfully: ", fileName);
 
       // Cache the uploaded media
       mediaCache.set(fileName, previewUrl, isVideo);
