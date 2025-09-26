@@ -17,12 +17,44 @@
   import { SvelteDate } from "svelte/reactivity";
   import FormStep from "./FormStep.svelte";
 
+  interface Props {
+    title?: string;
+    subtitle?: string;
+    tooltip?: string;
+    collapsible?: boolean;
+    defaultCollapsed?: boolean;
+    maxFiles?: number;
+    maxFileSize?: number;
+    accept?: string;
+    onFileUpload?: (fileName: string) => void;
+    onFileClear?: () => void;
+    isProcessing?: boolean;
+  }
+
+  let {
+    title = "Match Profile Analysis",
+    subtitle,
+    tooltip = "Upload screenshots of your match bio",
+    collapsible = false,
+    defaultCollapsed = false,
+    maxFiles = 5,
+    maxFileSize = 2 * MEGABYTE,
+    accept = "image/*",
+    onFileUpload,
+    onFileClear,
+    isProcessing = false,
+  }: Props = $props();
+
   let files = $state<UploadedFile[]>([]);
   let uploading = $state(false);
 
   const fileUploadHandler = new FileUploadHandler({
     onFileUploaded: (fileName) => {
-      firstMoveGeneratorFormStore.addImageFileName(fileName);
+      if (onFileUpload) {
+        onFileUpload(fileName);
+      } else {
+        firstMoveGeneratorFormStore.addImageFileName(fileName);
+      }
     },
     onFileUploadError: (error) => {
       console.error("Upload error:", error);
@@ -64,7 +96,11 @@
       const url = await file.url;
       FileUploadHandler.revokeObjectURL(url);
       if (file.fileName) {
-        firstMoveGeneratorFormStore.removeImageFileName(file.fileName);
+        if (onFileClear) {
+          onFileClear();
+        } else {
+          firstMoveGeneratorFormStore.removeImageFileName(file.fileName);
+        }
       }
 
       // Remove from form store if it was successfully uploaded
@@ -97,18 +133,21 @@
 </script>
 
 <FormStep
-  title="Match Profile Analysis"
-  tooltip="Upload screenshots of your match bio"
+  {title}
+  {subtitle}
+  {tooltip}
+  {collapsible}
+  {defaultCollapsed}
 >
   <div class="flex w-full flex-col gap-2 p-6">
     <FileDropZone
       {onUpload}
       {onFileRejected}
-      maxFileSize={2 * MEGABYTE}
-      accept="image/*"
-      maxFiles={5}
+      maxFileSize={maxFileSize}
+      accept={accept}
+      maxFiles={maxFiles}
       fileCount={files.length}
-      disabled={uploading}
+      disabled={uploading || isProcessing}
     />
     <div class="flex flex-col gap-2">
       {#each files as file, i (file.name)}
