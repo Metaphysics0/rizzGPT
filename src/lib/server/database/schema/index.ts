@@ -115,7 +115,7 @@ export const conversations = pgTable("conversation", {
   relationshipContext: jsonb().$type<RelationshipContext>(),
   matchName: text().notNull(),
   status: text().$type<ConversationStatus>().default("initial"),
-  conversationType: text().$type<ConversationType>(),
+  conversationType: text().$type<ConversationType>().notNull(),
   createdAt: timestamp().defaultNow().notNull(),
   updatedAt: timestamp()
     .$onUpdate(() => /* @__PURE__ */ new Date())
