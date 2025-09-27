@@ -5,6 +5,7 @@
   import { INITIAL_CONVERSATION_DESCRIPTION } from "$lib/constants/initial-conversation.constant";
   import ProcessingResponseSkeleton from "../loading-animations/ProcessingResponseSkeleton.svelte";
   import GeneratedResponseItem from "./GeneratedResponseItem.svelte";
+  import Button from "$lib/components/button/button.svelte";
 
   let { conversation }: { conversation: Conversation } = $props();
 
@@ -71,15 +72,21 @@
 
   {#if hasResponses}
     <div class="space-y-3">
-      <h3 class="flex items-center gap-2 text-lg font-semibold text-gray-800">
-        {#if conversation.conversationType === "first-move"}
-          <Icon icon="mdi:message-star" class="h-5 w-5 text-purple-600" />
-          First Message Options
-        {:else}
-          <Icon icon="mdi:message-text" class="h-5 w-5 text-purple-600" />
-          Response Options
-        {/if}
-      </h3>
+      <div class="flex justify-between">
+        <h3 class="flex items-center gap-2 text-lg font-semibold text-gray-800">
+          {#if conversation.conversationType === "first-move"}
+            <Icon icon="mdi:message-star" class="h-5 w-5 text-purple-600" />
+            First Message Options
+          {:else}
+            <Icon icon="mdi:message-text" class="h-5 w-5 text-purple-600" />
+            Response Options
+          {/if}
+        </h3>
+        <Button variant="outline" class="cursor-pointer">
+          Remix
+          <Icon icon="mingcute:shuffle-2-fill" />
+        </Button>
+      </div>
 
       {#each conversation.rizzResponses as response, index}
         <GeneratedResponseItem {index} {response} />
