@@ -1,4 +1,5 @@
 <script>
+  import { m } from "$lib/paraglide/messages";
   import DownloadAppButtons from "./DownloadAppButtons.svelte";
   import IPhoneAnimatedGif from "./IPhoneAnimatedGif.svelte";
   import SatisfiedUsers from "./SatisfiedUsers.svelte";
@@ -10,12 +11,13 @@
 >
   <div class="flex flex-col justify-center gap-4">
     <TrustpilotScore />
-    <h4 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-wide leading-tight sm:leading-snug md:leading-normal">
-      Land 3.5x More Dates Using RizzGPT. Guaranteed.
+    <h4
+      class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-wide leading-tight sm:leading-snug md:leading-normal"
+    >
+      {m.landing_header()}
     </h4>
     <p class="text-lg sm:text-xl md:text-2xl mb-3">
-      We've tested 100,000+ messages and trained our AI to land you more dates.
-      And we're going to let you try it free for 7 days.
+      {m.landing_subheader()}
     </p>
     <DownloadAppButtons className="h-12 md:h-16" />
   </div>

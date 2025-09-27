@@ -6,6 +6,7 @@
   import HingeLogo from "$lib/assets/dating-app-logos/hinge.svg";
   import OkcupidLogo from "$lib/assets/dating-app-logos/okcupid.svg";
   import TinderLogo from "$lib/assets/dating-app-logos/tinder.svg";
+  import { m } from "$lib/paraglide/messages";
 
   const datingApps = [
     { name: "Tinder", logo: TinderLogo },
@@ -24,7 +25,7 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-shadow-lg">
     <div class="text-center mb-16">
       <h2 class="text-4xl font-bold text-white mb-4">
-        Works with all dating apps
+        {m.dating_app_carousel_header()}
       </h2>
     </div>
 
