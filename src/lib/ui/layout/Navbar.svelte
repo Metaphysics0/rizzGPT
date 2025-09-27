@@ -53,7 +53,7 @@
     {/if}
 
     <div class="flex gap-5 items-center">
-      {#if page.data.user}
+      {#if page.data.user && page.url.pathname === "/"}
         <div class="mr-24">
           {#if page.url.pathname === "/"}
             <LinkButton label="Generate Rizz!" href="/response-helper" />
