@@ -33,10 +33,13 @@ There are two main features (as of sept 27, 2025).
 
 ## TODO:
 
-1. Localization! Add language selector + init project in user's device language.
-   a. Look at: [js-lingui](https://github.com/lingui/js-lingui),
-2. AI Profile Optimizer page (pro only)
+- Refactor 'analyze-bio' to be 'generate-first-move'
 
-- E2E Gumroad subscription flow
-- Refactoring the DB to have a relationship of user.subscriptions, instead of the code duplcation for user & { subscription: Subscription }
-- Capacitor mobile app
+1. pagination for the generated responses.
+2. improve user usage events.
+
+Backlog:
+
+1. fully internationalize app.
+
+- AI Profile Optimizer page (pro only)

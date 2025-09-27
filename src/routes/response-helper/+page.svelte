@@ -1,6 +1,6 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
-  import { responseHelperForm } from "$lib/stores/response-helper-form.svelte";
+  import { responseHelperForm } from "$lib/runes/response-helper-form.svelte";
   import Dropzone from "$lib/ui/form/Dropzone.svelte";
   import FormHeader from "$lib/ui/form/FormHeader.svelte";
   import RelationshipContext from "$lib/ui/form/RelationshipContext.svelte";
