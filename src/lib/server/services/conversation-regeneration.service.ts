@@ -2,7 +2,7 @@ import { actions } from "./db-actions.service";
 import { backblazeStorageService } from "./backblaze-storage.service";
 import { GeminiService } from "./llm/gemini";
 import { PromptHelper } from "./llm/prompt-helper";
-import { LLMInferenceType } from "./llm/types";
+import { conversationTypeToLLMInferenceTypeMap } from "./llm/types";
 import type { Conversation } from "../database/types";
 
 export interface RegenerateRizzRequest {
@@ -71,7 +71,9 @@ export class ConversationRegenerationService {
       conversation;
 
     const basePrompt = PromptHelper.generatePrompt({
-      type: LLMInferenceType.GENERATE_RIZZ_RESPONSE,
+      type: conversationTypeToLLMInferenceTypeMap[
+        conversation.conversationType
+      ],
       data: relationshipContext,
     });
 

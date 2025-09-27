@@ -1,4 +1,4 @@
-import { mediaCache } from "$lib/stores/image-preview.svelte";
+import { mediaCache } from "$lib/runes/image-preview.svelte";
 import { triggerClientFileUpload } from "./client-file-upload.util";
 
 export type UploadedFile = {

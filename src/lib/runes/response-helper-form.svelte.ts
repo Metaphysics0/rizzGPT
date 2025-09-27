@@ -23,7 +23,7 @@ class ResponseHelperForm {
       }
       if (result.type === "failure") {
         console.error("Generation failed", result.data);
-        responseHelperForm.response.error = "Generation Failed";
+        this.response.error = "Generation Failed";
         return;
       }
       await applyAction(result);

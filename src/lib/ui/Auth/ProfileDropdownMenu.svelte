@@ -1,6 +1,5 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
-  import { cn } from "$lib/utils/string/cn.util";
   import { page } from "$app/state";
   import SubscriptionTierStatusBadge from "../general/SubscriptionTierStatusBadge.svelte";
   import {
@@ -9,6 +8,7 @@
   } from "$lib/utils/user/user-info.util";
   import { authClient } from "$lib/auth-client";
   import { goto } from "$app/navigation";
+  import { cn } from "$lib/utils";
   let isDropdownOpen = $state(false);
 
   function handleClickOutside(event: MouseEvent) {
@@ -18,7 +18,14 @@
     }
   }
 
-  const MENU_ITEMS = [
+  interface MenuItem {
+    label: string;
+    icon: string;
+    href: string;
+    disabled?: boolean;
+  }
+
+  const MENU_ITEMS: MenuItem[] = [
     {
       label: "First Move Generator",
       icon: "mingcute:hand-heart-fill",
@@ -38,6 +45,7 @@
       label: "AI Profile Optimizer",
       icon: "mingcute:quill-pen-ai-fill",
       href: "/optimizer",
+      disabled: true,
     },
     {
       label: "Account",
@@ -78,7 +86,6 @@
           class="flex items-center gap-2 rounded-2xl bg-white/70 p-2 shadow-lg backdrop-blur-sm transition-all duration-200 hover:bg-white/80 hover:shadow-xl cursor-pointer"
           aria-label="Profile menu"
         >
-          <!-- User Avatar -->
           <div class="relative h-8 w-8 overflow-hidden rounded-full">
             {#if user.image}
               <img
@@ -100,7 +107,6 @@
             {getDisplayName({ user, fullName: true })}
           </span>
 
-          <!-- Dropdown Arrow -->
           <Icon
             icon="heroicons:chevron-down"
             class="h-4 w-4 text-gray-500 transition-transform duration-200 {isDropdownOpen
@@ -115,7 +121,6 @@
             class="absolute right-0 top-full z-50 mt-2 w-64 rounded-xl border border-white/20 bg-white/90 p-2 shadow-xl backdrop-blur-sm"
           >
             {#if user}
-              <!-- User Info Section -->
               <div class="border-b border-gray-200 p-3">
                 <div class="flex items-center gap-3">
                   <div class="relative h-10 w-10 overflow-hidden rounded-full">
@@ -153,13 +158,15 @@
                 </div>
               </div>
 
-              <!-- Menu Items -->
               <div class="py-1">
                 {#each MENU_ITEMS as item}
                   <a
                     href={item.href}
+                    aria-disabled={item.disabled ? "true" : "false"}
                     class={cn(
                       "flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-slate-100 hover:text-slate-600",
+                      item.disabled &&
+                        "cursor-not-allowed opacity-20 pointer-events-none",
                       page.route.id === item.href &&
                         "bg-slate-100 text-slate-600"
                     )}
@@ -182,10 +189,8 @@
                   </a>
                 {/if}
 
-                <!-- Separator -->
                 <div class="border-t border-gray-200 my-1"></div>
 
-                <!-- Sign Out Button -->
                 <button
                   onclick={signOut}
                   class="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-600 transition-colors hover:bg-red-50 hover:text-red-700 cursor-pointer"
@@ -193,8 +198,6 @@
                   <Icon icon="mdi:logout" class="h-4 w-4" />
                   Log Out
                 </button>
-                <!-- <div class="mt-3 pt-3 border-t border-gray-200">
-                </div> -->
               </div>
             {:else}
               <!-- Not Authenticated Menu -->

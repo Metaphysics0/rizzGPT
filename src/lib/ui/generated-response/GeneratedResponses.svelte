@@ -21,27 +21,28 @@
 
   async function handleRegenerate() {
     if (isRegenerating) return;
-
     isRegenerating = true;
     try {
-      const response = await fetch(`/api/conversations/${conversation.id}/regenerate`, {
-        method: 'POST',
-      });
+      const response = await fetch(
+        `/api/conversations/${conversation.id}/regenerate`,
+        { method: "POST" }
+      );
 
-      if (!response.ok) {
-        throw new Error('Failed to regenerate responses');
-      }
+      if (!response.ok) throw new Error("Failed to regenerate responses");
 
       const result = await response.json();
 
       // Update conversation with new responses
-      conversation.rizzResponses = [...conversation.rizzResponses, ...result.data.responses];
+      conversation.rizzResponses = [
+        ...conversation.rizzResponses,
+        ...result.data.responses,
+      ];
       conversation.rizzResponseDescription = result.data.explanation;
       if (conversation.matchName === "Processing...") {
         conversation.matchName = result.data.matchName;
       }
     } catch (error) {
-      console.error('Regeneration failed:', error);
+      console.error("Regeneration failed:", error);
       // TODO: Add proper error handling/toast
     } finally {
       isRegenerating = false;
@@ -124,7 +125,9 @@
           disabled={isRegenerating}
         >
           {#if isRegenerating}
-            <div class="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
+            <div
+              class="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"
+            ></div>
           {:else}
             <Icon icon="mingcute:shuffle-2-fill" />
           {/if}

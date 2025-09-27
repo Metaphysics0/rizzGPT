@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getSignedUrlFromFilePath } from "$lib/utils/file/client-file-upload.util";
   import { isFileUrlMovie } from "$lib/utils/file/is-file-url-movie.util";
-  import { mediaCache } from "$lib/stores/image-preview.svelte";
+  import { mediaCache } from "$lib/runes/image-preview.svelte";
   import MediaSkeleton from "$lib/ui/loading-animations/MediaSkeleton.svelte";
   import Icon from "@iconify/svelte";
 
