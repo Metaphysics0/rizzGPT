@@ -2,7 +2,7 @@ import { type Handle } from "@sveltejs/kit";
 import { svelteKitHandler } from "better-auth/svelte-kit";
 import { building } from "$app/environment";
 import { auth } from "$lib/server/auth";
-import { paraglideMiddleware } from "./paraglide/server";
+import { paraglideMiddleware } from "./lib/paraglide/server";
 import { sequence } from "@sveltejs/kit/hooks";
 
 const handleAuth: Handle = async ({ event, resolve }) => {
