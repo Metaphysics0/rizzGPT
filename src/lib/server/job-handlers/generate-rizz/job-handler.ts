@@ -46,8 +46,14 @@ export class GenerateRizzJobHandler {
         status: "completed",
       });
 
-      // Increment usage count after successful generation
-      await this.usageService.incrementUsage(this.jobPayload.userId);
+      // Record usage after successful generation
+      await this.usageService.createUsageRecord({
+        userId: this.jobPayload.userId,
+        usageType: "first-move-generation",
+        metadata: {
+          conversationId: this.jobPayload.conversationId,
+        },
+      });
 
       return generateRizzResponse;
     } catch (processingError) {

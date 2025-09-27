@@ -95,8 +95,10 @@ export const userUsage = pgTable("user_usage", {
   userId: text()
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
-  monthYear: text().notNull(), // Format: "YYYY-MM"
-  responseCount: text().default("0").notNull(),
+  usageType: text()
+    .$type<"first-move-generation" | "response-helper-generation" | "regeneration">()
+    .notNull(),
+  metadata: jsonb().$type<Record<string, any>>(),
   createdAt: timestamp().defaultNow().notNull(),
   updatedAt: timestamp()
     .$onUpdate(() => /* @__PURE__ */ new Date())

@@ -3,6 +3,7 @@ import { backblazeStorageService } from "./backblaze-storage.service";
 import { GeminiService } from "./llm/gemini";
 import { PromptHelper } from "./llm/prompt-helper";
 import { conversationTypeToLLMInferenceTypeMap } from "./llm/types";
+import { UsageService } from "./usage.service";
 import type { Conversation } from "../database/types";
 
 export interface RegenerateRizzRequest {
@@ -12,9 +13,11 @@ export interface RegenerateRizzRequest {
 
 export class ConversationRegenerationService {
   private readonly geminiService: GeminiService;
+  private readonly usageService: UsageService;
 
   constructor() {
     this.geminiService = new GeminiService();
+    this.usageService = new UsageService();
   }
 
   async regenerateRizzResponses(request: RegenerateRizzRequest) {
@@ -53,6 +56,15 @@ export class ConversationRegenerationService {
         ...(conversation.matchName === "Processing..." && {
           matchName: generateRizzResponse.matchName,
         }),
+      });
+
+      // Record usage after successful regeneration
+      await this.usageService.createUsageRecord({
+        userId,
+        usageType: "regeneration",
+        metadata: {
+          conversationId,
+        },
       });
 
       return {
