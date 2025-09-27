@@ -9,9 +9,44 @@
 
   let { conversation }: { conversation: Conversation } = $props();
 
+  let isRegenerating = $state(false);
+
   const isProcessing = $derived(conversation.status === "processing");
   const isCompleted = $derived(conversation.status === "completed");
   const hasResponses = $derived(conversation.rizzResponses.length > 0);
+  const showLoading = $derived(isProcessing || isRegenerating);
+
+  // Show latest 3 responses
+  const displayResponses = $derived(conversation.rizzResponses.slice(-3));
+
+  async function handleRegenerate() {
+    if (isRegenerating) return;
+
+    isRegenerating = true;
+    try {
+      const response = await fetch(`/api/conversations/${conversation.id}/regenerate`, {
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to regenerate responses');
+      }
+
+      const result = await response.json();
+
+      // Update conversation with new responses
+      conversation.rizzResponses = [...conversation.rizzResponses, ...result.data.responses];
+      conversation.rizzResponseDescription = result.data.explanation;
+      if (conversation.matchName === "Processing...") {
+        conversation.matchName = result.data.matchName;
+      }
+    } catch (error) {
+      console.error('Regeneration failed:', error);
+      // TODO: Add proper error handling/toast
+    } finally {
+      isRegenerating = false;
+    }
+  }
 </script>
 
 <div
@@ -82,13 +117,22 @@
             Response Options
           {/if}
         </h3>
-        <Button variant="outline" class="cursor-pointer">
-          Remix
-          <Icon icon="mingcute:shuffle-2-fill" />
+        <Button
+          variant="outline"
+          class="cursor-pointer"
+          onclick={handleRegenerate}
+          disabled={isRegenerating}
+        >
+          {#if isRegenerating}
+            <div class="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
+          {:else}
+            <Icon icon="mingcute:shuffle-2-fill" />
+          {/if}
+          Regenerate
         </Button>
       </div>
 
-      {#each conversation.rizzResponses as response, index}
+      {#each displayResponses as response, index}
         <GeneratedResponseItem {index} {response} />
       {/each}
     </div>
@@ -105,7 +149,7 @@
         </div>
       </div>
     </div>
-  {:else if isProcessing}
+  {:else if showLoading}
     <ProcessingResponseSkeleton />
   {/if}
 </div>

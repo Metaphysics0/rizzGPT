@@ -23,10 +23,7 @@ export const POST = (async ({ params, locals }) => {
       userId: user.id,
     });
 
-    return jsonSuccessResponse({
-      message: "Responses regenerated successfully",
-      data: result,
-    });
+    return jsonSuccessResponse(result);
   } catch (error) {
     console.error("Regeneration endpoint error:", error);
 
