@@ -51,6 +51,7 @@
       label: "Account",
       icon: "mingcute:user-3-fill",
       href: "/profile",
+      disabled: true,
     },
   ] as const;
 

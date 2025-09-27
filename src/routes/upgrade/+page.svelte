@@ -1,5 +1,5 @@
 <script>
-  import Pricing from "$lib/ui/landing-page/components/Pricing.svelte";
+  import Plans from "$lib/ui/pricing/Plans.svelte";
 </script>
 
-<Pricing />
+<Plans />
