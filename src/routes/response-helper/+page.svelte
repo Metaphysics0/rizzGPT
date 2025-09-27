@@ -7,7 +7,7 @@
   import ResponseHelperHeader from "$lib/ui/layout/ResponseHelperHeader.svelte";
 </script>
 
-<div class="mx-auto max-w-xl space-y-8">
+<div class="mx-auto max-w-xl space-y-8 px-3">
   <ResponseHelperHeader />
   <form
     method="POST"
@@ -38,7 +38,7 @@
 
     <div class="flex justify-center pt-4">
       <SubmitFormButton
-        text="Get response"
+        text="Generate response!"
         disabled={!responseHelperForm.canGenerate}
         isLoading={responseHelperForm.response.loading}
       />
