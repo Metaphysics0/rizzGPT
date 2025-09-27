@@ -4,22 +4,6 @@ import { eq, and } from "drizzle-orm";
 import { GumroadService } from "./payments/gumroad.service";
 import type { GumroadSubscriber } from "./payments/gumroad.types";
 
-export interface GumroadWebhookPayload {
-  sale_id: string;
-  product_id: string;
-  product_name: string;
-  price: string;
-  email: string;
-  full_name?: string;
-  purchaser_id: string;
-  subscription_id?: string;
-  is_subscription_payment?: string;
-  is_renewal?: string;
-  cancelled?: string;
-  ended?: string;
-  test?: boolean;
-}
-
 export interface SubscriptionData {
   email: string;
   gumroadSaleId: string;
@@ -163,11 +147,8 @@ export class SubscriptionService {
   }
 
   async createOrUpdateSubscription(
-    webhookData: GumroadWebhookPayload
+    subscriptionData: SubscriptionData
   ): Promise<void> {
-    const subscriptionData: SubscriptionData =
-      this.parseWebhookData(webhookData);
-
     const existing = await db
       .select()
       .from(subscriptions)
@@ -214,38 +195,5 @@ export class SubscriptionService {
         updatedAt: new Date(),
       })
       .where(eq(subscriptions.gumroadSaleId, saleId));
-  }
-
-  private parseWebhookData(
-    webhookData: GumroadWebhookPayload
-  ): SubscriptionData {
-    const isSubscription = webhookData.is_subscription_payment === "true";
-    const isCancelled =
-      webhookData.cancelled === "true" || webhookData.ended === "true";
-
-    let status: "active" | "expired" | "cancelled" = "active";
-    if (isCancelled) {
-      status = "cancelled";
-    }
-
-    let expiresAt: Date | undefined;
-    if (isSubscription && !isCancelled) {
-      expiresAt = new Date();
-      expiresAt.setMonth(expiresAt.getMonth() + 1);
-    }
-
-    return {
-      email: webhookData.email,
-      gumroadSaleId: webhookData.sale_id,
-      productId: webhookData.product_id,
-      productName: webhookData.product_name,
-      price: webhookData.price,
-      purchaserEmail: webhookData.email,
-      purchaserName: webhookData.full_name,
-      isSubscription,
-      subscriptionId: webhookData.subscription_id,
-      status,
-      expiresAt,
-    };
   }
 }

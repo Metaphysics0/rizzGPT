@@ -1,9 +1,8 @@
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
-import {
-  SubscriptionService,
-  type GumroadWebhookPayload,
-} from "$lib/server/services/subscription.service";
+import { SubscriptionService } from "$lib/server/services/subscription.service";
+import { GumroadService } from "$lib/server/services/payments/gumroad.service";
+import type { GumroadWebhookPayload } from "$lib/server/services/payments/gumroad.types";
 
 export const POST: RequestHandler = async ({ request }) => {
   try {
@@ -31,8 +30,11 @@ export const POST: RequestHandler = async ({ request }) => {
       return json({ error: "Missing required webhook data" }, { status: 400 });
     }
 
+    const parsedWebhookData = new GumroadService().parseWebhookData(
+      webhookData
+    );
     const subscriptionService = new SubscriptionService();
-    await subscriptionService.createOrUpdateSubscription(webhookData);
+    await subscriptionService.createOrUpdateSubscription(parsedWebhookData);
 
     console.log(
       `[GUMROAD] Successfully processed GumRoad webhook for sale: ${webhookData.sale_id}, email: ${webhookData.email}`

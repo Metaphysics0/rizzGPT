@@ -21,3 +21,19 @@ export interface GumroadSubscriber {
   free_trial_ends_at: any;
   status: string;
 }
+
+export interface GumroadWebhookPayload {
+  sale_id: string;
+  product_id: string;
+  product_name: string;
+  price: string;
+  email: string;
+  full_name?: string;
+  purchaser_id: string;
+  subscription_id?: string;
+  is_subscription_payment?: string;
+  is_renewal?: string;
+  cancelled?: string;
+  ended?: string;
+  test?: boolean;
+}
