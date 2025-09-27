@@ -119,7 +119,7 @@
 </script>
 
 <FormStep {title} {subtitle} {tooltip} {collapsible} {defaultCollapsed}>
-  <div class="flex w-full flex-col gap-2 p-6">
+  <div class="flex w-full flex-col gap-2 p-3">
     <FileDropZone
       {onUpload}
       {onFileRejected}
