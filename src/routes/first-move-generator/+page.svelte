@@ -21,8 +21,11 @@
       <Dropzone
         title="Match Profile Analysis"
         tooltip="Upload screenshots of your match bio"
-        onFileUpload={firstMoveGeneratorForm.addImageFileName}
-        onFileClear={firstMoveGeneratorForm.removeImageFileName}
+        onFileUpload={(fileName) =>
+          firstMoveGeneratorForm.addImageFileName(fileName)}
+        onFileClear={(fileName) =>
+          firstMoveGeneratorForm.removeImageFileName(fileName)}
+        isProcessing={firstMoveGeneratorForm.response.loading}
       />
       <RelationshipContext
         title="Match Context"

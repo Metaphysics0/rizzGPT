@@ -12,7 +12,7 @@ class FirstMoveGeneratorForm {
     this.form.imageFileNames.length > 0 && !this.response?.loading
   );
 
-  public handleEnhance: SubmitFunction = async ({ formData }) => {
+  handleEnhance: SubmitFunction = async ({ formData }) => {
     this.setFormData(formData);
     this.response.loading = true;
     return async ({ result }) => {

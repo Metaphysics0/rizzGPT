@@ -60,7 +60,7 @@ export class FileUploadHandler {
       // Cache the uploaded media
       mediaCache.set(fileName, previewUrl, isVideo);
 
-      // Notify about successful upload
+      // Notify about successful upload with the actual fileName
       this.onFileUploaded(fileName);
 
       // Return both the preview URL and server fileName
