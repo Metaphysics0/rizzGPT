@@ -1,5 +1,7 @@
 <script lang="ts">
   import { page } from "$app/state";
+  // import { m } from "../../../paraglide/messages";
+  // import * as m from '$lib/paraglide/messages'
   import ProfileDropdownMenu from "../Auth/ProfileDropdownMenu.svelte";
   import LinkButton from "../general/LinkButton.svelte";
   import Logo from "./Logo.svelte";

@@ -2,8 +2,10 @@ import { type Handle } from "@sveltejs/kit";
 import { svelteKitHandler } from "better-auth/svelte-kit";
 import { building } from "$app/environment";
 import { auth } from "$lib/server/auth";
+import { paraglideMiddleware } from "./paraglide/server";
+import { sequence } from "@sveltejs/kit/hooks";
 
-export const handle: Handle = async ({ event, resolve }) => {
+const handleAuth: Handle = async ({ event, resolve }) => {
   try {
     if (isChromeDevToolsRequest(event.url)) {
       return new Response(null, { status: 204 });
@@ -33,6 +35,19 @@ export const handle: Handle = async ({ event, resolve }) => {
   }
 };
 
+const handleParaglide: Handle = ({ event, resolve }) =>
+  paraglideMiddleware(
+    event.request,
+    ({ request: localizedRequest, locale }) => {
+      event.request = localizedRequest;
+      return resolve(event, {
+        transformPageChunk: ({ html }) => {
+          return html.replace("%lang%", locale);
+        },
+      });
+    }
+  );
+
 function isChromeDevToolsRequest(url: URL) {
   return url.pathname.startsWith(
     "/.well-known/appspecific/com.chrome.devtools"
@@ -56,3 +71,5 @@ function doesPathnameRequireSignedInUser(pathname: string) {
   ];
   return protectedRoutes.some((route) => pathname.startsWith(route));
 }
+
+export const handle: Handle = sequence(handleParaglide, handleAuth);
