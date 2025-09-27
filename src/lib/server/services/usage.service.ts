@@ -1,72 +1,57 @@
-import { getCurrentMonthYear } from "$lib/utils/date.util";
 import { db } from "../database/connection";
 import { userUsage } from "../database/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, gte } from "drizzle-orm";
 import { actions } from "./db-actions.service";
+
+export type UsageType =
+  | "first-move-generation"
+  | "response-helper-generation"
+  | "regeneration";
+
+export interface CreateUsageOptions {
+  userId: string;
+  usageType: UsageType;
+  metadata?: Record<string, any>;
+}
 
 export class UsageService {
   static readonly MAX_AMOUNT_OF_MONTHLY_GENERATIONS_FOR_FREE_TIER = 5;
-  readonly currentMonthYear = getCurrentMonthYear();
 
-  async getUserUsage(userId: string): Promise<number> {
-    const usage = await db
-      .select()
-      .from(userUsage)
-      .where(
-        and(
-          eq(userUsage.userId, userId),
-          eq(userUsage.monthYear, this.currentMonthYear)
-        )
-      )
-      .limit(1);
-
-    return usage.length > 0 ? parseInt(usage[0].responseCount) : 0;
+  async createUsageRecord(options: CreateUsageOptions): Promise<void> {
+    await db.insert(userUsage).values({
+      userId: options.userId,
+      usageType: options.usageType,
+      metadata: options.metadata || null,
+    });
   }
 
-  async incrementUsage(userId: string): Promise<void> {
-    const existing = await db
+  async getUserUsageCount(userId: string): Promise<number> {
+    const monthStart = this.getCurrentMonthStart();
+
+    const usageRecords = await db
       .select()
       .from(userUsage)
       .where(
-        and(
-          eq(userUsage.userId, userId),
-          eq(userUsage.monthYear, this.currentMonthYear)
-        )
-      )
-      .limit(1);
+        and(eq(userUsage.userId, userId), gte(userUsage.createdAt, monthStart))
+      );
 
-    if (existing.length > 0) {
-      const currentCount = parseInt(existing[0].responseCount);
-      await db
-        .update(userUsage)
-        .set({
-          responseCount: String(currentCount + 1),
-          updatedAt: new Date(),
-        })
-        .where(
-          and(
-            eq(userUsage.userId, userId),
-            eq(userUsage.monthYear, this.currentMonthYear)
-          )
-        );
-    } else {
-      await db.insert(userUsage).values({
-        userId,
-        monthYear: this.currentMonthYear,
-        responseCount: "1",
-      });
-    }
+    return usageRecords.length;
   }
 
   async hasExceededFreeLimit(userId: string): Promise<boolean> {
     const isSuperUser = await actions.isSuperUser(userId);
     if (isSuperUser) return false;
 
-    const currentUsage = await this.getUserUsage(userId);
+    const currentUsage = await this.getUserUsageCount(userId);
 
     return (
       currentUsage >=
       UsageService.MAX_AMOUNT_OF_MONTHLY_GENERATIONS_FOR_FREE_TIER
     );
+  }
+
+  private getCurrentMonthStart(): Date {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), 1);
   }
 }

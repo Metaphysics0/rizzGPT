@@ -46,8 +46,14 @@ export class AnalyzeBioJobHandler {
         status: "completed",
       });
 
-      // Increment usage count after successful generation
-      await this.usageService.incrementUsage(this.jobPayload.userId);
+      // Record usage after successful generation
+      await this.usageService.createUsageRecord({
+        userId: this.jobPayload.userId,
+        usageType: "response-helper-generation",
+        metadata: {
+          conversationId: this.jobPayload.conversationId,
+        },
+      });
 
       return bioAnalysisResponse;
     } catch (processingError) {
