@@ -4,9 +4,14 @@
   import GenerateResponseButton from "$lib/ui/form/SubmitFormButton.svelte";
   import RelationshipContext from "$lib/ui/form/RelationshipContext.svelte";
   import Dropzone from "$lib/ui/form/Dropzone.svelte";
+  import FormHeader from "$lib/ui/form/FormHeader.svelte";
 </script>
 
-<div class="mx-auto max-w-xl space-y-8">
+<div class="mx-auto max-w-xl space-y-8 px-3">
+  <FormHeader
+    header="Get the perfect opener 💞"
+    subheader="Upload your matches' bio, and get a handcrafted first message"
+  />
   <form
     method="POST"
     action="?/generateFirstMove"

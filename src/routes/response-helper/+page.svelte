@@ -2,13 +2,16 @@
   import { enhance } from "$app/forms";
   import { responseHelperForm } from "$lib/stores/response-helper-form.svelte";
   import Dropzone from "$lib/ui/form/Dropzone.svelte";
+  import FormHeader from "$lib/ui/form/FormHeader.svelte";
   import RelationshipContext from "$lib/ui/form/RelationshipContext.svelte";
   import SubmitFormButton from "$lib/ui/form/SubmitFormButton.svelte";
-  import ResponseHelperHeader from "$lib/ui/layout/ResponseHelperHeader.svelte";
 </script>
 
 <div class="mx-auto max-w-xl space-y-8 px-3">
-  <ResponseHelperHeader />
+  <FormHeader
+    header="Not sure what to say next?"
+    subheader="Get a handcrafted response in seconds!"
+  />
   <form
     method="POST"
     action="?/generateRizz"
