@@ -5,7 +5,7 @@
   import DatingAppsCarousel from "./components/DatingAppsCarousel.svelte";
   import FAQ from "./components/FAQ.svelte";
   import HeroSection from "./components/HeroSection.svelte";
-  import Pricing from "./components/Pricing.svelte";
+  import Plans from "../pricing/Plans.svelte";
   import StepByStepWalkthrough from "./components/StepByStepWalkthrough.svelte";
   import Testimonials from "./components/Testimonials.svelte";
   import TryItOut from "./components/TryItOut.svelte";
@@ -29,7 +29,7 @@
   <TryItForFreeButton className="py-32" />
 </section>
 
-<Pricing />
+<Plans />
 <FAQ />
 <TryItForFreeButton className="pb-20" />
 <Footer />
