@@ -74,15 +74,14 @@ Generate 3 distinct first message options that:
 `;
 
   private static readonly BIO_RESPONSE_FORMAT = dedent`
-Based on the dating profile in the image, provide a thorough analysis and craft 3 personalized first message options.
+Based on the dating profile in the image, provide a brief analysis (2-3 sentences max) and craft 3 personalized first message options.
 
-Your analysis should cover:
-- Key interests, hobbies, or activities visible in photos or bio
-- Personality indicators (humor style, energy level, lifestyle)
-- Conversation hooks (specific details that could spark discussion)
-- Overall vibe and what type of opener would work best
+Keep your analysis concise and focused only on:
+- The most notable interests or personality traits that stand out
+- Best conversation starters or hooks from their profile
+- What approach would work best with this person
 
-Then provide 3 distinct first message options that demonstrate different approaches:
+Then provide 3 distinct first message options:
 1. Interest-based: Reference a specific hobby, activity, or detail from their profile
 2. Observational/Witty: Make a clever observation or light joke based on their photos/bio
 3. Question-based: Ask an engaging question that encourages a meaningful response
@@ -94,7 +93,7 @@ Return the response as a valid JSON object with three keys: "explanation" (a str
 Example:
 {
   "matchName": "Sarah",
-  "explanation": "Sarah's profile shows she's adventurous (hiking photos), has a sense of humor (witty bio about coffee addiction), and loves travel (photos from various cities). She seems approachable but appreciates substance over surface-level compliments. These openers reference specific elements while showing personality and genuine interest.",
+  "explanation": "Sarah's into hiking and travel with a witty sense of humor about her coffee addiction. She seems approachable but values substance over surface-level compliments.",
   "responses": [
     "I see you're a fellow coffee addict - what's your go-to order when you need to fuel up for those hiking adventures?",
     "Your travel photos are making me seriously jealous! That sunset shot from Santorini is incredible - was that trip as amazing as it looks?",

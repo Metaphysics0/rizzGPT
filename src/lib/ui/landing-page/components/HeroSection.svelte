@@ -11,12 +11,10 @@
 >
   <div class="flex flex-col justify-center gap-4">
     <TrustpilotScore />
-    <h4
-      class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-wide leading-tight sm:leading-snug md:leading-normal"
-    >
+    <h4 class="heading-hero">
       {m.landing_header()}
     </h4>
-    <p class="text-lg sm:text-xl md:text-2xl mb-3">
+    <p class="text-responsive-lg mb-3">
       {m.landing_subheader()}
     </p>
     <DownloadAppButtons className="h-12 md:h-16" />

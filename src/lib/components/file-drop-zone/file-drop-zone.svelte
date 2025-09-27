@@ -8,6 +8,7 @@
   import { displaySize } from ".";
   import { useId } from "bits-ui";
   import type { FileDropZoneProps, FileRejectedReason } from "./types";
+  import { pluralize, pluralizeWithCount } from "$lib/utils/string/pluralize";
 
   let {
     id = useId(),
@@ -154,15 +155,18 @@
       </div>
       <div class="flex flex-col gap-0.5 text-center">
         <span class="text-muted-foreground font-medium">
-          Drag 'n' drop files here, or click to select files
+          Drag and drop, or click to select files
         </span>
         {#if maxFiles || maxFileSize}
           <span class="text-muted-foreground/75 text-sm">
             {#if maxFiles}
-              <span>You can upload {maxFiles} files</span>
+              <span>You can upload {pluralizeWithCount(maxFiles, "file")}</span>
             {/if}
             {#if maxFiles && maxFileSize}
-              <span>(up to {displaySize(maxFileSize)} each)</span>
+              <span
+                >(up to {displaySize(maxFileSize)}
+                {maxFiles > 1 ? "each" : ""})</span
+              >
             {/if}
             {#if maxFileSize && !maxFiles}
               <span>Maximum size {displaySize(maxFileSize)}</span>
