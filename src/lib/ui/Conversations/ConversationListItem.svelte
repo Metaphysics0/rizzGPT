@@ -117,6 +117,7 @@
         </h3>
         <ConversationTypeBadge
           conversationType={conversation.conversationType}
+          className="mr-1"
         />
         <span
           class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium {statusInfo.bgColor} {statusInfo.color} shrink-0"
