@@ -6,18 +6,38 @@
   import ProcessingResponseSkeleton from "../loading-animations/ProcessingResponseSkeleton.svelte";
   import GeneratedResponseItem from "./GeneratedResponseItem.svelte";
   import Button from "$lib/components/button/button.svelte";
+  import * as Pagination from "$lib/components/pagination";
+  import toast from "svelte-french-toast";
 
   let { conversation }: { conversation: Conversation } = $props();
 
   let isRegenerating = $state(false);
+  let currentPage = $state(1);
 
   const isProcessing = $derived(conversation.status === "processing");
   const isCompleted = $derived(conversation.status === "completed");
   const hasResponses = $derived(conversation.rizzResponses.length > 0);
   const showLoading = $derived(isProcessing || isRegenerating);
 
-  // Show latest 3 responses
-  const displayResponses = $derived(conversation.rizzResponses.slice(-3));
+  // Pagination constants
+  const responsesPerPage = 3;
+  const totalResponses = $derived(conversation.rizzResponses.length);
+  const totalPages = $derived(Math.ceil(totalResponses / responsesPerPage));
+  const showPagination = $derived(totalResponses > responsesPerPage);
+
+  // Calculate responses for current page
+  const displayResponses = $derived(() => {
+    const startIndex = (currentPage - 1) * responsesPerPage;
+    const endIndex = startIndex + responsesPerPage;
+    return conversation.rizzResponses.slice(startIndex, endIndex);
+  });
+
+  // Reset to last page when new responses are added
+  $effect(() => {
+    if (totalPages > 0 && currentPage > totalPages) {
+      currentPage = totalPages;
+    }
+  });
 
   async function handleRegenerate() {
     if (isRegenerating) return;
@@ -43,7 +63,7 @@
       }
     } catch (error) {
       console.error("Regeneration failed:", error);
-      // TODO: Add proper error handling/toast
+      toast.error("Regeneration failed");
     } finally {
       isRegenerating = false;
     }
@@ -135,10 +155,32 @@
         </Button>
       </div>
 
-      {#each displayResponses as response, index}
+      {#each displayResponses() as response, index}
         <GeneratedResponseItem {index} {response} />
       {/each}
     </div>
+
+    {#if showPagination}
+      <div class="mt-4 flex justify-center">
+        <Pagination.Root
+          count={totalResponses}
+          perPage={responsesPerPage}
+          bind:page={currentPage}
+          siblingCount={0}
+        >
+          {#snippet children()}
+            <Pagination.Content>
+              <Pagination.Item>
+                <Pagination.PrevButton />
+              </Pagination.Item>
+              <Pagination.Item>
+                <Pagination.NextButton />
+              </Pagination.Item>
+            </Pagination.Content>
+          {/snippet}
+        </Pagination.Root>
+      </div>
+    {/if}
 
     <div class="mt-6 rounded-lg bg-green-50 p-3 text-sm">
       <div class="flex items-start gap-2">

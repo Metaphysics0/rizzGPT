@@ -6,7 +6,7 @@
   import Icon from "@iconify/svelte";
   import { onDestroy, onMount } from "svelte";
   import type { PageData } from "./$types";
-  import GeneratedResponses from "$lib/ui/generated-response/GeneratedResponses.svelte";
+  import ProcessedConversation from "$lib/ui/generated-response/ProcessedConversation.svelte";
 
   const { data }: { data: PageData } = $props();
 
@@ -128,7 +128,7 @@
   {/if}
 
   {#if conversation}
-    <GeneratedResponses {conversation} />
+    <ProcessedConversation {conversation} />
   {:else}
     <div
       class="rounded-2xl border border-white/20 bg-white/70 p-8 shadow-lg backdrop-blur-sm text-center"
