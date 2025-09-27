@@ -1,5 +1,5 @@
 {
-  "$schema": "https://inlang.com/schema/inlang-message-format",
-  "example_message": "Guten Tag {username}",
-  "greeting": "Hi!! {name}"
+	"$schema": "https://inlang.com/schema/inlang-message-format",
+	"example_message": "Guten Tag {username}",
+	"greeting": "Hi!! {name}"
 }
