@@ -1,8 +1,12 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
 	"landing_header": "Consigue 3,5 veces más citas con RizzGPT. ¡Garantizado!",
-	"landing_subheader": "Hemos probado más de 100,000 mensajes y entrenado nuestra IA para conseguirte más citas. Y te lo vamos a dar gratis durante 7 días.",
+	"landing_subheader": "Hemos probado más de 100,000 mensajes y entrenado nuestra IA para conseguirte más citas. Y te daremos una oportunidad de probarlo gratis durante 7 días.",
 	"satisfied_users": "Únase a miles de usuarios satisfechos 🔥",
 	"see_reviews": "Ver reseñas",
-	"upload_their_bio": "Sube su biografía y obtén sugerencias para chats..."
+	"upload_their_bio": "Sube su biografía y obtén sugerencias para chats...",
+	"dating_app_carousel_header": "Funciona con todas las aplicaciones de citas.",
+	"testimonials_header": "Hemos ayudado a miles de usuarios a obtener citas el mismo día",
+	"how_it_works_header": "¿Cómo funciona?",
+	"how_it_works_description": "¡Es muy sencillo! Cuando conectes con alguien en cualquier app de citas, simplemente haz una captura de pantalla de su biografía. Abre RizzGPT, sube la captura y ¡deja que nuestra IA haga su trabajo!"
 }

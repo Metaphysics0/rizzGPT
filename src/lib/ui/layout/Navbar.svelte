@@ -1,7 +1,5 @@
 <script lang="ts">
   import { page } from "$app/state";
-  // import { m } from "../../../paraglide/messages";
-  // import * as m from '$lib/paraglide/messages'
   import ProfileDropdownMenu from "../Auth/ProfileDropdownMenu.svelte";
   import LinkButton from "../general/LinkButton.svelte";
   import Logo from "./Logo.svelte";
@@ -55,15 +53,14 @@
     {/if}
 
     <div class="flex gap-5 items-center">
-      {#if page.data.user && page.url.pathname === "/"}
-        <div class="mr-24">
-          {#if page.url.pathname === "/"}
+      {#if page.data.user}
+        {#if page.url.pathname === "/"}
+          <div class="mr-24">
             <LinkButton label="Generate Rizz!" href="/response-helper" />
-          {/if}
-        </div>
+          </div>
+        {/if}
         <ProfileDropdownMenu />
       {:else}
-        <!-- Desktop login link -->
         <a
           class="text-primary font-bold duration-100 hidden md:block"
           href="/sign-in">Login</a
