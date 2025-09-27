@@ -9,6 +9,9 @@
   import { authClient } from "$lib/auth-client";
   import { goto } from "$app/navigation";
   import { cn } from "$lib/utils";
+
+  let { wrapperClass }: { wrapperClass?: string } = $props();
+
   let isDropdownOpen = $state(false);
 
   function handleClickOutside(event: MouseEvent) {
@@ -79,7 +82,7 @@
 </script>
 
 {#if user}
-  <nav class="absolute right-0 w-fit z-50 p-4">
+  <nav class={cn("absolute right-0 w-fit z-50 p-4", wrapperClass)}>
     <div class="flex justify-end">
       <div class="relative profile-dropdown">
         <button
