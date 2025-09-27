@@ -6,5 +6,5 @@
 </script>
 
 <div class={cn("flex justify-center", className)}>
-  <LinkButton label="Try it for free" href="/sign-in" />
+  <LinkButton label="Try it for free" href="/sign-in" responsive={false} />
 </div>
