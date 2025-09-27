@@ -4,10 +4,11 @@
   import Dropzone from "$lib/ui/form/Dropzone.svelte";
   import RelationshipContext from "$lib/ui/form/RelationshipContext.svelte";
   import SubmitFormButton from "$lib/ui/form/SubmitFormButton.svelte";
+  import ResponseHelperHeader from "$lib/ui/layout/ResponseHelperHeader.svelte";
 </script>
 
 <div class="mx-auto max-w-xl space-y-8">
-  <h1>Response Helper 🚀</h1>
+  <ResponseHelperHeader />
   <form
     method="POST"
     action="?/generateRizz"
@@ -15,7 +16,7 @@
   >
     <div class="space-y-6">
       <Dropzone
-        title="Conversation Upload"
+        title="Upload your conversation!"
         tooltip="Upload a screen recording or screenshot of your conversation with your partner."
         maxFiles={1}
         maxFileSize={50 * 1024 * 1024}
