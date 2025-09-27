@@ -1,34 +1,13 @@
-import { applyAction } from "$app/forms";
-import { goto } from "$app/navigation";
-import type { SubmitFunction } from "@sveltejs/kit";
+import { FormStateBaseClass } from "./form-state-base-class.svelte";
 
-class FirstMoveGeneratorForm {
+class FirstMoveGeneratorForm extends FormStateBaseClass {
   public form = $state({
     relationshipContext: { objective: "", notes: "" },
     imageFileNames: [] as string[],
   });
-  public response = $state({ loading: false, error: "" });
   public canGenerate = $derived(
     this.form.imageFileNames.length > 0 && !this.response?.loading
   );
-
-  handleEnhance: SubmitFunction = async ({ formData }) => {
-    this.setFormData(formData);
-    this.response.loading = true;
-    return async ({ result }) => {
-      this.response.loading = false;
-      if (result.type === "redirect") {
-        goto(result.location);
-        return;
-      }
-      if (result.type === "failure") {
-        console.error("Generation failed", result.data);
-        this.response.error = "Generation Failed";
-        return;
-      }
-      await applyAction(result);
-    };
-  };
 
   addImageFileName(fileName: string) {
     if (this.form.imageFileNames.length < 5) {
@@ -43,7 +22,7 @@ class FirstMoveGeneratorForm {
     }
   }
 
-  private setFormData(formData: FormData) {
+  setFormData(formData: FormData) {
     this.form.imageFileNames.forEach((fileName) => {
       formData.append("imageFileNames", fileName);
     });
