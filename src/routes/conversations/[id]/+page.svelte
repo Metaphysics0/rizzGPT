@@ -7,6 +7,7 @@
   import { onDestroy, onMount } from "svelte";
   import type { PageData } from "./$types";
   import ProcessedConversation from "$lib/ui/generated-response/ProcessedConversation.svelte";
+  import LinkButton from "$lib/ui/general/LinkButton.svelte";
 
   const { data }: { data: PageData } = $props();
 
