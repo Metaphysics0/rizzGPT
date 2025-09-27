@@ -15,6 +15,7 @@ const handleAuth: Handle = async ({ event, resolve }) => {
       headers: event.request.headers,
     });
 
+    console.log("SESSION", session);
     if (doesPathnameRequireSignedInUser(event.url.pathname) && !session) {
       return new Response(null, {
         status: 302,
@@ -59,6 +60,7 @@ function doesPathnameRequireSignedInUser(pathname: string) {
   if (publicRoutes.some((route) => pathname.startsWith(route))) {
     return false;
   }
+  console.log("PATHNAME", pathname);
 
   const protectedRoutes = [
     "/profile",
@@ -72,4 +74,4 @@ function doesPathnameRequireSignedInUser(pathname: string) {
   return protectedRoutes.some((route) => pathname.startsWith(route));
 }
 
-export const handle: Handle = sequence(handleParaglide, handleAuth);
+export const handle: Handle = sequence(handleAuth, handleParaglide);

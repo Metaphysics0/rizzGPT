@@ -14,7 +14,7 @@
     "lint": "biome check .",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "machine-translate": "inlang machine translate --project project.inlang"
+    "machine-translate": "inlang machine translate --project project.inlang --locale=en --targetLocales=es,fr,de,pt,it,ru,ja,ko,zh-CN,ar,hi,pt-BR,nl,sv,tr,he"
   },
   "devDependencies": {
     "@iconify/svelte": "^4.2.0",
