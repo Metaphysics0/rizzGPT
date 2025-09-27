@@ -1,5 +1,6 @@
 <script lang="ts">
   import { page } from "$app/state";
+  import { cn } from "$lib/utils";
   import ProfileDropdownMenu from "../Auth/ProfileDropdownMenu.svelte";
   import LinkButton from "../general/LinkButton.svelte";
   import Logo from "./Logo.svelte";
@@ -55,11 +56,13 @@
     <div class="flex gap-5 items-center">
       {#if page.data.user}
         {#if page.url.pathname === "/"}
-          <div class="mr-24">
+          <div class={cn("mr-0 md:mr-24")}>
             <LinkButton label="Generate Rizz!" href="/response-helper" />
           </div>
         {/if}
-        <ProfileDropdownMenu />
+        <ProfileDropdownMenu
+          wrapperClass={cn(page.url.pathname === "/" && "hidden md:block")}
+        />
       {:else}
         <a
           class="text-primary font-bold duration-100 hidden md:block"
