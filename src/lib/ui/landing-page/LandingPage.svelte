@@ -9,8 +9,10 @@
   import StepByStepWalkthrough from "./components/StepByStepWalkthrough.svelte";
   import Testimonials from "./components/Testimonials.svelte";
   import TryItOut from "./components/TryItOut.svelte";
+  import { m } from "$lib/paraglide/messages";
 </script>
 
+<!-- {m} -->
 <HeroSection />
 <DatingAppsCarousel />
 
