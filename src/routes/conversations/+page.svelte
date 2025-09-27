@@ -1,6 +1,5 @@
 <script lang="ts">
   import ConversationListItem from "$lib/ui/conversations/ConversationListItem.svelte";
-  import NewConversationButton from "$lib/ui/conversations/NewConversationButton.svelte";
   import { pluralizeWithCount } from "$lib/utils/string/pluralize";
   import type { PageData } from "./$types";
 
@@ -9,7 +8,7 @@
   let conversations = $state(data.conversations);
 
   function handleDelete(conversationId: string) {
-    conversations = conversations.filter(conv => conv.id !== conversationId);
+    conversations = conversations.filter((conv) => conv.id !== conversationId);
   }
 </script>
 
@@ -28,7 +27,6 @@
           {pluralizeWithCount(conversations.length, "conversation")}
         </p>
       </div>
-      <NewConversationButton />
     </div>
   </div>
 
