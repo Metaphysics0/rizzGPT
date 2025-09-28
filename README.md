@@ -2,7 +2,7 @@
 
 A web app for generating responses for dating conversations, using modern web technologies.
 
-## Core
+## Core Features
 
 The app is an AI wingman assistant to help users craft responses to send to a prospective partner they have met on any dating app platoform.
 There are two main features (as of sept 27, 2025).
@@ -35,8 +35,11 @@ There are two main features (as of sept 27, 2025).
 
 - Refactor 'analyze-bio' to be 'generate-first-move'
 
-1. pagination for the generated responses.
-2. improve user usage events.
+1. Subscriptions working e2e 🚀🚀🚀
+
+- Test redirect after purchase.
+- Setup cron
+- Consider loading the plans from gumroad's API
 
 Backlog:
 
