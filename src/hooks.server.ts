@@ -6,6 +6,26 @@ import { paraglideMiddleware } from "./lib/paraglide/server";
 import { sequence } from "@sveltejs/kit/hooks";
 import { actions } from "$lib/server/services/db-actions.service";
 
+const handleCsrf: Handle = async ({ event, resolve }) => {
+  const forbidden =
+    event.request.method === "POST" &&
+    event.request.headers.get("origin") !== event.url.origin &&
+    !isWebhookRoute(event.url.pathname);
+
+  if (forbidden) {
+    return new Response("Cross-site POST form submissions are forbidden", {
+      status: 403,
+    });
+  }
+
+  return resolve(event);
+};
+
+function isWebhookRoute(pathname: string): boolean {
+  const webhookRoutes = ["/api/webhooks", "/api/cron"];
+  return webhookRoutes.some((route) => pathname.startsWith(route));
+}
+
 const handleAuth: Handle = async ({ event, resolve }) => {
   try {
     if (isChromeDevToolsRequest(event.url)) {
@@ -87,4 +107,4 @@ function doesPathnameRequirePaidUser(pathname: string) {
   return premiumRoutes.some((route) => pathname.startsWith(route));
 }
 
-export const handle: Handle = sequence(handleParaglide, handleAuth);
+export const handle: Handle = sequence(handleCsrf, handleParaglide, handleAuth);
