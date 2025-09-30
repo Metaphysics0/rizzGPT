@@ -4,9 +4,7 @@ export function doesUserHaveActiveSubscription(
   user?: UserWithRelations
 ): boolean {
   if (user?.isSuperUser) return true;
+  if (!user?.subscriptions?.length) return false;
 
-  return (
-    !!user?.subscriptions &&
-    user.subscriptions.filter((sub) => sub.status === "active").length > 0
-  );
+  return user.subscriptions.filter((sub) => sub.status === "active").length > 0;
 }
