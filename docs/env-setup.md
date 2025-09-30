@@ -8,3 +8,6 @@ Setting up your environment and connecting all these services should take around
 4. Get a Better Auth secret here: https://www.better-auth.com/docs/installation, and add it to `BETTER_AUTH_SECRET`
 5. Create a backblaze b2 cloud storage bucket, and name it to `rizz-gpt`. Keep it private. See `storage.md` for more info.
 6. Create a Gumroad account + a digital product.
+
+7. RECOMMENDED (but not mandatory): Create a cron job on https://cron-job.org/ that calls your production domain.
+   Add HTTP authorization to the cron job, and Create a random secret and store it `CRON_SECRET`.
