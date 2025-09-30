@@ -7,7 +7,12 @@ import {
   subscriptions,
   userUsage,
 } from "../database/schema";
-import type { Conversation, NewConversation } from "../database/types";
+import type {
+  Conversation,
+  NewConversation,
+  UserWithRelations,
+} from "../database/types";
+import { doesUserHaveActiveSubscription } from "../utils/user.util";
 
 // A general place to put DB actions.
 class DbActionsService {
@@ -95,8 +100,10 @@ class DbActionsService {
     return result[0];
   }
 
-  async getUserWithRelations(userId: string) {
-    return db.query.users.findFirst({
+  async getUserWithRelations(
+    userId: string
+  ): Promise<UserWithRelations | undefined> {
+    const user = await db.query.users.findFirst({
       where: eq(users.id, userId),
       with: {
         subscriptions: {
@@ -109,6 +116,12 @@ class DbActionsService {
         },
       },
     });
+    if (!user) return;
+
+    return {
+      ...user,
+      hasActiveSubscription: doesUserHaveActiveSubscription(user),
+    };
   }
 
   async getUserByEmail(email: string) {
