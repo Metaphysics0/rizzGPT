@@ -1,4 +1,11 @@
-import type { accounts, conversations, sessions, users, subscriptions, userUsage } from "./schema";
+import type {
+  accounts,
+  conversations,
+  sessions,
+  users,
+  subscriptions,
+  userUsage,
+} from "./schema";
 
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
@@ -22,6 +29,7 @@ export type NewUserUsage = typeof userUsage.$inferInsert;
 export type UserWithRelations = User & {
   subscriptions: Subscription[];
   userUsage: UserUsage[];
+  hasActiveSubscription?: boolean;
 };
 
 // Alias for the common use case

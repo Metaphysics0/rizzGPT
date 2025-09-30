@@ -29,6 +29,8 @@
   <TryItForFreeButton className="py-32" />
 </section>
 
+<div class="py-20"></div>
+
 <Plans />
 <FAQ />
 <TryItForFreeButton className="pb-20" />

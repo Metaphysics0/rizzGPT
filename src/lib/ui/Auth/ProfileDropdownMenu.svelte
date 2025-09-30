@@ -10,6 +10,8 @@
   import { goto } from "$app/navigation";
   import { cn } from "$lib/utils";
 
+  const user = page.data.user;
+
   let { wrapperClass }: { wrapperClass?: string } = $props();
 
   let isDropdownOpen = $state(false);
@@ -43,18 +45,19 @@
       label: "History",
       icon: "mingcute:history-fill",
       href: "/conversations",
+      disabled: !user?.hasActiveSubscription,
     },
     {
       label: "AI Profile Optimizer",
       icon: "mingcute:quill-pen-ai-fill",
       href: "/optimizer",
-      disabled: true,
+      disabled: !user?.hasActiveSubscription,
     },
     {
       label: "Account",
       icon: "mingcute:user-3-fill",
       href: "/profile",
-      disabled: true,
+      disabled: !user?.hasActiveSubscription,
     },
   ] as const;
 
@@ -77,8 +80,6 @@
       };
     }
   });
-
-  const user = page.data.user;
 </script>
 
 {#if user}
@@ -181,7 +182,7 @@
                 {/each}
 
                 <!-- Upgrade Button for non-pro users -->
-                {#if !user.subscriptions?.find((sub) => sub.status === "active")}
+                {#if !user.hasActiveSubscription}
                   <a
                     href="/upgrade"
                     class="flex items-center justify-between gap-2 rounded-lg px-3 py-2 mt-1 mb-3 text-sm bg-gradient-to-r from-purple-500 to-pink-500 text-white transition-all hover:from-purple-600 hover:to-pink-600 hover:shadow-lg transform hover:scale-[1.02] group"

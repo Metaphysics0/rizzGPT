@@ -4,6 +4,7 @@ import { building } from "$app/environment";
 import { auth } from "$lib/server/auth";
 import { paraglideMiddleware } from "./lib/paraglide/server";
 import { sequence } from "@sveltejs/kit/hooks";
+import { actions } from "$lib/server/services/db-actions.service";
 
 const handleAuth: Handle = async ({ event, resolve }) => {
   try {
@@ -15,7 +16,8 @@ const handleAuth: Handle = async ({ event, resolve }) => {
       headers: event.request.headers,
     });
 
-    if (doesPathnameRequireSignedInUser(event.url.pathname) && !session) {
+    const eventPathname = event.url.pathname;
+    if (doesPathnameRequireSignedInUser(eventPathname) && !session) {
       return new Response(null, {
         status: 302,
         headers: { Location: "/sign-in" },
@@ -25,7 +27,18 @@ const handleAuth: Handle = async ({ event, resolve }) => {
     // Make session and user available on server
     if (session) {
       event.locals.session = session.session;
-      event.locals.user = session.user;
+      const dbUser = await actions.getUserWithRelations(session.user.id);
+      event.locals.user = dbUser;
+
+      if (
+        doesPathnameRequirePaidUser(eventPathname) &&
+        !dbUser?.hasActiveSubscription
+      ) {
+        return new Response(null, {
+          status: 302,
+          headers: { Location: "/upgrade" },
+        });
+      }
     }
 
     return svelteKitHandler({ event, resolve, auth, building });
@@ -67,6 +80,11 @@ function doesPathnameRequireSignedInUser(pathname: string) {
     "/api",
   ];
   return protectedRoutes.some((route) => pathname.startsWith(route));
+}
+
+function doesPathnameRequirePaidUser(pathname: string) {
+  const premiumRoutes = ["/conversations", "/profile", "/ai-profile-optimizer"];
+  return premiumRoutes.some((route) => pathname.startsWith(route));
 }
 
 export const handle: Handle = sequence(handleParaglide, handleAuth);
