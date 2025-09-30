@@ -21,6 +21,7 @@ There are two main features (as of sept 27, 2025).
 - Vercel Deployment
 - Backblaze Object Storage (cheaper s3 / vercel blob alternative)
 - Gumroad (processing payments + pro subscription tier)
+- Cron-job.org (calling our api/cron endpoints)
 
 ## How to run the app
 
