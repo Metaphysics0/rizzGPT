@@ -20,8 +20,8 @@ export interface SubscriptionData {
 
 export interface SyncResult {
   success: boolean;
-  inserted: number;
-  updated: number;
+  insertedCount: number;
+  updatedCount: number;
   error?: string;
 }
 
@@ -35,25 +35,23 @@ export class SubscriptionService {
     if (!subscribersResponse?.success) {
       return {
         success: false,
-        inserted: 0,
-        updated: 0,
+        insertedCount: 0,
+        updatedCount: 0,
         error: "Failed to fetch subscribers from Gumroad",
       };
     }
 
-    let inserted = 0;
-    let updated = 0;
+    const results = await Promise.all(
+      subscribersResponse.subscribers.map((subscriber) =>
+        this.syncSubscriber(subscriber)
+      )
+    );
 
-    for (const subscriber of subscribersResponse.subscribers) {
-      const result = await this.syncSubscriber(subscriber);
-      if (result.isNew) {
-        inserted++;
-      } else if (result.wasUpdated) {
-        updated++;
-      }
-    }
-
-    return { success: true, inserted, updated };
+    return {
+      success: true,
+      insertedCount: results.filter((r) => r.isNew).length,
+      updatedCount: results.filter((r) => r.wasUpdated).length,
+    };
   }
 
   private async syncSubscriber(subscriber: GumroadSubscriber) {
