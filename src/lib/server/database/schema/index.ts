@@ -70,7 +70,12 @@ export const subscriptions = pgTable("subscription", {
   id: uuid().primaryKey().defaultRandom(),
   userId: text().references(() => users.id, { onDelete: "cascade" }),
   email: text().notNull(),
-  gumroadSaleId: text().unique().notNull(),
+  // Payment provider
+  provider: text().$type<"paypal">().default("paypal").notNull(),
+  // PayPal fields
+  paypalSubscriptionId: text().unique(),
+  paypalPlanId: text(),
+  // Common fields
   productId: text().notNull(),
   productName: text().notNull(),
   price: text().notNull(),
@@ -80,8 +85,7 @@ export const subscriptions = pgTable("subscription", {
     .notNull(),
   purchaserEmail: text().notNull(),
   purchaserName: text(),
-  isSubscription: boolean().default(false).notNull(),
-  subscriptionId: text(),
+  isSubscription: boolean().default(true).notNull(),
   expiresAt: timestamp(),
   createdAt: timestamp().defaultNow().notNull(),
   updatedAt: timestamp()

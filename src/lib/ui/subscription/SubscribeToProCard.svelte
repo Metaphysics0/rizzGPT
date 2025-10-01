@@ -9,15 +9,38 @@
 
   let { userEmail, className }: Props = $props();
 
-  const GUMROAD_PRODUCT_URL = "https://rizzgpt.gumroad.com/l/rizzgpt-pro";
+  let isLoading = $state(false);
+  let error = $state<string | null>(null);
 
-  function handleUpgrade() {
-    // Redirect to Gumroad with user email pre-filled if available
-    const url = new URL(GUMROAD_PRODUCT_URL);
-    if (userEmail) {
-      url.searchParams.set("email", userEmail);
+  async function handleUpgrade() {
+    try {
+      isLoading = true;
+      error = null;
+
+      const response = await fetch("/api/subscriptions/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to create subscription");
+      }
+
+      // Redirect to PayPal approval page
+      if (data.approvalUrl) {
+        window.location.href = data.approvalUrl;
+      } else {
+        throw new Error("No approval URL received");
+      }
+    } catch (err) {
+      console.error("Subscription error:", err);
+      error = err instanceof Error ? err.message : "Failed to start subscription";
+      isLoading = false;
     }
-    window.open(url.toString(), "_blank");
   }
 
   const features = [
@@ -72,18 +95,30 @@
         </div>
       </div>
 
+      {#if error}
+        <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+          <p class="text-sm text-red-600">{error}</p>
+        </div>
+      {/if}
+
       <button
         onclick={handleUpgrade}
-        class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+        disabled={isLoading}
+        class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
       >
         <div class="flex items-center justify-center gap-2">
-          <Icon icon="mdi:rocket-launch" class="w-5 h-5" />
-          <span>Upgrade to Pro</span>
+          {#if isLoading}
+            <Icon icon="mingcute:loading-fill" class="w-5 h-5 animate-spin" />
+            <span>Processing...</span>
+          {:else}
+            <Icon icon="mdi:rocket-launch" class="w-5 h-5" />
+            <span>Upgrade to Pro</span>
+          {/if}
         </div>
       </button>
 
       <p class="text-xs text-gray-500 text-center mt-3">
-        Secure payment via Gumroad • Cancel anytime
+        Secure payment via PayPal • Cancel anytime
       </p>
     </div>
   </div>
