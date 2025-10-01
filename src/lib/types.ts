@@ -45,3 +45,13 @@ export type ConversationStatus =
   | "failed";
 
 export type ConversationType = "response-helper" | "first-move";
+
+export interface UiPlan {
+  name: string;
+  description: string;
+  price: string;
+  period: string;
+  discount?: string;
+  features: string[];
+  planId: string; // PayPal plan ID
+}

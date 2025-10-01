@@ -1,9 +1,20 @@
-<script>
+<script lang="ts">
+  import type { UiPlan } from "$lib/types";
+  import PlanDetailsModal from "$lib/ui/subscription/PlanDetailsModal.svelte";
+
+  let selectedPlan = $state<UiPlan | null>(null);
+  let isModalOpen = $state(false);
+
+  function openPlanModal(plan: UiPlan | null) {
+    selectedPlan = plan;
+    isModalOpen = true;
+  }
+
   const plans = [
     {
       name: "The Conversationalist",
       description: "Perfect for testing the waters.",
-      gumroadLink: "https://ryanroberts7.gumroad.com/l/ytunv",
+      planId: "P-MONTHLY-PLAN-ID", // Replace with actual PayPal plan ID
       price: "$14.99",
       period: "/month",
       ctaText: "Start Your Rizz",
@@ -27,7 +38,7 @@
     {
       name: "The Date Magnet",
       description: "Your ultimate advantage for consistent dates.",
-      gumroadLink: "https://ryanroberts7.gumroad.com/l/gqffay",
+      planId: "P-YEARLY-PLAN-ID", // Replace with actual PayPal plan ID
       price: "$69.99",
       period: "/year",
       discount: "Save 60% vs. weekly!",
@@ -55,7 +66,7 @@
     {
       name: "The Rizz Master",
       description: "Accelerate your journey to becoming a dating pro.",
-      gumroadLink: "https://ryanroberts7.gumroad.com/l/cdapsn",
+      planId: "P-PREMIUM-PLAN-ID", // Replace with actual PayPal plan ID
       price: "$149.99",
       period: "/year",
       discount: "Over $500 in value!",
@@ -116,12 +127,9 @@
                 <p class={plan.discountClasses}>{plan.discount}</p>
               {/if}
             </div>
-            <a
-              href={plan.gumroadLink || "/get-started"}
-              class={plan.ctaClasses}
-            >
+            <button onclick={() => openPlanModal(plan)} class={plan.ctaClasses}>
               {plan.ctaText}
-            </a>
+            </button>
             <ul class="text-left space-y-3">
               {#each plan.features as feature}
                 <li class="flex items-center">
@@ -148,3 +156,10 @@
     </div>
   </div>
 </section>
+
+<!-- Plan Details Modal -->
+<PlanDetailsModal
+  open={isModalOpen}
+  onOpenChange={(open) => (isModalOpen = open)}
+  plan={selectedPlan}
+/>
