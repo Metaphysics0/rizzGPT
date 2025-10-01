@@ -20,7 +20,7 @@ There are two main features (as of sept 27, 2025).
 - Gemini + Gemini Flash 2.0 (`@google/genai` sdk)
 - Vercel Deployment
 - Backblaze Object Storage (cheaper s3 / vercel blob alternative)
-- Gumroad (processing payments + pro subscription tier)
+- PayPal Subscriptions (processing payments + pro subscription tier)
 - Cron-job.org (calling our api/cron endpoints)
 
 ## How to run the app
@@ -33,6 +33,8 @@ There are two main features (as of sept 27, 2025).
 - if you get a `failed to load config from /Users/ryan/Desktop/dev/rizzGPT/vite.config.ts` error, try rm -rf node_modules
 
 ## TODO:
+
+- SWITCH TO PAYPAL ?!?!
 
 - Refactor 'analyze-bio' to be 'generate-first-move'
 
