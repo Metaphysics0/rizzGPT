@@ -1,3 +1,4 @@
+import { dev } from "$app/environment";
 import { PAYPAL_CLIENT_SECRET, PAYPAL_WEBHOOK_ID } from "$env/static/private";
 import { PUBLIC_PAYPAL_CLIENT_ID } from "$env/static/public";
 import type {
@@ -12,30 +13,20 @@ import type {
 } from "./paypal.types";
 
 export class PaypalService {
-  private readonly webhookId: string;
+  private readonly clientId = PUBLIC_PAYPAL_CLIENT_ID;
+  private readonly clientSecret = PAYPAL_CLIENT_SECRET;
+  private readonly webhookId = PAYPAL_WEBHOOK_ID || "";
   private readonly apiBaseUrl: string;
 
   constructor() {
-    console.log(
-      "env vars",
-      JSON.stringify({
-        PAYPAL_CLIENT_SECRET,
-        PAYPAL_WEBHOOK_ID,
-        PUBLIC_PAYPAL_CLIENT_ID,
-      })
-    );
-    if (!PUBLIC_PAYPAL_CLIENT_ID) {
+    if (!this.clientId) {
       throw new Error("[PaypalService] Missing Client Id");
     }
-
-    if (!PAYPAL_CLIENT_SECRET) {
+    if (!this.clientSecret) {
       throw new Error("[PaypalService] Missing Client Secret");
     }
 
-    this.webhookId = PAYPAL_WEBHOOK_ID || "";
-
-    const isDev = process.env.NODE_ENV === "dev";
-    this.apiBaseUrl = isDev
+    this.apiBaseUrl = dev
       ? `https://api-m.sandbox.paypal.com/v1`
       : `https://api-m.paypal.com/v1`;
   }
@@ -185,13 +176,11 @@ export class PaypalService {
 
   private async getAccessToken(): Promise<string> {
     try {
-      console.log("API BASE URL", this.apiBaseUrl);
-
       const response = await fetch(`${this.apiBaseUrl}/oauth2/token`, {
         method: "POST",
         headers: {
           Authorization: `Basic ${Buffer.from(
-            `${PUBLIC_PAYPAL_CLIENT_ID}:${PAYPAL_CLIENT_SECRET}`
+            `${this.clientId}:${this.clientSecret}`
           ).toString("base64")}`,
           "Content-Type": "application/x-www-form-urlencoded",
         },
