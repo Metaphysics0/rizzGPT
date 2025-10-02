@@ -34,7 +34,7 @@
           layout: "vertical",
           label: "subscribe",
         },
-        createSubscription: function (data: any, actions: any) {
+        createSubscription: function (data, actions) {
           return actions.subscription.create({
             plan_id: planId,
           });
@@ -71,7 +71,7 @@
       .then(() => {
         isLoading = false;
       })
-      .catch((err: any) => {
+      .catch((err) => {
         console.error("Error rendering PayPal button:", err);
         error = "Failed to load payment system. Please refresh the page.";
         isLoading = false;

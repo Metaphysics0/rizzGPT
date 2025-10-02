@@ -1,6 +1,9 @@
 <script lang="ts">
-  import type { UiPlan } from "$lib/types";
+  import { page } from "$app/state";
+  import type { PlanType, UiPlan } from "$lib/types";
   import PlanDetailsModal from "$lib/ui/subscription/PlanDetailsModal.svelte";
+
+  const plans = page.data.plans as UiPlan[];
 
   let selectedPlan = $state<UiPlan | null>(null);
   let isModalOpen = $state(false);
@@ -10,13 +13,9 @@
     isModalOpen = true;
   }
 
-  const plans = [
-    {
-      name: "The Conversationalist",
-      description: "Perfect for testing the waters.",
-      planId: "P-MONTHLY-PLAN-ID", // Replace with actual PayPal plan ID
-      price: "$14.99",
-      period: "/month",
+  // Styling configuration for each plan, keyed by plan ID
+  const planStyles: Record<PlanType, Record<string, any>> = {
+    "the-conversationalist": {
       ctaText: "Start Your Rizz",
       ctaClasses:
         "block w-full bg-gray-900 text-white py-3 rounded-full font-semibold hover:bg-gray-800 transition-colors mb-6",
@@ -27,21 +26,11 @@
       descriptionClasses: "text-gray-600 mb-4",
       priceClasses: "text-4xl font-bold text-gray-900",
       periodClasses: "text-gray-600",
+      discountClasses: "text-sm text-gray-500 mt-1",
       checkIconClasses: "w-5 h-5 text-green-500 mr-3",
-      features: [
-        "Higher quality LLM model",
-        "30 generations per week",
-        "Ability to regenerate responses",
-        "History and profile pages",
-      ],
+      mostPopular: false,
     },
-    {
-      name: "The Date Magnet",
-      description: "Your ultimate advantage for consistent dates.",
-      planId: "P-YEARLY-PLAN-ID", // Replace with actual PayPal plan ID
-      price: "$69.99",
-      period: "/year",
-      discount: "Save 60% vs. weekly!",
+    "the-date-magnet": {
       ctaText: "Get The Date Magnet",
       ctaClasses:
         "block w-full bg-white text-purple-600 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors mb-6",
@@ -55,21 +44,8 @@
       discountClasses: "text-sm text-purple-200 mt-1",
       checkIconClasses: "w-5 h-5 text-green-300 mr-3",
       mostPopular: true,
-      features: [
-        "Everything in The Conversationalist",
-        "Unlimited AI-generated messages",
-        "Priority customer support",
-        "Access to new premium features first",
-        "AI-powered bio analysis",
-      ],
     },
-    {
-      name: "The Rizz Master",
-      description: "Accelerate your journey to becoming a dating pro.",
-      planId: "P-PREMIUM-PLAN-ID", // Replace with actual PayPal plan ID
-      price: "$149.99",
-      period: "/year",
-      discount: "Over $500 in value!",
+    "the-rizz-master": {
       ctaText: "Become a Rizz Master",
       ctaClasses:
         "block w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-300 transform hover:scale-105 mb-6",
@@ -82,14 +58,9 @@
       periodClasses: "text-gray-600",
       discountClasses: "text-sm text-gray-500 mt-1",
       checkIconClasses: "w-5 h-5 text-green-500 mr-3",
-      features: [
-        "Everything in The Date Magnet",
-        "Personalized dating profile review",
-        "1-on-1 Coaching Call (30 min)",
-        'Exclusive "Mastering Rizz" content',
-      ],
+      mostPopular: false,
     },
-  ];
+  };
 </script>
 
 <section id="pricing">
@@ -105,8 +76,9 @@
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
       {#each plans as plan}
-        <div class={plan.cardClasses}>
-          {#if plan.mostPopular}
+        {@const style = planStyles[plan.id]}
+        <div class={style.cardClasses}>
+          {#if style.mostPopular}
             <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
               <span
                 class="bg-yellow-400 text-yellow-900 px-4 py-1 rounded-full text-sm font-semibold"
@@ -115,26 +87,29 @@
               </span>
             </div>
           {/if}
-          <div class={plan.textClasses}>
-            <h3 class={plan.titleClasses}>
+          <div class={style.textClasses}>
+            <h3 class={style.titleClasses}>
               {plan.name}
             </h3>
-            <p class={plan.descriptionClasses}>{plan.description}</p>
+            <p class={style.descriptionClasses}>{plan.description}</p>
             <div class="mb-6">
-              <span class={plan.priceClasses}>{plan.price}</span>
-              <span class={plan.periodClasses}>{plan.period}</span>
+              <span class={style.priceClasses}>{plan.price}</span>
+              <span class={style.periodClasses}>{plan.period}</span>
               {#if plan.discount}
-                <p class={plan.discountClasses}>{plan.discount}</p>
+                <p class={style.discountClasses}>{plan.discount}</p>
               {/if}
             </div>
-            <button onclick={() => openPlanModal(plan)} class={plan.ctaClasses}>
-              {plan.ctaText}
+            <button
+              onclick={() => openPlanModal(plan)}
+              class={style.ctaClasses}
+            >
+              {style.ctaText}
             </button>
             <ul class="text-left space-y-3">
               {#each plan.features as feature}
                 <li class="flex items-center">
                   <svg
-                    class={plan.checkIconClasses}
+                    class={style.checkIconClasses}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"

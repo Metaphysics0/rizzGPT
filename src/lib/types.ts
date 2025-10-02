@@ -46,7 +46,12 @@ export type ConversationStatus =
 
 export type ConversationType = "response-helper" | "first-move";
 
+export type PlanType =
+  | "the-conversationalist"
+  | "the-date-magnet"
+  | "the-rizz-master";
 export interface UiPlan {
+  id: PlanType;
   name: string;
   description: string;
   price: string;
