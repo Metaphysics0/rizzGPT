@@ -2,22 +2,22 @@
   import { page } from "$app/state";
   import type { PlanType, UiPlan } from "$lib/types";
   import PlanDetailsModal from "$lib/ui/subscription/PlanDetailsModal.svelte";
+  import { cn } from "$lib/utils";
 
-  const plans = page.data.plans as UiPlan[];
+  const { plans } = page.data;
 
   let selectedPlan = $state<UiPlan | null>(null);
   let isModalOpen = $state(false);
 
-  function openPlanModal(plan: UiPlan | null) {
+  function openPlanModal(plan: UiPlan) {
     selectedPlan = plan;
     isModalOpen = true;
   }
 
-  // Styling configuration for each plan, keyed by plan ID
   const planStyles: Record<PlanType, Record<string, any>> = {
     "the-conversationalist": {
-      ctaText: "Start Your Rizz",
-      ctaClasses:
+      buttonText: "Start Your Rizz",
+      buttonClass:
         "block w-full bg-gray-900 text-white py-3 rounded-full font-semibold hover:bg-gray-800 transition-colors mb-6",
       cardClasses:
         "bg-white rounded-2xl shadow-lg p-8 border-2 border-gray-200",
@@ -31,8 +31,8 @@
       mostPopular: false,
     },
     "the-date-magnet": {
-      ctaText: "Get The Date Magnet",
-      ctaClasses:
+      buttonText: "Get The Date Magnet",
+      buttonClass:
         "block w-full bg-white text-purple-600 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors mb-6",
       cardClasses:
         "bg-gradient-to-b from-purple-600 to-pink-600 rounded-2xl shadow-xl p-8 border-2 border-purple-600 relative transform scale-105",
@@ -46,8 +46,8 @@
       mostPopular: true,
     },
     "the-rizz-master": {
-      ctaText: "Become a Rizz Master",
-      ctaClasses:
+      buttonText: "Become a Rizz Master",
+      buttonClass:
         "block w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-300 transform hover:scale-105 mb-6",
       cardClasses:
         "bg-white rounded-2xl shadow-lg p-8 border-2 border-gray-200",
@@ -101,9 +101,9 @@
             </div>
             <button
               onclick={() => openPlanModal(plan)}
-              class={style.ctaClasses}
+              class={cn(style.buttonClass, "cursor-pointer")}
             >
-              {style.ctaText}
+              {style.buttonText}
             </button>
             <ul class="text-left space-y-3">
               {#each plan.features as feature}
@@ -132,7 +132,6 @@
   </div>
 </section>
 
-<!-- Plan Details Modal -->
 <PlanDetailsModal
   open={isModalOpen}
   onOpenChange={(open) => (isModalOpen = open)}

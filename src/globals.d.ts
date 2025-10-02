@@ -1,4 +1,5 @@
 import type { UserWithRelations } from "$lib/server/database/types";
+import type { UiPlan } from "$lib/types";
 import type { Session } from "better-auth/types";
 
 declare global {
@@ -10,6 +11,7 @@ declare global {
 
     interface PageData {
       user?: UserWithRelations;
+      plans: UiPlan[];
     }
   }
 }
