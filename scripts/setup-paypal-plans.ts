@@ -2,7 +2,12 @@
  * One-time script to create PayPal products and subscription plans.
  * Run this script once to generate your plan IDs, then add them to your .env file.
  *
- * Usage: bun run scripts/setup-paypal-plans.ts
+ * To avoid a ts import error from $lib, simply add the envs like this:
+ * const { PAYPAL_CLIENT_SECRET, PAYPAL_WEBHOOK_ID, PUBLIC_PAYPAL_CLIENT_ID } = process.env;
+ *
+ * Run the script: NODE_ENV="dev" bun run scripts/setup-paypal-plans.ts
+ *
+ *
  */
 
 import { PaypalService } from "../src/lib/server/services/payments/paypal.service";
