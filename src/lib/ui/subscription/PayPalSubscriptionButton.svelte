@@ -4,9 +4,9 @@
 
   interface Props {
     planId: string;
-    onSuccess?: (subscriptionId: string) => void;
-    onError?: (error: any) => void;
-    onCancel?: () => void;
+    onSuccess: (subscriptionId: string) => void;
+    onError: (error: any) => void;
+    onCancel: () => void;
   }
 
   let { planId, onSuccess, onError, onCancel }: Props = $props();
@@ -25,9 +25,8 @@
       return;
     }
 
-    // @ts-ignore
     paypal
-      .Buttons({
+      .Buttons?.({
         style: {
           shape: "rect",
           color: "gold",
@@ -45,26 +44,19 @@
             data.subscriptionID
           );
 
-          // Call success callback
-          if (onSuccess) {
-            onSuccess(data.subscriptionID);
-          }
+          onSuccess(data.subscriptionID);
 
           // Redirect to success handler
           window.location.href = `/api/subscriptions/success?subscription_id=${data.subscriptionID}`;
         },
         onCancel: function (data: any) {
           console.log("Subscription cancelled by user");
-          if (onCancel) {
-            onCancel();
-          }
+          onCancel();
         },
         onError: function (err: any) {
           console.error("PayPal subscription error:", err);
           error = "Failed to process subscription. Please try again.";
-          if (onError) {
-            onError(err);
-          }
+          onError(err);
         },
       })
       .render("#paypal-button-container")
