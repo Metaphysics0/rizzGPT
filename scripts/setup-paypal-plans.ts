@@ -5,42 +5,43 @@
  * Usage: bun run scripts/setup-paypal-plans.ts
  */
 
-import { PaypalService } from '../src/lib/server/services/payments/paypal.service';
+import { PaypalService } from "../src/lib/server/services/payments/paypal.service";
 
 async function setupPayPalPlans() {
-  console.log('🚀 Setting up PayPal products and plans...\n');
+  console.log("🚀 Setting up PayPal products and plans...\n");
 
   const paypalService = new PaypalService();
 
   try {
     // Create Product
-    console.log('📦 Creating product...');
+    console.log("📦 Creating product...");
     const product = await paypalService.createProduct(
-      'RizzGPT Premium',
-      'AI-powered dating assistance and conversation generation',
-      'SERVICE'
+      "RizzGPT Premium",
+      "AI-powered dating assistance and conversation generation",
+      "SERVICE"
     );
     console.log(`✅ Product created: ${product.id}\n`);
 
     // Create Monthly Plan (The Conversationalist)
-    console.log('💳 Creating monthly plan (The Conversationalist)...');
+    console.log("💳 Creating monthly plan (The Conversationalist)...");
     const monthlyPlan = await paypalService.createPlan({
       product_id: product.id,
-      name: 'The Conversationalist - Monthly',
-      description: 'Perfect for testing the waters. Monthly subscription with 30 generations per week.',
+      name: "The Conversationalist - Weekly",
+      description:
+        "Perfect for testing the waters. Weekly subscription with 30 generations per week.",
       billing_cycles: [
         {
           frequency: {
-            interval_unit: 'MONTH',
+            interval_unit: "WEEK",
             interval_count: 1,
           },
-          tenure_type: 'REGULAR',
+          tenure_type: "REGULAR",
           sequence: 1,
           total_cycles: 0, // 0 = infinite
           pricing_scheme: {
             fixed_price: {
-              value: '14.99',
-              currency_code: 'USD',
+              value: "3.99",
+              currency_code: "USD",
             },
           },
         },
@@ -51,27 +52,30 @@ async function setupPayPalPlans() {
       },
     });
     console.log(`✅ Monthly plan created: ${monthlyPlan.id}`);
-    console.log(`   Add to .env: PUBLIC_PAYPAL_MONTHLY_PLAN_ID="${monthlyPlan.id}"\n`);
+    console.log(
+      `   Add to .env: PUBLIC_PAYPAL_MONTHLY_PLAN_ID="${monthlyPlan.id}"\n`
+    );
 
     // Create Yearly Plan (The Date Magnet)
-    console.log('💳 Creating yearly plan (The Date Magnet)...');
+    console.log("💳 Creating yearly plan (The Date Magnet)...");
     const yearlyPlan = await paypalService.createPlan({
       product_id: product.id,
-      name: 'The Date Magnet - Yearly',
-      description: 'Your ultimate advantage for consistent dates. Yearly subscription with unlimited generations.',
+      name: "The Date Magnet - Yearly",
+      description:
+        "Your ultimate advantage for consistent dates. Yearly subscription with unlimited generations.",
       billing_cycles: [
         {
           frequency: {
-            interval_unit: 'YEAR',
+            interval_unit: "YEAR",
             interval_count: 1,
           },
-          tenure_type: 'REGULAR',
+          tenure_type: "REGULAR",
           sequence: 1,
           total_cycles: 0, // 0 = infinite
           pricing_scheme: {
             fixed_price: {
-              value: '69.99',
-              currency_code: 'USD',
+              value: "69.99",
+              currency_code: "USD",
             },
           },
         },
@@ -82,27 +86,30 @@ async function setupPayPalPlans() {
       },
     });
     console.log(`✅ Yearly plan created: ${yearlyPlan.id}`);
-    console.log(`   Add to .env: PUBLIC_PAYPAL_YEARLY_PLAN_ID="${yearlyPlan.id}"\n`);
+    console.log(
+      `   Add to .env: PUBLIC_PAYPAL_YEARLY_PLAN_ID="${yearlyPlan.id}"\n`
+    );
 
     // Create Premium Yearly Plan (The Rizz Master)
-    console.log('💳 Creating premium yearly plan (The Rizz Master)...');
+    console.log("💳 Creating premium yearly plan (The Rizz Master)...");
     const premiumPlan = await paypalService.createPlan({
       product_id: product.id,
-      name: 'The Rizz Master - Premium Yearly',
-      description: 'Accelerate your journey to becoming a dating pro. Includes coaching and exclusive content.',
+      name: "The Rizz Master - Premium Yearly",
+      description:
+        "Accelerate your journey to becoming a dating pro. Includes coaching and exclusive content.",
       billing_cycles: [
         {
           frequency: {
-            interval_unit: 'YEAR',
+            interval_unit: "YEAR",
             interval_count: 1,
           },
-          tenure_type: 'REGULAR',
+          tenure_type: "REGULAR",
           sequence: 1,
           total_cycles: 0, // 0 = infinite
           pricing_scheme: {
             fixed_price: {
-              value: '149.99',
-              currency_code: 'USD',
+              value: "149.99",
+              currency_code: "USD",
             },
           },
         },
@@ -113,19 +120,20 @@ async function setupPayPalPlans() {
       },
     });
     console.log(`✅ Premium plan created: ${premiumPlan.id}`);
-    console.log(`   Add to .env: PUBLIC_PAYPAL_PREMIUM_PLAN_ID="${premiumPlan.id}"\n`);
+    console.log(
+      `   Add to .env: PUBLIC_PAYPAL_PREMIUM_PLAN_ID="${premiumPlan.id}"\n`
+    );
 
     // Summary
-    console.log('\n🎉 All plans created successfully!');
-    console.log('\n📝 Add these to your .env file:');
-    console.log('─'.repeat(80));
+    console.log("\n🎉 All plans created successfully!");
+    console.log("\n📝 Add these to your .env file:");
+    console.log("─".repeat(80));
     console.log(`PUBLIC_PAYPAL_MONTHLY_PLAN_ID="${monthlyPlan.id}"`);
     console.log(`PUBLIC_PAYPAL_YEARLY_PLAN_ID="${yearlyPlan.id}"`);
     console.log(`PUBLIC_PAYPAL_PREMIUM_PLAN_ID="${premiumPlan.id}"`);
-    console.log('─'.repeat(80));
-
+    console.log("─".repeat(80));
   } catch (error) {
-    console.error('❌ Error setting up PayPal plans:', error);
+    console.error("❌ Error setting up PayPal plans:", error);
     process.exit(1);
   }
 }

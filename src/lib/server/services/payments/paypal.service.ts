@@ -1,10 +1,5 @@
-import {
-  PAYPAL_CLIENT_ID,
-  PAYPAL_CLIENT_ID_DEV,
-  PAYPAL_CLIENT_SECRET,
-  PAYPAL_CLIENT_SECRET_DEV,
-  PAYPAL_WEBHOOK_ID,
-} from "$env/static/private";
+import { PAYPAL_CLIENT_SECRET, PAYPAL_WEBHOOK_ID } from "$env/static/private";
+import { PUBLIC_PAYPAL_CLIENT_ID } from "$env/static/public";
 import type {
   PaypalAccessTokenResponse,
   PayPalProduct,
@@ -17,27 +12,23 @@ import type {
 } from "./paypal.types";
 
 export class PaypalService {
-  private readonly clientId: string;
-  private readonly clientSecret: string;
   private readonly webhookId: string;
   private readonly apiBaseUrl: string;
 
   constructor() {
-    const isDev = process.env.NODE_ENV === "development";
-    this.clientId = isDev ? PAYPAL_CLIENT_ID_DEV : PAYPAL_CLIENT_ID;
-    this.clientSecret = isDev ? PAYPAL_CLIENT_SECRET_DEV : PAYPAL_CLIENT_SECRET;
-    this.webhookId = PAYPAL_WEBHOOK_ID || "";
-    this.apiBaseUrl = isDev
-      ? "https://api-m.sandbox.paypal.com/v1"
-      : "https://api-m.paypal.com/v1";
-
-    if (!this.clientId) {
+    if (PUBLIC_PAYPAL_CLIENT_ID) {
       throw new Error("[PaypalService] Missing Client Id");
     }
 
-    if (!this.clientSecret) {
+    if (PAYPAL_CLIENT_SECRET) {
       throw new Error("[PaypalService] Missing Client Secret");
     }
+    this.webhookId = PAYPAL_WEBHOOK_ID || "";
+
+    const isDev = process.env.NODE_ENV === "development";
+    this.apiBaseUrl = isDev
+      ? `https://api-m.sandbox.paypal.com/v1`
+      : `https://api-m.paypal.com/v1`;
   }
 
   async createProduct(
@@ -176,11 +167,11 @@ export class PaypalService {
     }
   }
 
-  getApprovalUrl(subscription: PayPalSubscription): string | null {
+  getApprovalUrl(subscription: PayPalSubscription) {
     const approveLink = subscription.links.find(
       (link) => link.rel === "approve"
     );
-    return approveLink?.href || null;
+    return approveLink?.href;
   }
 
   private async getAccessToken(): Promise<string> {
@@ -189,7 +180,7 @@ export class PaypalService {
         method: "POST",
         headers: {
           Authorization: `Basic ${Buffer.from(
-            `${this.clientId}:${this.clientSecret}`
+            `${PUBLIC_PAYPAL_CLIENT_ID}:${PAYPAL_CLIENT_SECRET}`
           ).toString("base64")}`,
           "Content-Type": "application/x-www-form-urlencoded",
         },

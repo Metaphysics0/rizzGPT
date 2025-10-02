@@ -12,8 +12,8 @@ export function getPlans(): UiPlan[] {
       name: "The Conversationalist",
       description: "Perfect for testing the waters.",
       planId: PUBLIC_PAYPAL_MONTHLY_PLAN_ID,
-      price: "$14.99",
-      period: "/month",
+      price: "$3.99",
+      period: "/week",
       features: [
         "Higher quality LLM model",
         "30 generations per week",
@@ -34,7 +34,7 @@ export function getPlans(): UiPlan[] {
         "Unlimited AI-generated messages",
         "Priority customer support",
         "Access to new premium features first",
-        "AI-powered bio analysis",
+        "AI Profile Analyzer",
       ],
     },
     {
