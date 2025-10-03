@@ -121,16 +121,7 @@
 </script>
 
 <div class={cardClasses}>
-  {#if isCurrentPlan}
-    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
-      <span
-        class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-1 rounded-full text-sm font-semibold flex items-center gap-1 shadow-lg"
-      >
-        <Icon icon="mingcute:check-circle-fill" class="w-4 h-4" />
-        Current Plan
-      </span>
-    </div>
-  {:else if style.mostPopular}
+  {#if style.mostPopular}
     <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
       <span
         class="bg-yellow-400 text-yellow-900 px-4 py-1 rounded-full text-sm font-semibold"
