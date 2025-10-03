@@ -1,5 +1,5 @@
 import {
-  PUBLIC_PAYPAL_MONTHLY_PLAN_ID,
+  PUBLIC_PAYPAL_STARTER_PLAN_ID,
   PUBLIC_PAYPAL_YEARLY_PLAN_ID,
   PUBLIC_PAYPAL_PREMIUM_PLAN_ID,
 } from "$env/static/public";
@@ -11,7 +11,7 @@ export function getPlans(): UiPlan[] {
       id: "the-conversationalist",
       name: "The Conversationalist",
       description: "Perfect for testing the waters.",
-      planId: PUBLIC_PAYPAL_MONTHLY_PLAN_ID,
+      planId: PUBLIC_PAYPAL_STARTER_PLAN_ID,
       price: "$3.99",
       period: "/week",
       features: [

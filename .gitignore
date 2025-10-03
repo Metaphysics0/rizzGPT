@@ -30,3 +30,4 @@ cursor-replies/
 # Database migrations (using push mode instead)
 src/lib/server/database/migrations/
 
+scratch/
