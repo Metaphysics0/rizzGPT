@@ -28,7 +28,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
       `[SUBSCRIPTIONS] Revision approved for ${locals.user.email} -> plan ${newPlanId}`
     );
 
-    throw redirect(303, "/pricing?revision=success");
+    throw redirect(303, "/first-move-generator?revision=success");
   } catch (error) {
     if (isRedirect(error)) throw error;
 
