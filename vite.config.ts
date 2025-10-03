@@ -16,8 +16,7 @@ export default defineConfig(() => {
     ],
     server: {
       allowedHosts: [
-        "eager-weeks-teach.loca.lt", // replace with your localtunnel domain
-        "bitter-olives-wave.loca.lt",
+        "bitter-oranges-taste.loca.lt", // replace with your localtunnel domain
       ],
     },
     optimizeDeps: {
