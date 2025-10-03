@@ -4,8 +4,8 @@
   import * as Dialog from "$lib/components/dialog/index.js";
   import CurrentPlanView from "./SubscriptionModal/CurrentPlanView.svelte";
   import ReviseSubscriptionView from "./SubscriptionModal/ReviseSubscriptionView.svelte";
-  import NewSubscriptionView from "./SubscriptionModal/NewSubscriptionView.svelte";
   import type { UiPlan } from "$lib/types";
+  import PayPalSubscriptionButton from "./PayPalSubscriptionButton.svelte";
 
   interface Props {
     open: boolean;
@@ -39,39 +39,11 @@
     console.log("Subscription cancelled");
     onOpenChange(false);
   }
-
-  async function handleReviseSubscription() {
-    if (!plan) return;
-
-    const response = await fetch("/api/subscriptions/revise", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        newPlanId: plan.planId,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || "Failed to revise subscription");
-    }
-
-    // Redirect to PayPal for re-consent
-    if (data.approvalUrl) {
-      window.location.href = data.approvalUrl;
-    } else {
-      throw new Error("No approval URL received");
-    }
-  }
 </script>
 
 {#if plan}
   <Dialog.Root {open} {onOpenChange}>
     <Dialog.Content class="max-w-2xl p-0 overflow-hidden">
-      <!-- Header -->
       <Dialog.Header
         class="p-6 bg-gradient-to-r from-purple-600 to-pink-600 text-white"
       >
@@ -116,14 +88,11 @@
         <!-- Subscription Action View -->
         <div class="mt-6">
           {#if isCurrentPlan}
-            <CurrentPlanView planName={plan.name} />
+            <CurrentPlanView />
           {:else if isUpgradeOrDowngrade}
-            <ReviseSubscriptionView
-              planId={plan.planId}
-              onRevise={handleReviseSubscription}
-            />
+            <ReviseSubscriptionView planId={plan.planId} />
           {:else}
-            <NewSubscriptionView
+            <PayPalSubscriptionButton
               planId={plan.planId}
               onSuccess={handleSubscriptionSuccess}
               onError={handleSubscriptionError}

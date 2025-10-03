@@ -1,11 +1,5 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
-
-  interface Props {
-    planName: string;
-  }
-
-  let { planName }: Props = $props();
 </script>
 
 <div class="space-y-4">
