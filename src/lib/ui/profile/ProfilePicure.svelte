@@ -1,15 +1,11 @@
 <script lang="ts">
+  import { page } from "$app/state";
   import {
     getDisplayName,
     getUserInitials,
   } from "$lib/utils/user/user-info.util";
-  import type { User } from "better-auth";
 
-  interface Props {
-    user: User;
-  }
-
-  let { user }: Props = $props();
+  const { user } = page.data;
 </script>
 
 <div class="relative h-16 w-16 overflow-hidden rounded-full">
