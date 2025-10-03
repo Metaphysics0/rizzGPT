@@ -2,28 +2,18 @@ import { db } from "../database/connection";
 import { subscriptions, users } from "../database/schema";
 import { eq, and } from "drizzle-orm";
 import { PaypalService } from "./payments/paypal.service";
-import type { PayPalSubscription } from "./payments/paypal.types";
-
-export interface SubscriptionData {
-  email: string;
-  provider: "paypal";
-  paypalSubscriptionId: string;
-  paypalPlanId: string;
-  productId: string;
-  productName: string;
-  price: string;
-  purchaserEmail: string;
-  purchaserName?: string;
-  isSubscription: boolean;
-  status: "active" | "expired" | "cancelled";
-  expiresAt?: Date;
-}
+import type {
+  CreateOrUpdateSubscriptionParams,
+  PayPalSubscription,
+} from "./payments/paypal.types";
+import { getPlans } from "../utils/plans.util";
+import type { UiPlan } from "$lib/types";
 
 export class SubscriptionService {
   private paypalService = new PaypalService();
 
   async createOrUpdateSubscription(
-    subscriptionData: SubscriptionData
+    subscriptionData: CreateOrUpdateSubscriptionParams
   ): Promise<void> {
     const user = await db.query.users.findFirst({
       where: eq(users.email, subscriptionData.email),
@@ -85,10 +75,8 @@ export class SubscriptionService {
     paypalSubscriptionId: string,
     reason?: string
   ): Promise<void> {
-    // Cancel in PayPal first
     await this.paypalService.cancelSubscription(paypalSubscriptionId, reason);
 
-    // Update database
     await db
       .update(subscriptions)
       .set({
@@ -96,6 +84,77 @@ export class SubscriptionService {
         updatedAt: new Date(),
       })
       .where(eq(subscriptions.paypalSubscriptionId, paypalSubscriptionId));
+  }
+
+  async reviseSubscription(params: {
+    userId: string;
+    newPlanId: string;
+    returnUrl: string;
+    cancelUrl: string;
+  }): Promise<{ approvalUrl: string; subscriptionId: string }> {
+    const activeSubscription = await this.getActiveSubscriptionByUserId(
+      params.userId
+    );
+
+    if (!activeSubscription) {
+      throw new Error("No active subscription found");
+    }
+
+    if (!activeSubscription.paypalSubscriptionId) {
+      throw new Error("Invalid subscription: missing PayPal ID");
+    }
+
+    if (activeSubscription.paypalPlanId === params.newPlanId) {
+      throw new Error("Already subscribed to this plan");
+    }
+
+    const subscriptionId = activeSubscription.paypalSubscriptionId;
+    const returnUrlWithParams = `${params.returnUrl}?subscription_id=${subscriptionId}&new_plan_id=${params.newPlanId}`;
+
+    const revision = await this.paypalService.reviseSubscription({
+      subscriptionId,
+      newPlanId: params.newPlanId,
+      returnUrl: returnUrlWithParams,
+      cancelUrl: params.cancelUrl,
+    });
+
+    const approvalUrl = this.paypalService.getApprovalUrl(revision);
+
+    if (!approvalUrl) {
+      throw new Error("No approval URL received from PayPal");
+    }
+
+    return {
+      approvalUrl,
+      subscriptionId,
+    };
+  }
+
+  async handleRevisionApproval(params: {
+    subscriptionId: string;
+    newPlanId: string;
+  }): Promise<void> {
+    const paypalSubscription = await this.paypalService.getSubscription(
+      params.subscriptionId
+    );
+
+    if (paypalSubscription.plan_id !== params.newPlanId) {
+      throw new Error(
+        `Plan mismatch: expected ${params.newPlanId}, got ${paypalSubscription.plan_id}`
+      );
+    }
+
+    const plan = this.getPlanById(params.newPlanId);
+
+    await db
+      .update(subscriptions)
+      .set({
+        paypalPlanId: params.newPlanId,
+        productName: plan.name,
+        price: plan.price,
+        updatedAt: new Date(),
+      })
+      .where(eq(subscriptions.paypalSubscriptionId, params.subscriptionId));
   }
 
   async syncFromPayPalWebhook(
@@ -125,6 +184,32 @@ export class SubscriptionService {
     });
   }
 
+  private async getActiveSubscriptionByUserId(userId: string) {
+    const results = await db
+      .select()
+      .from(subscriptions)
+      .where(
+        and(
+          eq(subscriptions.userId, userId),
+          eq(subscriptions.status, "active")
+        )
+      )
+      .limit(1);
+
+    return results[0] || null;
+  }
+
+  private getPlanById(planId: string): UiPlan {
+    const plans = getPlans();
+    const plan = plans.find((p) => p.planId === planId);
+
+    if (!plan) {
+      throw new Error(`Unknown plan ID: ${planId}`);
+    }
+
+    return plan;
+  }
+
   private mapPayPalStatusToDbStatus(
     paypalStatus: PayPalSubscription["status"]
   ): "active" | "expired" | "cancelled" {
@@ -149,7 +234,6 @@ export class SubscriptionService {
       return new Date(paypalSubscription.billing_info.next_billing_time);
     }
 
-    // If subscription is active but no next billing time, set to 1 month from now
     if (paypalSubscription.status === "ACTIVE") {
       const expiresAt = new Date();
       expiresAt.setMonth(expiresAt.getMonth() + 1);

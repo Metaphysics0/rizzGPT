@@ -67,7 +67,10 @@ export interface PayPalSubscriptionRequest {
   application_context?: {
     brand_name?: string;
     locale?: string;
-    shipping_preference?: "GET_FROM_FILE" | "NO_SHIPPING" | "SET_PROVIDED_ADDRESS";
+    shipping_preference?:
+      | "GET_FROM_FILE"
+      | "NO_SHIPPING"
+      | "SET_PROVIDED_ADDRESS";
     user_action?: "SUBSCRIBE_NOW" | "CONTINUE";
     payment_method?: {
       payer_selected?: "PAYPAL";
@@ -80,7 +83,13 @@ export interface PayPalSubscriptionRequest {
 
 export interface PayPalSubscription {
   id: string;
-  status: "APPROVAL_PENDING" | "APPROVED" | "ACTIVE" | "SUSPENDED" | "CANCELLED" | "EXPIRED";
+  status:
+    | "APPROVAL_PENDING"
+    | "APPROVED"
+    | "ACTIVE"
+    | "SUSPENDED"
+    | "CANCELLED"
+    | "EXPIRED";
   status_update_time?: string;
   plan_id: string;
   start_time?: string;
@@ -153,4 +162,72 @@ export interface PayPalWebhookVerificationRequest {
 
 export interface PayPalWebhookVerificationResponse {
   verification_status: "SUCCESS" | "FAILURE";
+}
+
+export interface PayPalReviseSubscriptionRequest {
+  plan_id: string;
+  quantity?: string;
+  shipping_amount?: {
+    currency_code: string;
+    value: string;
+  };
+  shipping_address?: {
+    name?: {
+      full_name?: string;
+    };
+    address?: {
+      address_line_1?: string;
+      address_line_2?: string;
+      admin_area_2?: string;
+      admin_area_1?: string;
+      postal_code?: string;
+      country_code: string;
+    };
+  };
+  application_context?: {
+    brand_name?: string;
+    locale?: string;
+    shipping_preference?:
+      | "GET_FROM_FILE"
+      | "NO_SHIPPING"
+      | "SET_PROVIDED_ADDRESS";
+    user_action?: "CONTINUE";
+    payment_method?: {
+      payer_selected?: "PAYPAL";
+      payee_preferred?: "IMMEDIATE_PAYMENT_REQUIRED";
+    };
+    return_url?: string;
+    cancel_url?: string;
+  };
+}
+
+export interface PayPalReviseSubscriptionResponse {
+  plan_id: string;
+  quantity: string;
+  shipping_amount?: {
+    currency_code: string;
+    value: string;
+  };
+  subscriber?: PayPalSubscriber;
+  plan_overridden?: boolean;
+  links: Array<{
+    href: string;
+    rel: string;
+    method: string;
+  }>;
+}
+
+export interface CreateOrUpdateSubscriptionParams {
+  email: string;
+  provider: "paypal";
+  paypalSubscriptionId: string;
+  paypalPlanId: string;
+  productId: string;
+  productName: string;
+  price: string;
+  purchaserEmail: string;
+  purchaserName?: string;
+  isSubscription: boolean;
+  status: "active" | "expired" | "cancelled";
+  expiresAt?: Date;
 }
