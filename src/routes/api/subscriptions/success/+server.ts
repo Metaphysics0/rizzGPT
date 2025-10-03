@@ -35,8 +35,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
       `[SUBSCRIPTIONS] Subscription synced to database for ${locals.user.email}`
     );
 
-    // Redirect to success page or dashboard
-    throw redirect(303, "/?subscription=success");
+    throw redirect(303, "/first-move-generator?subscription=success");
   } catch (error) {
     if (isRedirect(error)) throw error;
 
