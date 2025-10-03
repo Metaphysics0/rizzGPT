@@ -1,6 +1,6 @@
 import type { UserWithRelations } from "$lib/server/database/types";
 
-export function getUserInitials(user: UserWithRelations): string {
+export function getUserInitials(user?: UserWithRelations): string {
   if (!user) return "U";
   const firstName = user.name?.split(" ")[0] || "";
   const lastName = user.name?.split(" ")[1] || "";
@@ -18,7 +18,7 @@ export function getDisplayName({
   user,
   fullName = false,
 }: {
-  user: UserWithRelations;
+  user?: UserWithRelations;
   fullName?: boolean;
 }): string {
   if (!user) return "User";

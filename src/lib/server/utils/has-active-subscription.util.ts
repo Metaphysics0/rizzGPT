@@ -3,8 +3,11 @@ import type { UserWithRelations } from "../database/types";
 export function doesUserHaveActiveSubscription(
   user?: UserWithRelations
 ): boolean {
-  if (user?.isSuperUser) return false;
-  if (!user?.subscriptions?.length) return false;
+  if (!user) return false;
+  if (user.isSuperUser) return true;
 
-  return user.subscriptions.filter((sub) => sub.status === "active").length > 0;
+  return getActiveSubscriptions(user).length > 0;
 }
+
+const getActiveSubscriptions = (user: UserWithRelations) =>
+  user.subscriptions.filter((sub) => sub.status === "active");
