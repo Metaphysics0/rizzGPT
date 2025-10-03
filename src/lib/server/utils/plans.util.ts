@@ -8,7 +8,7 @@ import type { UiPlan } from "$lib/types";
 export function getPlans(): UiPlan[] {
   return [
     {
-      id: "the-conversationalist",
+      uiPlanId: "the-conversationalist",
       name: "The Conversationalist",
       description: "Perfect for testing the waters.",
       planId: PUBLIC_PAYPAL_STARTER_PLAN_ID,
@@ -22,7 +22,7 @@ export function getPlans(): UiPlan[] {
       ],
     },
     {
-      id: "the-date-magnet",
+      uiPlanId: "the-date-magnet",
       name: "The Date Magnet",
       description: "Your ultimate advantage for consistent dates.",
       planId: PUBLIC_PAYPAL_YEARLY_PLAN_ID,
@@ -38,7 +38,7 @@ export function getPlans(): UiPlan[] {
       ],
     },
     {
-      id: "the-rizz-master",
+      uiPlanId: "the-rizz-master",
       name: "The Rizz Master",
       description: "Accelerate your journey to becoming a dating pro.",
       planId: PUBLIC_PAYPAL_PREMIUM_PLAN_ID,
