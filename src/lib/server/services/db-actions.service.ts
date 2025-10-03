@@ -12,7 +12,7 @@ import type {
   NewConversation,
   UserWithRelations,
 } from "../database/types";
-import { doesUserHaveActiveSubscription } from "../utils/user.util";
+import { doesUserHaveActiveSubscription } from "../utils/has-active-subscription.util";
 
 // A general place to put DB actions.
 class DbActionsService {
