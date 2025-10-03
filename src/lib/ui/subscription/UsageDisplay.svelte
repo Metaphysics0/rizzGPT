@@ -11,13 +11,7 @@
     showUpgradeCard?: boolean;
   }
 
-  let {
-    usageCount,
-    subscription,
-    userEmail,
-    className,
-    showUpgradeCard = false,
-  }: Props = $props();
+  let { usageCount, subscription, className }: Props = $props();
 
   const isProUser = subscription?.status === "active";
   const freeLimit = 5;

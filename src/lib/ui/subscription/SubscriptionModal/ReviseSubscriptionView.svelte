@@ -1,12 +1,7 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
 
-  interface Props {
-    planId: string;
-    onRevise: () => Promise<void>;
-  }
-
-  let { planId, onRevise }: Props = $props();
+  let { planId }: { planId: string } = $props();
 
   let isRevising = $state(false);
   let revisionError = $state<string | null>(null);
@@ -14,9 +9,29 @@
   async function handleRevise() {
     isRevising = true;
     revisionError = null;
-
     try {
-      await onRevise();
+      const response = await fetch("/api/subscriptions/revise", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          newPlanId: planId,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to revise subscription");
+      }
+
+      // Redirect to PayPal for re-consent
+      if (data.approvalUrl) {
+        window.location.href = data.approvalUrl;
+      } else {
+        throw new Error("No approval URL received");
+      }
     } catch (error) {
       console.error("Revision error:", error);
       revisionError =
