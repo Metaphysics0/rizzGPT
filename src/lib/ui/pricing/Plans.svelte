@@ -1,6 +1,5 @@
 <script lang="ts">
   import { page } from "$app/state";
-  // import { isUserSubscribedToPlan } from "$lib/server/utils/has-active-subscription.util";
   import type { UiPlan } from "$lib/types";
   import PlanDetailsModal from "$lib/ui/subscription/PlanDetailsModal.svelte";
   import PlanCard from "./PlanCard.svelte";

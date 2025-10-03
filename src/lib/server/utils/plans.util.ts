@@ -12,7 +12,8 @@ export function getPlans(): UiPlan[] {
       name: "The Conversationalist",
       description: "Perfect for testing the waters.",
       planId: PUBLIC_PAYPAL_STARTER_PLAN_ID,
-      price: "$3.99",
+      price: "$0.99",
+      discount: "Then $3.99 / week",
       period: "/week",
       features: [
         "Higher quality LLM model",

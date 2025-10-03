@@ -109,14 +109,12 @@
 
   const style = $derived(planStyleMap[plan.uiPlanId]);
 
-  // Dynamic button text based on plan status
   const buttonText = $derived(() => {
     if (isCurrentPlan) return "Manage Subscription";
     if (isUpgrade()) return "Upgrade";
     return style.buttonText;
   });
 
-  // Dynamic card classes based on active status
   const cardClasses = $derived(
     isCurrentPlan ? style.activeCardClasses : style.cardClasses
   );
