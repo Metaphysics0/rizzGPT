@@ -34,15 +34,11 @@ There are two main features (as of sept 27, 2025).
 
 ## TODO:
 
-- SWITCH TO PAYPAL ?!?!
+1. Setup paypal webhooks
 
-- Refactor 'analyze-bio' to be 'generate-first-move'
-
-1. Subscriptions working e2e 🚀🚀🚀
-
-- Test redirect after purchase.
-- Setup cron
-- Consider loading the plans from gumroad's API
+1. Fix the ui for landing page / make mobile responsive.
+1. Add some framer motion animations to the landing page, similar to wing ai.
+1. Add a basic profile page for viewing usage.
 
 Backlog:
 

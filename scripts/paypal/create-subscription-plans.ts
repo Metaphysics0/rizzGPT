@@ -10,7 +10,7 @@
  *
  */
 
-import { PaypalService } from "../src/lib/server/services/payments/paypal.service";
+import { PaypalService } from "../../src/lib/server/services/payments/paypal.service";
 
 async function setupPayPalPlans() {
   console.log("🚀 Setting up PayPal products and plans...\n");
