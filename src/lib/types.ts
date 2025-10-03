@@ -51,7 +51,7 @@ export type PlanType =
   | "the-date-magnet"
   | "the-rizz-master";
 export interface UiPlan {
-  id: PlanType;
+  uiPlanId: PlanType;
   name: string;
   description: string;
   price: string;
