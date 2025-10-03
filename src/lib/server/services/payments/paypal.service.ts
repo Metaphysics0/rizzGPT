@@ -6,6 +6,8 @@ import type {
   PayPalPlan,
   PayPalSubscription,
   PayPalSubscriptionRequest,
+  PayPalReviseSubscriptionRequest,
+  PayPalReviseSubscriptionResponse,
   PayPalWebhookEvent,
   PayPalWebhookVerificationRequest,
   PayPalWebhookVerificationResponse,
@@ -130,6 +132,31 @@ export class PaypalService {
     );
   }
 
+  async reviseSubscription(params: {
+    subscriptionId: string;
+    newPlanId: string;
+    returnUrl?: string;
+    cancelUrl?: string;
+  }): Promise<PayPalReviseSubscriptionResponse> {
+    const revisionData: PayPalReviseSubscriptionRequest = {
+      plan_id: params.newPlanId,
+      application_context: {
+        brand_name: "RizzGPT",
+        locale: "en-US",
+        shipping_preference: "NO_SHIPPING",
+        user_action: "CONTINUE",
+        return_url: params.returnUrl,
+        cancel_url: params.cancelUrl,
+      },
+    };
+
+    return this.makeRequest<PayPalReviseSubscriptionResponse>(
+      `/billing/subscriptions/${params.subscriptionId}/revise`,
+      "POST",
+      revisionData
+    );
+  }
+
   async verifyWebhookSignature(
     headers: {
       "paypal-transmission-id": string;
@@ -170,10 +197,10 @@ export class PaypalService {
     }
   }
 
-  getApprovalUrl(subscription: PayPalSubscription) {
-    const approveLink = subscription.links.find(
-      (link) => link.rel === "approve"
-    );
+  getApprovalUrl(
+    resource: PayPalSubscription | PayPalReviseSubscriptionResponse
+  ) {
+    const approveLink = resource.links.find((link) => link.rel === "approve");
     return approveLink?.href;
   }
 
