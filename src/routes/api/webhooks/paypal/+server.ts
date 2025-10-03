@@ -10,6 +10,11 @@ export const POST: RequestHandler = async ({ request }) => {
 
     const webhookEvent: PayPalWebhookEvent = await request.json();
 
+    console.log(
+      "[PAYPAL] Incoming request headers",
+      JSON.stringify(request.headers)
+    );
+
     const paypalService = new PaypalService();
     const headers = {
       "paypal-transmission-id":
