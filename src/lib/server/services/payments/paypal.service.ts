@@ -12,10 +12,8 @@ import type {
   PayPalWebhookVerificationRequest,
   PayPalWebhookVerificationResponse,
 } from "./paypal.types";
-// import { PAYPAL_CLIENT_SECRET, PAYPAL_WEBHOOK_ID } from "$env/static/private";
-// import { PUBLIC_PAYPAL_CLIENT_ID } from "$env/static/public";
-const { PAYPAL_CLIENT_SECRET, PAYPAL_WEBHOOK_ID, PUBLIC_PAYPAL_CLIENT_ID } =
-  process.env;
+import { PAYPAL_CLIENT_SECRET, PAYPAL_WEBHOOK_ID } from "$env/static/private";
+import { PUBLIC_PAYPAL_CLIENT_ID } from "$env/static/public";
 
 export class PaypalService {
   private readonly clientId = PUBLIC_PAYPAL_CLIENT_ID;
