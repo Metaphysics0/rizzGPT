@@ -1,6 +1,7 @@
 <script lang="ts">
   import { PUBLIC_PAYPAL_CLIENT_ID } from "$env/static/public";
   import { loadScript } from "@paypal/paypal-js";
+  import { onMount } from "svelte";
 
   interface Props {
     planId: string;
@@ -14,60 +15,62 @@
   let isLoading = $state(true);
   let error = $state<string | null>(null);
 
-  loadScript({
-    clientId: PUBLIC_PAYPAL_CLIENT_ID,
-    vault: true,
-    intent: "subscription",
-  }).then((paypal) => {
-    if (!paypal) {
-      error = "Failed to load payment system. Please refresh the page.";
-      isLoading = false;
-      return;
-    }
-
-    paypal
-      .Buttons?.({
-        style: {
-          shape: "rect",
-          color: "gold",
-          layout: "vertical",
-          label: "subscribe",
-        },
-        createSubscription: function (data, actions) {
-          return actions.subscription.create({
-            plan_id: planId,
-          });
-        },
-        onApprove: async function (data: any, actions: any) {
-          console.log(
-            "Subscription approved, subscription ID:",
-            data.subscriptionID
-          );
-
-          onSuccess(data.subscriptionID);
-
-          // Redirect to success handler
-          window.location.href = `/api/subscriptions/success?subscription_id=${data.subscriptionID}`;
-        },
-        onCancel: function (data: any) {
-          console.log("Subscription cancelled by user");
-          onCancel();
-        },
-        onError: function (err: any) {
-          console.error("PayPal subscription error:", err);
-          error = "Failed to process subscription. Please try again.";
-          onError(err);
-        },
-      })
-      .render("#paypal-button-container")
-      .then(() => {
-        isLoading = false;
-      })
-      .catch((err) => {
-        console.error("Error rendering PayPal button:", err);
+  onMount(() => {
+    loadScript({
+      clientId: PUBLIC_PAYPAL_CLIENT_ID,
+      vault: true,
+      intent: "subscription",
+    }).then((paypal) => {
+      if (!paypal) {
         error = "Failed to load payment system. Please refresh the page.";
         isLoading = false;
-      });
+        return;
+      }
+
+      paypal
+        .Buttons?.({
+          style: {
+            shape: "rect",
+            color: "gold",
+            layout: "vertical",
+            label: "subscribe",
+          },
+          createSubscription: function (data, actions) {
+            return actions.subscription.create({
+              plan_id: planId,
+            });
+          },
+          onApprove: async function (data: any, actions: any) {
+            console.log(
+              "Subscription approved, subscription ID:",
+              data.subscriptionID
+            );
+
+            onSuccess(data.subscriptionID);
+
+            // Redirect to success handler
+            window.location.href = `/api/subscriptions/success?subscription_id=${data.subscriptionID}`;
+          },
+          onCancel: function (data: any) {
+            console.log("Subscription cancelled by user");
+            onCancel();
+          },
+          onError: function (err: any) {
+            console.error("PayPal subscription error:", err);
+            error = "Failed to process subscription. Please try again.";
+            onError(err);
+          },
+        })
+        .render("#paypal-button-container")
+        .then(() => {
+          isLoading = false;
+        })
+        .catch((err) => {
+          console.error("Error rendering PayPal button:", err);
+          error = "Failed to load payment system. Please refresh the page.";
+          isLoading = false;
+        });
+    });
   });
 </script>
 
