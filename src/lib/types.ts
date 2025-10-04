@@ -60,3 +60,11 @@ export interface UiPlan {
   features: string[];
   planId: string; // PayPal plan ID
 }
+
+export interface ComparisonItem {
+  feature: string;
+  rizzgptTooltip?: string;
+  rizzgpt: boolean | "in-progress";
+  competitor: boolean;
+  competitorTooltip?: string;
+}

@@ -26,6 +26,10 @@
       label: "FAQs",
       href: "#faqs",
     },
+    {
+      label: "Compare - WingAI",
+      href: "/compare/wingai",
+    },
   ];
 </script>
 

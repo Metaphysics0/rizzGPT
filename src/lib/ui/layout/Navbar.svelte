@@ -58,7 +58,7 @@
   <div class="flex w-full justify-between items-center p-4 max-w-7xl mx-auto">
     <Logo />
 
-    {#if !page.data.user && page.url.pathname !== "/sign-in"}
+    {#if !page.data.user && page.url.pathname === "/"}
       <div class="hidden md:flex gap-10">
         {#each landingPageNavItems as { href, label }}
           <a
