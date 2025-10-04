@@ -20,7 +20,7 @@ There are two main features (as of sept 27, 2025).
 - Resend (for email auth verification)
 - Gemini + Gemini Flash 2.5 lite (via `@google/genai` sdk)
 - Vercel Deployment
-- Backblaze Object Storage (cheaper s3 / vercel blob alternative)
+- Backblaze Object Storage (cheaper s3 alternative)
 - PayPal (processing payments + subscriptions tier)
 
 ## How to run the app

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import IPhoneGif from "$lib/assets/rizz-hero-vid.gif";
+  import IPhoneVideo from "$lib/assets/rizz-hero-vid.mp4";
   import CircleAndEmojiSvg from "$lib/assets/ui-svgs/CircleAndEmojiSvg.svelte";
   import CircleAndEmojiSvgSmall from "$lib/assets/ui-svgs/CircleAndEmojiSvgSmall.svelte";
   import { m } from "$lib/paraglide/messages";
@@ -8,11 +8,16 @@
 <div
   class="relative bottom-14 lg:bottom-0 h-[415px] lg:h-[600px] mb-16 lg:mb-0"
 >
-  <img
-    src={IPhoneGif}
-    alt="Iphone video of uploading a screenshot"
+  <video
+    src={IPhoneVideo}
+    autoplay
+    loop
+    muted
+    playsinline
     class="z-10 object-contain scale-90 lg:scale-100 absolute h-full w-full inset-0"
-  />
+  >
+    <track kind="captions" />
+  </video>
   <div class="hidden lg:block lg:absolute lg:-right-14 xl:right-4 lg:top-10">
     <CircleAndEmojiSvgSmall />
     <CircleAndEmojiSvg />
