@@ -31,17 +31,3 @@ There are two main features (as of sept 27, 2025).
 ## Troubleshooting
 
 - if you get a `failed to load config from /Users/ryan/Desktop/dev/rizzGPT/vite.config.ts` error, try rm -rf node_modules
-
-## TODO:
-
-1. Setup paypal webhooks
-
-1. Fix the ui for landing page / make mobile responsive.
-1. Add some framer motion animations to the landing page, similar to wing ai.
-1. Add a basic profile page for viewing usage.
-
-Backlog:
-
-1. fully internationalize app.
-
-- AI Profile Optimizer page (pro only)

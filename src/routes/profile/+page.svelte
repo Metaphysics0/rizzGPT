@@ -2,6 +2,7 @@
   import type { PageData } from "./$types";
   import Icon from "@iconify/svelte";
   import UsageDisplay from "$lib/ui/subscription/UsageDisplay.svelte";
+  import SubscriptionStatusBadge from "$lib/ui/subscription/SubscriptionStatusBadge.svelte";
   import { page } from "$app/state";
   import { formatSubscriptionDate } from "$lib/utils/date.util";
   import { getUserInitials } from "$lib/utils/user/user-info.util";
