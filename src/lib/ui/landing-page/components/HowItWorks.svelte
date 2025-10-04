@@ -3,7 +3,10 @@
   import { m } from "$lib/paraglide/messages";
 </script>
 
-<section class="relative overflow-hidden text-center py-24 px-4">
+<section
+  class="relative overflow-hidden text-center py-24 px-4"
+  id="how-it-works"
+>
   <div class="absolute">
     <img
       src={BackgroundSquares}

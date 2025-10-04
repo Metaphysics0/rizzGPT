@@ -1,7 +1,7 @@
 <script lang="ts">
   import TryItForFreeButton from "./components/TryItForFreeButton.svelte";
   import HowItWorks from "./components/HowItWorks.svelte";
-  import { Footer } from "../../components/dialog";
+  import Footer from "./components/Footer.svelte";
   import DatingAppsCarousel from "./components/DatingAppsCarousel.svelte";
   import FAQ from "./components/FAQ.svelte";
   import HeroSection from "./components/HeroSection.svelte";

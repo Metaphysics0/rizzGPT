@@ -20,8 +20,8 @@
       href: "#faqs",
     },
     {
-      label: "Reviews",
-      href: "#reviews",
+      label: "Pricing",
+      href: "#pricing",
     },
   ] as const;
 
@@ -35,6 +35,19 @@
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   });
+
+  function smoothScrollAnchorClick(event: MouseEvent) {
+    event.preventDefault();
+    const link = event.currentTarget as HTMLAnchorElement;
+    const anchorId = new URL(link.href).hash.replace("#", "");
+    const anchor = document.getElementById(anchorId);
+    if (anchor) {
+      window.scrollTo({
+        top: anchor.offsetTop - 80, // Offset for fixed navbar
+        behavior: "smooth",
+      });
+    }
+  }
 </script>
 
 <nav
@@ -48,7 +61,11 @@
     {#if !page.data.user && page.url.pathname !== "/sign-in"}
       <div class="hidden md:flex gap-10">
         {#each landingPageNavItems as { href, label }}
-          <a class="hover:text-primary duration-100" {href}>{label}</a>
+          <a
+            class="hover:text-primary duration-100"
+            {href}
+            onclick={smoothScrollAnchorClick}>{label}</a
+          >
         {/each}
       </div>
     {/if}
