@@ -13,7 +13,7 @@
 </script>
 
 <svelte:head>
-  <title>Conversations - RizzGPT</title>
+  <title>RizzGPT - Conversations</title>
 </svelte:head>
 
 <div class="max-w-4xl mx-auto px-4 sm:px-6">
