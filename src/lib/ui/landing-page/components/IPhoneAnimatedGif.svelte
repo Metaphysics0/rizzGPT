@@ -5,17 +5,15 @@
   import { m } from "$lib/paraglide/messages";
 </script>
 
-<div class="relative bottom-14 lg:bottom-0 h-[415px] lg:h-[600px]">
+<div class="relative bottom-14 lg:bottom-0 h-[415px] lg:h-[600px] mb-16 lg:mb-0">
   <img
     src={IPhoneGif}
     alt="Iphone video of uploading a screenshot"
     class="z-10 object-contain scale-90 lg:scale-100 absolute h-full w-full inset-0"
   />
-  <div class="relative top-24 lg:absolute lg:-right-14 xl:right-4 lg:top-10">
+  <div class="hidden lg:block lg:absolute lg:-right-14 xl:right-4 lg:top-10">
     <CircleAndEmojiSvgSmall />
-    <div class="hidden lg:block">
-      <CircleAndEmojiSvg />
-    </div>
+    <CircleAndEmojiSvg />
   </div>
   <h4
     class="w-[200px] md:w-[360px] mx-auto absolute bottom-[-78px] left-24 text-2xl lg:text-3xl font-bold"

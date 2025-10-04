@@ -20,7 +20,7 @@
     </p>
 
     <LinkButton
-      className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 hover:shadow-xl hover:scale-105 transform transition-all duration-300 w-1/2 rounded-2xl"
+      className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 hover:shadow-xl hover:scale-105 transform transition-all duration-300 w-1/2 rounded-2xl mx-auto lg:mx-0"
       label="Start Now"
       href="/sign-in"
     />
