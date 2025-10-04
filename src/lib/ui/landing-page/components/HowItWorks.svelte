@@ -21,5 +21,8 @@
     <p class="max-w-2xl mx-auto text-lg text-gray-600 leading-relaxed">
       {m.how_it_works_description()}
     </p>
+    <p class="max-w-2xl mx-auto text-lg text-gray-600 leading-relaxed">
+      {m.how_it_works_sub_description()}
+    </p>
   </div>
 </section>

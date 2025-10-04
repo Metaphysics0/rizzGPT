@@ -1,29 +1,34 @@
 <script lang="ts">
   import placeholderGif from "$lib/assets/product-walkthrough/upload-screenshot.gif";
+  import TakeScreenshotGif from "$lib/assets/product-walkthrough/take-screenshot.gif";
+  import ResponsesImg from "$lib/assets/product-walkthrough/responses-1.png";
   import OrangeLine from "$lib/assets/ui-svgs/orange-line.svg";
   import BlueLine from "$lib/assets/ui-svgs/blue-line.svg";
 
   const steps = [
     {
       id: "01",
-      title: "Take screenshot",
+      title: "Take screenshots of your matches bio 🖼️",
       description:
-        "Take a screenshot that includes some text you want to focus on in their bio",
-      image: placeholderGif,
+        "Take up to 5 screenshots of your matches bio, and add them to the upload box.",
+      image: TakeScreenshotGif,
       bgColorClass: "bg-orange",
     },
     {
       id: "02",
-      title: "Upload",
-      description: "Click on the upload button and select the screenshot.",
-      image: placeholderGif,
+      // title: "Generate 🚀",
+      // description: "Click on generate, and see the magic!",
+      title: "Get a flirty message 💞",
+      description:
+        'Within moments, RizzGPT crafts a dating expert approved message based on the provided screenshot. For additional responses, simply press "Regenerate".',
+      image: ResponsesImg,
       bgColorClass: "bg-secondary",
     },
     {
       id: "03",
-      title: "Get a flirty message",
+      title: "Generate replies!",
       description:
-        'Within moments, RizzGPT crafts a dating expert approved message based on the provided screenshot. For additional lines, simply press "Generate More".',
+        "If you're speaking with someone and want help on a follow up message, simply upload a screen recording of your chat conversation, and generate the best response",
       image: placeholderGif,
       bgColorClass: "bg-blue",
     },
@@ -39,7 +44,9 @@
       class:md:flex-row-reverse={reverse}
     >
       <div class="flex-1 w-full">
-        <div class="step relative rounded-[40px] {step.bgColorClass} md:block hidden">
+        <div
+          class="step relative rounded-[40px] {step.bgColorClass} md:block hidden"
+        >
           <img
             alt={step.title}
             loading="lazy"

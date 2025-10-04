@@ -2,7 +2,7 @@
   import type { Conversation } from "$lib/server/database/types";
   import Icon from "@iconify/svelte";
 
-  export let conversation: Conversation;
+  let { conversation }: { conversation: Conversation } = $props();
 </script>
 
 <div class="mb-6 rounded-xl border border-blue-200 bg-blue-50 p-4">

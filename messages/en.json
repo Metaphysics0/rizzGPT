@@ -1,12 +1,13 @@
 {
   "$schema": "https://inlang.com/schema/inlang-message-format",
   "landing_header": "Land 3.5x More Dates Using RizzGPT. Guaranteed.",
-  "landing_subheader": "We've tested 100,000+ messages and trained our AI to land you more dates. And we're going to let you try it free for 7 days.",
+  "landing_subheader": "Get the most elegant conversation messages, as well as generate the best first move message.",
   "satisfied_users": "Join 1000s of satisfied users (:",
   "see_reviews": "See reviews",
   "upload_their_bio": "Upload a screen recording of any conversation, and get the best replies!",
   "dating_app_carousel_header": "Works with all dating apps!",
   "testimonials_header": "We've helped countless users get Same-Day Dates",
   "how_it_works_header": "How it works",
-  "how_it_works_description": "It's simple! When you match with someone on any dating app, just capture a screenshot of their bio. Open RizzGPT, upload the screenshot, and let our AI work its charm!"
+  "how_it_works_description": "It's simple! When you match with someone and an amazing first message to say, simply use our First Move Generator.",
+  "how_it_works_sub_description": "Already speaking with someone? Use our Conversation Helper."
 }

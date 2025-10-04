@@ -1,8 +1,7 @@
 <script lang="ts">
   import CopyToClipboardButton from "$lib/ui/general/CopyToClipboardButton.svelte";
 
-  export let index: number;
-  export let response: string;
+  let { index, response }: { index: number; response: string } = $props();
 </script>
 
 <div
