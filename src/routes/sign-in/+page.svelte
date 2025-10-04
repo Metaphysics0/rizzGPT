@@ -4,6 +4,7 @@
   let { form }: { form: ActionData } = $props();
 </script>
 
+<div class="pt-10"></div>
 <div class="flex items-center justify-center">
   <SignInForm {form} />
 </div>
