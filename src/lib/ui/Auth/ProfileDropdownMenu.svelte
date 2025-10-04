@@ -54,7 +54,7 @@
       disabled: true,
     },
     {
-      label: "Account",
+      label: "Profile",
       icon: "mingcute:user-3-fill",
       href: "/profile",
       disabled: !user?.hasActiveSubscription,
