@@ -8,7 +8,9 @@ export const POST: RequestHandler = async ({ request }) => {
   try {
     console.log("[PAYPAL] Incoming PayPal webhook");
 
-    const webhookEvent: PayPalWebhookEvent = await request.json();
+    // Get raw body for signature verification
+    const rawBody = await request.text();
+    const webhookEvent: PayPalWebhookEvent = JSON.parse(rawBody);
 
     console.log(
       "[PAYPAL] Incoming request headers",
@@ -29,7 +31,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
     const isValid = await paypalService.verifyWebhookSignature(
       headers,
-      webhookEvent
+      rawBody
     );
 
     if (!isValid) {

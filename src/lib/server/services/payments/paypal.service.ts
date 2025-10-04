@@ -8,12 +8,11 @@ import type {
   PayPalSubscriptionRequest,
   PayPalReviseSubscriptionRequest,
   PayPalReviseSubscriptionResponse,
-  PayPalWebhookEvent,
-  PayPalWebhookVerificationRequest,
-  PayPalWebhookVerificationResponse,
 } from "./paypal.types";
 import { PAYPAL_CLIENT_SECRET, PAYPAL_WEBHOOK_ID } from "$env/static/private";
 import { PUBLIC_PAYPAL_CLIENT_ID } from "$env/static/public";
+import crypto from "crypto";
+import { crc32 } from "zlib";
 
 export class PaypalService {
   private readonly clientId = PUBLIC_PAYPAL_CLIENT_ID;
@@ -163,7 +162,7 @@ export class PaypalService {
       "paypal-cert-url": string;
       "paypal-auth-algo": string;
     },
-    webhookEvent: PayPalWebhookEvent
+    rawBody: string
   ): Promise<boolean> {
     if (!this.webhookId) {
       console.warn(
@@ -172,27 +171,69 @@ export class PaypalService {
       return true; // In dev, you might want to skip verification
     }
 
-    const verificationRequest: PayPalWebhookVerificationRequest = {
-      auth_algo: headers["paypal-auth-algo"],
-      cert_url: headers["paypal-cert-url"],
-      transmission_id: headers["paypal-transmission-id"],
-      transmission_sig: headers["paypal-transmission-sig"],
-      transmission_time: headers["paypal-transmission-time"],
-      webhook_id: this.webhookId,
-      webhook_event: webhookEvent,
-    };
-
     try {
-      const result = await this.makeRequest<PayPalWebhookVerificationResponse>(
-        "/notifications/verify-webhook-signature",
-        "POST",
-        verificationRequest
-      );
-      return result.verification_status === "SUCCESS";
+      const transmissionId = headers["paypal-transmission-id"];
+      const timestamp = headers["paypal-transmission-time"];
+      const certUrl = headers["paypal-cert-url"];
+      const transmissionSig = headers["paypal-transmission-sig"];
+
+      // Calculate CRC32 of the raw body
+      const crc = crc32(Buffer.from(rawBody));
+
+      // Construct the message that was signed
+      const message = `${transmissionId}|${timestamp}|${this.webhookId}|${crc}`;
+
+      console.log("[PaypalService] Verifying signature with message:", message);
+
+      // Download the PayPal certificate
+      const certPem = await this.downloadCertificate(certUrl);
+
+      // Decode the signature from base64
+      const signatureBuffer = Buffer.from(transmissionSig, "base64");
+
+      // Create a verification object
+      const verifier = crypto.createVerify("SHA256");
+      verifier.update(message);
+
+      // Verify the signature
+      const isValid = verifier.verify(certPem, signatureBuffer);
+
+      console.log("[PaypalService] Signature verification result:", isValid);
+
+      return isValid;
     } catch (error) {
       console.error("[PaypalService] Webhook verification failed:", error);
       return false;
     }
+  }
+
+  private static certificateCache = new Map<
+    string,
+    { cert: string; timestamp: number }
+  >();
+  private readonly CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+
+  private async downloadCertificate(certUrl: string): Promise<string> {
+    // Check cache first
+    const cached = PaypalService.certificateCache.get(certUrl);
+    if (cached && Date.now() - cached.timestamp < this.CACHE_TTL) {
+      return cached.cert;
+    }
+
+    // Download certificate
+    const response = await fetch(certUrl);
+    if (!response.ok) {
+      throw new Error(`Failed to download certificate: ${response.status}`);
+    }
+
+    const cert = await response.text();
+
+    PaypalService.certificateCache.set(certUrl, {
+      cert,
+      timestamp: Date.now(),
+    });
+
+    return cert;
   }
 
   getApprovalUrl(
