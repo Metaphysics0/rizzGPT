@@ -1,5 +1,4 @@
-// import { dev } from "$app/environment";
-const dev = true;
+import { dev } from "$app/environment";
 import type {
   PaypalAccessTokenResponse,
   PayPalProduct,
@@ -9,10 +8,10 @@ import type {
   PayPalReviseSubscriptionRequest,
   PayPalReviseSubscriptionResponse,
 } from "./paypal.types";
-import { PAYPAL_CLIENT_SECRET, PAYPAL_WEBHOOK_ID } from "$env/static/private";
-import { PUBLIC_PAYPAL_CLIENT_ID } from "$env/static/public";
 import crypto from "crypto";
 import { crc32 } from "zlib";
+import { PAYPAL_CLIENT_SECRET, PAYPAL_WEBHOOK_ID } from "$env/static/private";
+import { PUBLIC_PAYPAL_CLIENT_ID } from "$env/static/public";
 
 export class PaypalService {
   private readonly clientId = PUBLIC_PAYPAL_CLIENT_ID;
