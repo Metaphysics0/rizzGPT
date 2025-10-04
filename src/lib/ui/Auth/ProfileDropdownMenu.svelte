@@ -7,7 +7,7 @@
     getUserInitials,
   } from "$lib/utils/user/user-info.util";
   import { authClient } from "$lib/auth-client";
-  import { goto } from "$app/navigation";
+  import { goto, invalidateAll, refreshAll } from "$app/navigation";
   import { cn } from "$lib/utils";
 
   const user = page.data.user;
@@ -64,7 +64,8 @@
   async function signOut() {
     await authClient.signOut({
       fetchOptions: {
-        onSuccess: () => {
+        onSuccess: async () => {
+          await invalidateAll();
           goto("/");
           isDropdownOpen = false;
         },

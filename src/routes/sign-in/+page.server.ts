@@ -4,9 +4,9 @@ import type { Actions, RequestEvent, PageServerLoad } from "./$types";
 import { fail, redirect } from "@sveltejs/kit";
 
 export const load: PageServerLoad = async ({ locals }) => {
-  // If user is already authenticated, redirect to home page
+  // If user is already signed in, redirect to the first move generator
   if (locals.user) {
-    throw redirect(302, "/");
+    throw redirect(302, "/first-move-generator");
   }
 
   return {};
@@ -38,7 +38,7 @@ export const actions: Actions = {
       });
 
       // If sign-in is successful, redirect to generate page
-      if (result) throw redirect(302, "/response-helper");
+      if (result) throw redirect(302, "/first-move-generator");
 
       return result;
     } catch (error) {
