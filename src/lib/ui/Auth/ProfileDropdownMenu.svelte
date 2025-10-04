@@ -1,7 +1,7 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
   import { page } from "$app/state";
-  import SubscriptionTierStatusBadge from "../general/SubscriptionTierStatusBadge.svelte";
+  import SubscriptionStatusBadge from "../subscription/SubscriptionStatusBadge.svelte";
   import {
     getDisplayName,
     getUserInitials,
@@ -149,12 +149,13 @@
                       <p class="font-medium text-gray-900 truncate">
                         {getDisplayName({ user })}
                       </p>
-                      <SubscriptionTierStatusBadge
+                      <SubscriptionStatusBadge
                         status={user.subscriptions?.find(
                           (sub) => sub.status === "active"
                         )
                           ? "pro"
-                          : "trial"}
+                          : "free"}
+                        size="sm"
                       />
                     </div>
                     <p class="text-sm text-gray-500 truncate">

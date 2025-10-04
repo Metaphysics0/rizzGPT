@@ -2,6 +2,7 @@
   import Icon from "@iconify/svelte";
   import { cn } from "$lib/utils/string/cn.util";
   import type { Subscription } from "$lib/server/database/schema";
+  import SubscriptionStatusBadge from "./SubscriptionStatusBadge.svelte";
 
   interface Props {
     usageCount: number;
@@ -44,21 +45,7 @@
         Usage This Month
       </h3>
 
-      {#if isProUser}
-        <div
-          class="flex items-center gap-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium"
-        >
-          <Icon icon="mdi:crown" class="w-4 h-4" />
-          Pro
-        </div>
-      {:else}
-        <div
-          class="flex items-center gap-2 px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-medium"
-        >
-          <Icon icon="mdi:account" class="w-4 h-4" />
-          Free
-        </div>
-      {/if}
+      <SubscriptionStatusBadge status={isProUser ? "pro" : "free"} />
     </div>
 
     <div class="space-y-3">
