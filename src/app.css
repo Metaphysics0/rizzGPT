@@ -248,7 +248,7 @@ body {
 @layer components {
   /* Responsive Heading Classes */
   .heading-hero {
-    @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-wide leading-tight sm:leading-snug md:leading-normal;
+    @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight;
   }
 
   .heading-primary {
