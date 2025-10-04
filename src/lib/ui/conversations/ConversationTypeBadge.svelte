@@ -22,7 +22,7 @@
   {#if conversationType === "first-move"}
     <Icon icon="mdi:message-star" class={cn(iconClass, className)} />
     First Move
-  {:else if conversationType === "response-helper"}
+  {:else if conversationType === "conversation-helper"}
     <Icon icon="mdi:message-reply" class={cn(iconClass, className)} />
     Response
   {:else}

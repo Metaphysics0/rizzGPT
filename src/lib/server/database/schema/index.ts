@@ -100,7 +100,11 @@ export const userUsage = pgTable("user_usage", {
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   usageType: text()
-    .$type<"first-move-generation" | "response-helper-generation" | "regeneration">()
+    .$type<
+      | "first-move-generation"
+      | "conversation-helper-generation"
+      | "regeneration"
+    >()
     .notNull(),
   metadata: jsonb().$type<Record<string, any>>(),
   createdAt: timestamp().defaultNow().notNull(),

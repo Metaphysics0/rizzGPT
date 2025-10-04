@@ -52,7 +52,7 @@
           </span>
         </div>
         <p class="text-gray-300 mb-4">
-          Your AI Wingman for Winning Conversations.
+          The ultimate dating companion to help you win at life.
         </p>
       </div>
 
@@ -91,7 +91,7 @@
 
     <div class="border-t border-gray-800 mt-8 pt-8 text-center">
       <p class="text-gray-400">
-        Copyright © 2024 RizzGPT. All rights reserved.
+        Copyright © 2025 RizzGPT. All rights reserved.
       </p>
     </div>
   </div>
