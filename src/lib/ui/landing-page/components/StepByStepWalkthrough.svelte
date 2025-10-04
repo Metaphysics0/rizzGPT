@@ -1,13 +1,12 @@
 <script lang="ts">
-  import placeholderGif from "$lib/assets/product-walkthrough/upload-screenshot.gif";
   import TakeScreenshotGif from "$lib/assets/product-walkthrough/take-screenshot.gif";
-  import ResponsesImg from "$lib/assets/product-walkthrough/responses-1.png";
+  import ResponsesImg from "$lib/assets/product-walkthrough/responses.png";
+  import ConversationUploadVideo from "$lib/assets/product-walkthrough/conversation-upload.mp4";
   import OrangeLine from "$lib/assets/ui-svgs/orange-line.svg";
   import BlueLine from "$lib/assets/ui-svgs/blue-line.svg";
 
   const steps = [
     {
-      id: "01",
       title: "Take screenshots of your matches bio 🖼️",
       description:
         "Take up to 5 screenshots of your matches bio, and add them to the upload box.",
@@ -15,9 +14,6 @@
       bgColorClass: "bg-orange",
     },
     {
-      id: "02",
-      // title: "Generate 🚀",
-      // description: "Click on generate, and see the magic!",
       title: "Get a flirty message 💞",
       description:
         'Within moments, RizzGPT crafts a dating expert approved message based on the provided screenshot. For additional responses, simply press "Regenerate".',
@@ -25,11 +21,10 @@
       bgColorClass: "bg-secondary",
     },
     {
-      id: "03",
       title: "Generate replies!",
       description:
         "If you're speaking with someone and want help on a follow up message, simply upload a screen recording of your chat conversation, and generate the best response",
-      image: placeholderGif,
+      video: ConversationUploadVideo,
       bgColorClass: "bg-blue",
     },
   ];
@@ -47,20 +42,42 @@
         <div
           class="step relative rounded-[40px] {step.bgColorClass} md:block hidden"
         >
-          <img
-            alt={step.title}
-            loading="lazy"
-            src={step.image}
-            class="rounded-[40px] w-full h-full object-contain"
-          />
+          {#if step.video}
+            <video
+              src={step.video}
+              autoplay
+              loop
+              muted
+              playsinline
+              class="rounded-[40px] w-full h-full object-contain"
+            ></video>
+          {:else}
+            <img
+              alt={step.title}
+              loading="lazy"
+              src={step.image}
+              class="rounded-[40px] w-full h-full object-contain"
+            />
+          {/if}
         </div>
         <div class="step relative md:hidden">
-          <img
-            alt={step.title}
-            loading="lazy"
-            src={step.image}
-            class="w-full h-full object-contain"
-          />
+          {#if step.video}
+            <video
+              src={step.video}
+              autoplay
+              loop
+              muted
+              playsinline
+              class="w-full h-full object-contain"
+            ></video>
+          {:else}
+            <img
+              alt={step.title}
+              loading="lazy"
+              src={step.image}
+              class="w-full h-full object-contain"
+            />
+          {/if}
         </div>
       </div>
       <div
@@ -69,7 +86,7 @@
         <div
           class="aspect-square min-w-[60px] md:min-w-[80px] lg:min-w-[100px] flex items-center justify-center rounded-full bg-black shadow-lg text-white font-bold text-2xl md:text-3xl lg:text-4xl xl:text-5xl"
         >
-          {step.id}
+          0{idx + 1}
         </div>
         <div>
           <h3
