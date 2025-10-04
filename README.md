@@ -31,3 +31,7 @@ There are two main features (as of sept 27, 2025).
 ## Troubleshooting
 
 - if you get a `failed to load config from /Users/ryan/Desktop/dev/rizzGPT/vite.config.ts` error, try rm -rf node_modules
+
+### TODO
+
+1. 3 more screen gifs for the product walkthrough
