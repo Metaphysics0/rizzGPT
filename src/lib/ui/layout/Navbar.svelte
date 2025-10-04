@@ -37,9 +37,16 @@
   });
 
   function smoothScrollAnchorClick(event: MouseEvent) {
-    event.preventDefault();
     const link = event.currentTarget as HTMLAnchorElement;
     const anchorId = new URL(link.href).hash.replace("#", "");
+
+    // If not on home page, navigate to home page with hash
+    if (page.url.pathname !== "/") {
+      window.location.href = "/" + link.hash;
+      return;
+    }
+
+    event.preventDefault();
     const anchor = document.getElementById(anchorId);
     if (anchor) {
       window.scrollTo({
@@ -58,7 +65,7 @@
   <div class="flex w-full justify-between items-center p-4 max-w-7xl mx-auto">
     <Logo />
 
-    {#if !page.data.user && page.url.pathname === "/"}
+    {#if !page.data.user}
       <div class="hidden md:flex gap-10">
         {#each navItems as { href, label }}
           <a

@@ -5,8 +5,9 @@
   import type { PageData } from "./$types";
   import Navbar from "$lib/ui/layout/Navbar.svelte";
   import { Toaster } from "svelte-french-toast";
+  import type { Snippet } from "svelte";
 
-  let { children }: { children: any; data: PageData } = $props();
+  let { children }: { children: Snippet; data: PageData } = $props();
 </script>
 
 <Toaster />

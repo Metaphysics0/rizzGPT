@@ -1,14 +1,14 @@
 import type { ComparisonItem } from "$lib/types";
 
-export const wingAiComparison: ComparisonItem[] = [
+export const wingmanComparison: ComparisonItem[] = [
   {
     feature: "First move generator",
-    competitor: true,
+    competitor: false,
     rizzgpt: true,
   },
   {
     feature: "Web App",
-    competitor: true,
+    competitor: false,
     rizzgpt: true,
   },
   {
@@ -19,7 +19,7 @@ export const wingAiComparison: ComparisonItem[] = [
   },
   {
     feature: "Conversation follow up generator",
-    competitor: false,
+    competitor: true,
     rizzgpt: true,
   },
   {
