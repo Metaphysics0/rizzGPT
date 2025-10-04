@@ -13,15 +13,15 @@ There are two main features (as of sept 27, 2025).
 ## Tech 👨‍💻
 
 - SvelteKit + TypeScript + Bun
-- Tailwind v4 + shadcn-svelte + Iconify icons
+- Tailwind (v4) + shadcn-svelte + Iconify + Google Fonts (Celebes & Valera)
+- Paraglide js (internationalization + machine translations)
 - Neon DB + Drizzle
 - BetterAuth (Google OAuth + Email)
-- Resend (for sending sign up email verification)
-- Gemini + Gemini Flash 2.0 (`@google/genai` sdk)
+- Resend (for email auth verification)
+- Gemini + Gemini Flash 2.5 lite (via `@google/genai` sdk)
 - Vercel Deployment
 - Backblaze Object Storage (cheaper s3 / vercel blob alternative)
-- PayPal Subscriptions (processing payments + pro subscription tier)
-- Cron-job.org (calling our api/cron endpoints)
+- PayPal (processing payments + subscriptions tier)
 
 ## How to run the app
 
