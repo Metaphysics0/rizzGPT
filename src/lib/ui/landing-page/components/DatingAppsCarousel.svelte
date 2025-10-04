@@ -21,9 +21,9 @@
   ];
 </script>
 
-<section class="py-10 pt-15 bg-secondary">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-shadow-lg">
-    <div class="text-center mb-16">
+<section class="py-10 bg-secondary">
+  <div class="max-w-7xl mx-auto px-4 text-shadow-lg">
+    <div class="text-center mb-10">
       <h2 class="text-4xl font-bold text-white mb-4">
         {m.dating_app_carousel_header()}
       </h2>

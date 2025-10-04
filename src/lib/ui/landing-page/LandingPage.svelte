@@ -7,7 +7,7 @@
   import HeroSection from "./components/HeroSection.svelte";
   import Plans from "../pricing/Plans.svelte";
   import StepByStepWalkthrough from "./components/StepByStepWalkthrough.svelte";
-  import Testimonials from "./components/Testimonials.svelte";
+  import ReviewsCarousel from "./components/ReviewsCarousel.svelte";
   import TryItOut from "./components/TryItOut.svelte";
 </script>
 
@@ -15,7 +15,7 @@
 <DatingAppsCarousel />
 
 <section class="py-20 bg-white">
-  <Testimonials />
+  <ReviewsCarousel />
   <TryItForFreeButton className="pt-24 pb-10" />
 </section>
 
