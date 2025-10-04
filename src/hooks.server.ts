@@ -80,7 +80,7 @@ function doesPathnameRequireSignedInUser(pathname: string) {
     "/profile",
     "/conversations",
     "/settings",
-    "/response-helper",
+    "/conversation-helper",
     "/first-move-generator",
     "/api",
   ];

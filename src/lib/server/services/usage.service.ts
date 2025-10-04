@@ -5,7 +5,7 @@ import { actions } from "./db-actions.service";
 
 export type UsageType =
   | "first-move-generation"
-  | "response-helper-generation"
+  | "conversation-helper-generation"
   | "regeneration";
 
 export interface CreateUsageOptions {

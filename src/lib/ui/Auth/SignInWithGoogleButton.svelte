@@ -15,7 +15,7 @@
       error = "";
       await authClient.signIn.social({
         provider: "google",
-        callbackURL: "/response-helper",
+        callbackURL: "/conversation-helper",
       });
     } catch (err) {
       error = "Google sign in failed";

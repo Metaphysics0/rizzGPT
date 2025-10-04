@@ -30,6 +30,10 @@
             `,
     },
     {
+      title: "Does it work in any language?",
+      content: `Yes!! You can upload a conversation / bio in any language, and our AI model will understand and give you the response in your native language`,
+    },
+    {
       title: "Is my data safe?",
       content: `
             Your privacy is our top priority. We do not store, sell, or share

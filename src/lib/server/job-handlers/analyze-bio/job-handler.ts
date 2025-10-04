@@ -49,7 +49,7 @@ export class AnalyzeBioJobHandler {
       // Record usage after successful generation
       await this.usageService.createUsageRecord({
         userId: this.jobPayload.userId,
-        usageType: "response-helper-generation",
+        usageType: "conversation-helper-generation",
         metadata: {
           conversationId: this.jobPayload.conversationId,
         },

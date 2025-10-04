@@ -44,7 +44,7 @@ export type ConversationStatus =
   | "completed"
   | "failed";
 
-export type ConversationType = "response-helper" | "first-move";
+export type ConversationType = "conversation-helper" | "first-move";
 
 export type PlanType =
   | "the-conversationalist"

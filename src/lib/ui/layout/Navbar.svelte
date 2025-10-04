@@ -81,7 +81,7 @@
       {#if page.data.user}
         {#if page.url.pathname === "/"}
           <div class={cn("mr-0 md:mr-24")}>
-            <LinkButton label="Generate Rizz!" href="/response-helper" />
+            <LinkButton label="Generate Rizz!" href="/conversation-helper" />
           </div>
         {/if}
         <ProfileDropdownMenu

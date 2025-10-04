@@ -39,7 +39,7 @@
     {
       label: "Response Helper",
       icon: "ri:chat-ai-fill",
-      href: "/response-helper",
+      href: "/conversation-helper",
     },
     {
       label: "History",

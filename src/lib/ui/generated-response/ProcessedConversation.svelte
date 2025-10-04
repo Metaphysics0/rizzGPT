@@ -94,7 +94,7 @@
           {#if conversation.conversationType === "first-move"}
             <Icon icon="mdi:message-star" class="h-4 w-4" />
             First Move
-          {:else if conversation.conversationType === "response-helper"}
+          {:else if conversation.conversationType === "conversation-helper"}
             <Icon icon="mdi:message-reply" class="h-4 w-4" />
             Response Helper
           {:else}

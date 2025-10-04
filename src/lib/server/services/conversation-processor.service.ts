@@ -30,9 +30,9 @@ export class ConversationProcessorService {
 
   async initiateConversationProcessing() {
     console.log(
-      `[ConversationProcessorService] Starting ${this.params.conversationType} processing - ${JSON.stringify(
-        this.params
-      )}`
+      `[ConversationProcessorService] Starting ${
+        this.params.conversationType
+      } processing - ${JSON.stringify(this.params)}`
     );
 
     // Check if user has active subscription
@@ -69,7 +69,7 @@ export class ConversationProcessorService {
   }
 
   private processInBackground(conversation: Conversation): void {
-    if (this.params.conversationType === "response-helper") {
+    if (this.params.conversationType === "conversation-helper") {
       const jobPayload: GenerateRizzJobPayload = {
         conversationId: conversation.id,
         fileName: this.params.fileName,

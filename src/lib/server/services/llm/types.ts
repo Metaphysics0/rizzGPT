@@ -10,7 +10,7 @@ export const conversationTypeToLLMInferenceTypeMap: Record<
   LLMInferenceType
 > = {
   "first-move": LLMInferenceType.ANALYZE_DATING_BIO,
-  "response-helper": LLMInferenceType.GENERATE_RIZZ_RESPONSE,
+  "conversation-helper": LLMInferenceType.GENERATE_RIZZ_RESPONSE,
 };
 
 export interface LLMPromptContext {
