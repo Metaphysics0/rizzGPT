@@ -1,11 +1,11 @@
 <script lang="ts">
   import { page } from "$app/state";
+  import { browser } from "$app/environment";
   import Icon from "@iconify/svelte";
   import * as Dialog from "$lib/components/dialog/index.js";
   import CurrentPlanView from "./SubscriptionModal/CurrentPlanView.svelte";
   import ReviseSubscriptionView from "./SubscriptionModal/ReviseSubscriptionView.svelte";
   import type { UiPlan } from "$lib/types";
-  import PayPalSubscriptionButton from "./PayPalSubscriptionButton.svelte";
 
   interface Props {
     open: boolean;
@@ -91,13 +91,21 @@
             <CurrentPlanView />
           {:else if isUpgradeOrDowngrade}
             <ReviseSubscriptionView planId={plan.planId} />
+          {:else if browser}
+            {#await import("./PayPalSubscriptionButton.svelte") then { default: PayPalSubscriptionButton }}
+              <PayPalSubscriptionButton
+                planId={plan.planId}
+                onSuccess={handleSubscriptionSuccess}
+                onError={handleSubscriptionError}
+                onCancel={handleSubscriptionCancel}
+              />
+            {/await}
           {:else}
-            <PayPalSubscriptionButton
-              planId={plan.planId}
-              onSuccess={handleSubscriptionSuccess}
-              onError={handleSubscriptionError}
-              onCancel={handleSubscriptionCancel}
-            />
+            <div class="flex items-center justify-center py-8">
+              <div
+                class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"
+              ></div>
+            </div>
           {/if}
         </div>
 
