@@ -6,7 +6,7 @@
   import Logo from "./Logo.svelte";
   import { onMount } from "svelte";
 
-  const landingPageNavItems = [
+  const navItems = [
     {
       label: "Home",
       href: "#home",
@@ -60,9 +60,9 @@
 
     {#if !page.data.user && page.url.pathname === "/"}
       <div class="hidden md:flex gap-10">
-        {#each landingPageNavItems as { href, label }}
+        {#each navItems as { href, label }}
           <a
-            class="hover:text-primary duration-100"
+            class="hover:text-primary duration-100 font-semibold"
             {href}
             onclick={smoothScrollAnchorClick}>{label}</a
           >
