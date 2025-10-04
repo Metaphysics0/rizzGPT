@@ -1,4 +1,6 @@
 <script lang="ts">
+  import Icon from "@iconify/svelte";
+
   const middleColumnItems = [
     {
       label: "Reviews",
@@ -17,13 +19,8 @@
 
   const leftColumnItems = [
     {
-      label: "About Us",
+      label: "About",
       href: "/about",
-    },
-
-    {
-      label: "Contact Us",
-      href: "/contact",
     },
     {
       label: "FAQs",
@@ -37,7 +34,10 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
       <div>
         <div class="flex items-center mb-4">
-          <span class="text-2xl font-bold text-purple-400">RizzGPT</span>
+          <span class="text-2xl flex items-center font-bold text-purple-400"
+            >RizzGPT
+            <Icon icon="mingcute:ai-line" class="mb-0.5" stroke-width={0.25} />
+          </span>
         </div>
         <p class="text-gray-300 mb-4">
           Your AI Wingman for Winning Conversations.
