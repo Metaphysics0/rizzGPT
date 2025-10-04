@@ -7,6 +7,10 @@
   import FormHeader from "$lib/ui/form/FormHeader.svelte";
 </script>
 
+<svelte:head>
+  <title>RizzGPT - First Move Generator</title>
+</svelte:head>
+
 <div class="mx-auto max-w-xl space-y-8 px-3">
   <FormHeader
     header="Get the perfect opener 💞"

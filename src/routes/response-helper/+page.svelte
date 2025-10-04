@@ -7,6 +7,10 @@
   import SubmitFormButton from "$lib/ui/form/SubmitFormButton.svelte";
 </script>
 
+<svelte:head>
+  <title>RizzGPT - Response Helper</title>
+</svelte:head>
+
 <div class="mx-auto max-w-xl space-y-8 px-3">
   <FormHeader
     header="Not sure what to say next?"
