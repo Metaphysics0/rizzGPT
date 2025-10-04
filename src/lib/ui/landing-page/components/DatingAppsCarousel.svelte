@@ -24,7 +24,7 @@
 <section class="py-10 bg-secondary">
   <div class="max-w-7xl mx-auto px-4 text-shadow-lg">
     <div class="text-center mb-10">
-      <h2 class="text-4xl font-bold text-white mb-4">
+      <h2 class="text-2xl md:text-4xl font-bold text-white mb-4">
         {m.dating_app_carousel_header()}
       </h2>
     </div>
@@ -36,7 +36,7 @@
             <img
               src={logo}
               alt={name + " Logo"}
-              class="h-16 max-h-16 object-contain mx-auto"
+              class="h-20 md:h-16 max-h-20 md:max-h-16 object-contain mx-auto"
             />
           </Carousel.Item>
         {/each}

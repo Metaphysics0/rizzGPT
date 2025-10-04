@@ -26,7 +26,7 @@
 <section class="py-16 px-4 bg-gray-50">
   <TryItOut />
 
-  <TryItForFreeButton className="py-32" />
+  <TryItForFreeButton className="py-12 md:py-32" />
 </section>
 
 <div class="py-20"></div>

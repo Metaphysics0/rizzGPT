@@ -39,12 +39,20 @@
       class:md:flex-row-reverse={reverse}
     >
       <div class="flex-1 w-full">
-        <div class="step relative rounded-[40px] {step.bgColorClass}">
+        <div class="step relative rounded-[40px] {step.bgColorClass} md:block hidden">
           <img
             alt={step.title}
             loading="lazy"
             src={step.image}
             class="rounded-[40px] w-full h-full object-contain"
+          />
+        </div>
+        <div class="step relative md:hidden">
+          <img
+            alt={step.title}
+            loading="lazy"
+            src={step.image}
+            class="w-full h-full object-contain"
           />
         </div>
       </div>
