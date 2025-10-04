@@ -1,4 +1,4 @@
-# RizzGPT
+# RizzGPT 💅
 
 A web app for generating responses for dating conversations, using modern web technologies.
 

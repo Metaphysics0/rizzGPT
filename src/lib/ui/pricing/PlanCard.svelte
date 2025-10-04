@@ -64,7 +64,6 @@
     priceClasses: "text-4xl font-bold text-gray-900",
     periodClasses: "text-gray-600",
     discountClasses: "text-sm text-gray-500 mt-1",
-    checkIconClasses: "w-5 h-5 text-green-500 mr-3",
     mostPopular: false,
   };
   const yearlyPlanStyles = {
@@ -81,7 +80,6 @@
     priceClasses: "text-4xl font-bold",
     periodClasses: "text-purple-100",
     discountClasses: "text-sm text-purple-200 mt-1",
-    checkIconClasses: "w-5 h-5 text-green-300 mr-3",
     mostPopular: true,
   };
   const premiumPlanStyles = {
@@ -97,7 +95,6 @@
     priceClasses: "text-4xl font-bold text-gray-900",
     periodClasses: "text-gray-600",
     discountClasses: "text-sm text-gray-500 mt-1",
-    checkIconClasses: "w-5 h-5 text-green-500 mr-3",
     mostPopular: false,
   };
 
@@ -148,19 +145,10 @@
     <ul class="text-left space-y-3">
       {#each plan.features as feature}
         <li class="flex items-center">
-          <svg
-            class={style.checkIconClasses}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M5 13l4 4L19 7"
-            ></path>
-          </svg>
+          <Icon
+            icon="mingcute:check-fill"
+            class="w-5 h-5 mr-3 text-green-500"
+          />
           {feature}
         </li>
       {/each}

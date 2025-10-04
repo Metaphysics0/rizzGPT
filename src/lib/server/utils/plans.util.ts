@@ -50,7 +50,7 @@ export function getPlans(): UiPlan[] {
         "Everything in The Date Magnet",
         "Personalized dating profile review",
         "1-on-1 Coaching Call (30 min)",
-        'Exclusive "Mastering Rizz" content',
+        "Become a personal backer, and have a direct voice in the future of the platform",
       ],
     },
   ];

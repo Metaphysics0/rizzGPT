@@ -12,6 +12,6 @@
   <h5 class="text-3xl">Join 1000s of satisfied users ;)</h5>
   <a
     class="font-light border py-2 px-8 mb-10 rounded-full hover:text-primary hover:bg-white duration-300"
-    href="#review">See reviews</a
+    href="#reviews">See reviews</a
   >
 </div>
