@@ -30,6 +30,14 @@
       label: "Compare - WingAI",
       href: "/compare/wingai",
     },
+    {
+      label: "Compare - RizzApp",
+      href: "/compare/rizzapp",
+    },
+    {
+      label: "Compare - Wingman",
+      href: "/compare/wingman",
+    },
   ];
 </script>
 
