@@ -1,5 +1,6 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
+  import SocialMediaIcons from "./SocialMediaIcons.svelte";
 
   const middleColumnItems = [
     {
@@ -15,7 +16,12 @@
       label: "Terms & Conditions",
       href: "/terms",
     },
-  ];
+    {
+      label: "Source Code",
+      href: "https://github.com/Metaphysics0/rizzGPT",
+      target: "_blank",
+    },
+  ] as const;
 
   const leftColumnItems = [
     {
@@ -38,7 +44,7 @@
       label: "Compare - Wingman",
       href: "/compare/wingman",
     },
-  ];
+  ] as const;
 </script>
 
 <footer class="bg-gray-900 text-white py-12">
@@ -54,6 +60,7 @@
         <p class="text-gray-300 mb-4">
           The ultimate dating companion to help you win at life.
         </p>
+        <SocialMediaIcons className="w-full items-start" />
       </div>
 
       <!-- Middle Column -->
@@ -65,6 +72,7 @@
               <a
                 href={item.href}
                 class="text-gray-300 hover:text-white transition-colors"
+                target={item.label === "Source Code" ? item.target : "_self"}
                 >{item.label}</a
               >
             </li>

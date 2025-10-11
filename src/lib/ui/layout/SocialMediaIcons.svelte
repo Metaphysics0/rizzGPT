@@ -1,5 +1,8 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
+  import { cn } from "$lib/utils";
+
+  let { className }: { className?: string } = $props();
 
   const socialLinks = [
     {
@@ -20,7 +23,7 @@
   ] as const;
 </script>
 
-<section class="flex items-center mx-auto w-fit h-max">
+<section class={cn("flex items-center mx-auto w-fit h-max", className)}>
   {#each socialLinks as link}
     <a
       href={link.href}

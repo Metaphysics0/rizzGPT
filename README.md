@@ -12,9 +12,9 @@ There are two main features (as of sept 27, 2025).
 
 ## Tech 👨‍💻
 
-- SvelteKit + TypeScript + Bun
+- SvelteKit (Svelte v5 runes) + TypeScript + Bun
 - Tailwind (v4) + shadcn-svelte + Iconify + Google Fonts (Celebes & Valera)
-- Paraglide js (internationalization + machine translations)
+- @inlang/paraglide-js (internationalization + machine translations)
 - Neon DB + Drizzle
 - BetterAuth (Google OAuth + Email)
 - Resend (for email auth verification)

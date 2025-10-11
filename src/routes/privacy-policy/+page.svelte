@@ -1,4 +1,5 @@
 <script>
+  import Footer from "$lib/ui/layout/Footer.svelte";
   import TextContentCard from "$lib/ui/layout/TextContentCard.svelte";
 </script>
 
@@ -216,3 +217,5 @@
     </p>
   </div>
 </TextContentCard>
+
+<Footer />
