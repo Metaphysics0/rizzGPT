@@ -1,4 +1,5 @@
 <script>
+  import Footer from "$lib/ui/layout/Footer.svelte";
   import SocialMediaIcons from "$lib/ui/layout/SocialMediaIcons.svelte";
   import TextContentCard from "$lib/ui/layout/TextContentCard.svelte";
 </script>
@@ -10,3 +11,5 @@
 
   <SocialMediaIcons />
 </TextContentCard>
+
+<Footer />
