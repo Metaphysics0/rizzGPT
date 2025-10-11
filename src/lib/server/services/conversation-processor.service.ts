@@ -69,29 +69,32 @@ export class ConversationProcessorService {
   }
 
   private processInBackground(conversation: Conversation): void {
-    if (this.params.conversationType === "conversation-helper") {
-      const jobPayload: GenerateRizzJobPayload = {
-        conversationId: conversation.id,
-        fileName: this.params.fileName,
-        relationshipContext: this.params.relationshipContext,
-        userId: this.params.userId,
-      };
+    switch (this.params.conversationType) {
+      case "conversation-helper": {
+        const jobPayload: GenerateRizzJobPayload = {
+          conversationId: conversation.id,
+          fileName: this.params.fileName,
+          relationshipContext: this.params.relationshipContext,
+          userId: this.params.userId,
+        };
 
-      new GenerateRizzJobHandler(jobPayload).call().catch((error) => {
-        console.error("Background job failed:", error);
-        actions.updateConversationStatus(conversation.id, "failed");
-      });
-    } else if (this.params.conversationType === "first-move") {
-      const jobPayload: AnalyzeBioJobPayload = {
-        conversationId: conversation.id,
-        fileName: this.params.fileName,
-        userId: this.params.userId,
-      };
+        new GenerateRizzJobHandler(jobPayload).call().catch((error) => {
+          console.error("Background job failed:", error);
+          actions.updateConversationStatus(conversation.id, "failed");
+        });
+      }
+      case "first-move": {
+        const jobPayload: AnalyzeBioJobPayload = {
+          conversationId: conversation.id,
+          fileName: this.params.fileName,
+          userId: this.params.userId,
+        };
 
-      new AnalyzeBioJobHandler(jobPayload).call().catch((error) => {
-        console.error("Background bio analysis job failed:", error);
-        actions.updateConversationStatus(conversation.id, "failed");
-      });
+        new AnalyzeBioJobHandler(jobPayload).call().catch((error) => {
+          console.error("Background bio analysis job failed:", error);
+          actions.updateConversationStatus(conversation.id, "failed");
+        });
+      }
     }
   }
 

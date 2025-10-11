@@ -18,24 +18,22 @@ x
   />
   <form
     method="POST"
-    action="?/generateFirstMove"
+    action="?/optimize"
     use:enhance={profileOptimizerForm.handleEnhance}
   >
     <div class="space-y-6">
       <Dropzone
         title="Profile bio"
         tooltip="Upload screenshots of your bio"
-        onFileUpload={(fileName) =>
-          profileOptimizerForm.addImageFileName(fileName)}
-        onFileClear={(fileName) =>
-          profileOptimizerForm.removeImageFileName(fileName)}
+        onFileUpload={(fileName) => profileOptimizerForm.images.add(fileName)}
+        onFileClear={(fileName) => profileOptimizerForm.images.remove(fileName)}
         isProcessing={profileOptimizerForm.response.loading}
       />
     </div>
 
     <div class="flex justify-center pt-4">
       <GenerateResponseButton
-        text="Generate!"
+        text="Optimize 🪄"
         disabled={!profileOptimizerForm.canGenerate}
         isLoading={profileOptimizerForm.response.loading}
       />

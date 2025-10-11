@@ -5,13 +5,6 @@ import { writeFile, unlink, mkdir, readFile } from "fs/promises";
 import { join } from "path";
 import { existsSync } from "fs";
 
-/**
- * Optimized image combiner service using fluent-ffmpeg.
- * Performance optimizations:
- * - Parallel downloads with Promise.all()
- * - Efficient temp file management
- * - Parallel cleanup operations
- */
 export class ImageCombinerService {
   private static readonly TEMP_DIR = "/tmp/image-combiner";
 
@@ -23,10 +16,7 @@ export class ImageCombinerService {
       throw new Error("No files provided for combination");
     }
 
-    if (fileNames.length === 1) {
-      // If only one file, return it as-is
-      return fileNames[0];
-    }
+    if (fileNames.length === 1) return fileNames[0];
 
     console.log(
       `[ImageCombinerService] Combining ${

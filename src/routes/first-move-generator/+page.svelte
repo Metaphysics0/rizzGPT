@@ -26,9 +26,9 @@
         title="Match Profile Analysis"
         tooltip="Upload screenshots of your match bio"
         onFileUpload={(fileName) =>
-          firstMoveGeneratorForm.addImageFileName(fileName)}
+          firstMoveGeneratorForm.images.add(fileName)}
         onFileClear={(fileName) =>
-          firstMoveGeneratorForm.removeImageFileName(fileName)}
+          firstMoveGeneratorForm.images.remove(fileName)}
         isProcessing={firstMoveGeneratorForm.response.loading}
       />
       <RelationshipContext
