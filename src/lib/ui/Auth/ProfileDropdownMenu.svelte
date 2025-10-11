@@ -51,7 +51,7 @@
       label: "AI Profile Optimizer",
       icon: "mingcute:quill-pen-ai-fill",
       href: "/optimizer",
-      disabled: true,
+      // disabled: true,
     },
     {
       label: "Profile",
