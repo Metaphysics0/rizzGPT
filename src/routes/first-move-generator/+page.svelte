@@ -1,6 +1,6 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
-  import { firstMoveGeneratorForm } from "$lib/runes/first-move-generator-form.svelte";
+  import { firstMoveGeneratorForm } from "$lib/runes/forms/first-move-generator-form.svelte";
   import GenerateResponseButton from "$lib/ui/form/SubmitFormButton.svelte";
   import RelationshipContext from "$lib/ui/form/RelationshipContext.svelte";
   import Dropzone from "$lib/ui/form/Dropzone.svelte";
