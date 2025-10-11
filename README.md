@@ -19,19 +19,15 @@ There are two main features (as of sept 27, 2025).
 - BetterAuth (Google OAuth + Email)
 - Resend (for email auth verification)
 - Gemini + Gemini Flash 2.5 lite (via `@google/genai` sdk)
-- Vercel Deployment
-- Backblaze Object Storage (cheaper s3 alternative)
-- PayPal (processing payments + subscriptions tier)
+- Vercel Deployment + Hosting
+- Backblaze Cloud Storage (cheaper s3 alternative)
+- PayPal + PayPal-JS SDK (processing payments + subscription products + Checkout)
 
 ## How to run the app
 
-1. Make sure you have envs defined in `.env.example`. See docs/env-setup.md for more info.
+1. Make sure you have envs defined in `.env.example`. See `docs/env-setup.md` for more info.
 2. cd into the project, `bun i` then `bun dev`
 
 ## Troubleshooting
 
-- if you get a `failed to load config from /Users/ryan/Desktop/dev/rizzGPT/vite.config.ts` error, try rm -rf node_modules
-
-### TODO
-
-1. 3 more screen gifs for the product walkthrough
+- if you get a `failed to load config from /Users/ryan/Desktop/dev/rizzGPT/vite.config.ts` error when trying to run the dev server, simply try to `rm -rf node_modules`
