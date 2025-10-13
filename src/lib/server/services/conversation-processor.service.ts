@@ -1,13 +1,13 @@
+import { INITIAL_CONVERSATION_DESCRIPTION } from "$lib/constants/initial-conversation.constant";
 import type { ConversationType, RelationshipContext } from "$lib/types";
 import type { Conversation } from "../database/types";
-import { GenerateRizzJobHandler } from "../job-handlers/generate-rizz/job-handler";
 import { AnalyzeBioJobHandler } from "../job-handlers/analyze-bio/job-handler";
-import type { GenerateRizzJobPayload } from "../job-handlers/generate-rizz/job-payload.type";
 import type { AnalyzeBioJobPayload } from "../job-handlers/analyze-bio/job-payload.type";
+import { GenerateRizzJobHandler } from "../job-handlers/generate-rizz/job-handler";
+import type { GenerateRizzJobPayload } from "../job-handlers/generate-rizz/job-payload.type";
 import { actions } from "./db-actions.service";
-import { UsageService } from "./usage.service";
 import { SubscriptionService } from "./subscription.service";
-import { INITIAL_CONVERSATION_DESCRIPTION } from "$lib/constants/initial-conversation.constant";
+import { UsageService } from "./usage.service";
 
 export interface ConversationProcessorRequest {
   fileName: string;
@@ -32,25 +32,25 @@ export class ConversationProcessorService {
     console.log(
       `[ConversationProcessorService] Starting ${
         this.params.conversationType
-      } processing - ${JSON.stringify(this.params)}`
+      } processing - ${JSON.stringify(this.params)}`,
     );
 
     // Check if user has active subscription
     const activeSubscription =
       await this.subscriptionService.getActiveSubscription(
-        this.params.userEmail
+        this.params.userEmail,
       );
 
     if (!activeSubscription) {
       const hasExceeded = await this.usageService.hasExceededFreeLimit(
-        this.params.userId
+        this.params.userId,
       );
 
       if (hasExceeded) {
         console.error(
           `[ConversationProcessorService] Failed to initiate processing - User has exceeded free limit - ${JSON.stringify(
-            this.params
-          )}`
+            this.params,
+          )}`,
         );
         throw new Error("Ran out of free generations!");
       }
@@ -58,7 +58,7 @@ export class ConversationProcessorService {
 
     const conversation = await this.createInitialConversation();
     console.log(
-      `Initial conversation created - ${JSON.stringify(conversation)}`
+      `Initial conversation created - ${JSON.stringify(conversation)}`,
     );
 
     this.processInBackground(conversation);
@@ -82,6 +82,7 @@ export class ConversationProcessorService {
           console.error("Background job failed:", error);
           actions.updateConversationStatus(conversation.id, "failed");
         });
+        break;
       }
       case "first-move": {
         const jobPayload: AnalyzeBioJobPayload = {
@@ -94,6 +95,7 @@ export class ConversationProcessorService {
           console.error("Background bio analysis job failed:", error);
           actions.updateConversationStatus(conversation.id, "failed");
         });
+        break;
       }
     }
   }

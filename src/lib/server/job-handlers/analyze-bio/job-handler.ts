@@ -1,10 +1,10 @@
-import { actions } from "$lib/server/services/db-actions.service";
-import { UsageService } from "$lib/server/services/usage.service";
-import type { AnalyzeBioJobPayload } from "./job-payload.type";
 import { backblazeStorageService } from "$lib/server/services/backblaze-storage.service";
+import { actions } from "$lib/server/services/db-actions.service";
 import { GeminiService } from "$lib/server/services/llm/gemini";
 import { PromptHelper } from "$lib/server/services/llm/prompt-helper";
 import { LLMInferenceType } from "$lib/server/services/llm/types";
+import { UsageService } from "$lib/server/services/usage.service";
+import type { AnalyzeBioJobPayload } from "./job-payload.type";
 
 export class AnalyzeBioJobHandler {
   private readonly jobPayload: AnalyzeBioJobPayload;
@@ -20,8 +20,8 @@ export class AnalyzeBioJobHandler {
   async call() {
     console.log(
       `[AnalyzeBioJobHandler] Starting background job - ${JSON.stringify(
-        this.jobPayload
-      )}`
+        this.jobPayload,
+      )}`,
     );
     this.ensureRequiredFieldsArePresent();
     const { fileName, conversationId } = this.jobPayload;
@@ -29,7 +29,7 @@ export class AnalyzeBioJobHandler {
     try {
       const file = await backblazeStorageService.downloadFile(fileName);
 
-      const prompt = PromptHelper.generatePrompt({
+      const prompt = new PromptHelper().generatePrompt({
         type: LLMInferenceType.ANALYZE_DATING_BIO,
         data: undefined,
       });
@@ -81,7 +81,7 @@ export class AnalyzeBioJobHandler {
 
     if (missingFields.length > 0) {
       throw new Error(
-        `Invalid job payload: ${missingFields.join(", ")} is required`
+        `Invalid job payload: ${missingFields.join(", ")} is required`,
       );
     }
   }

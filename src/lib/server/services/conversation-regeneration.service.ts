@@ -1,10 +1,10 @@
-import { actions } from "./db-actions.service";
+import type { Conversation } from "../database/types";
 import { backblazeStorageService } from "./backblaze-storage.service";
+import { actions } from "./db-actions.service";
 import { GeminiService } from "./llm/gemini";
 import { PromptHelper } from "./llm/prompt-helper";
 import { conversationTypeToLLMInferenceTypeMap } from "./llm/types";
 import { UsageService } from "./usage.service";
-import type { Conversation } from "../database/types";
 
 export interface RegenerateRizzRequest {
   conversationId: string;
@@ -30,7 +30,7 @@ export class ConversationRegenerationService {
     try {
       // Download the original file
       const file = await backblazeStorageService.downloadFile(
-        conversation.initialUploadedConversationFileName
+        conversation.initialUploadedConversationFileName,
       );
 
       // Create modified prompt with previous responses context
@@ -82,7 +82,7 @@ export class ConversationRegenerationService {
     const { relationshipContext, rizzResponses: previousResponses } =
       conversation;
 
-    const basePrompt = PromptHelper.generatePrompt({
+    const basePrompt = new PromptHelper().generatePrompt({
       type: conversationTypeToLLMInferenceTypeMap[
         conversation.conversationType
       ],
