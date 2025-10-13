@@ -1,11 +1,17 @@
-import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
 import type {
-  ConversationType,
   ConversationStatus,
+  ConversationType,
   RelationshipContext,
 } from "$lib/types";
-import { jsonb } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
+import {
+  boolean,
+  jsonb,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+} from "drizzle-orm/pg-core";
 
 export const users = pgTable("user", {
   id: text().primaryKey(),
@@ -94,18 +100,18 @@ export const subscriptions = pgTable("subscription", {
 });
 export type Subscription = typeof subscriptions.$inferSelect;
 
+export type UsageType =
+  | "first-move-generation"
+  | "conversation-helper-generation"
+  | "profile-optimization"
+  | "regeneration";
+
 export const userUsage = pgTable("user_usage", {
   id: uuid().primaryKey().defaultRandom(),
   userId: text()
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
-  usageType: text()
-    .$type<
-      | "first-move-generation"
-      | "conversation-helper-generation"
-      | "regeneration"
-    >()
-    .notNull(),
+  usageType: text().$type<UsageType>().notNull(),
   metadata: jsonb().$type<Record<string, any>>(),
   createdAt: timestamp().defaultNow().notNull(),
   updatedAt: timestamp()
@@ -132,13 +138,33 @@ export const conversations = pgTable("conversation", {
     .notNull(),
 });
 
+export const profileOptimizations = pgTable("profile_optimization", {
+  id: uuid().primaryKey().defaultRandom(),
+  userId: text()
+    .references(() => users.id, { onDelete: "cascade" })
+    .notNull(),
+  combinedImageFileName: text().notNull(),
+  overallScore: text(),
+  summary: text(),
+  annotations: jsonb().$type<any[]>(),
+  status: text()
+    .$type<"processing" | "completed" | "failed">()
+    .default("processing")
+    .notNull(),
+  createdAt: timestamp().defaultNow().notNull(),
+  updatedAt: timestamp()
+    .$onUpdate(() => /* @__PURE__ */ new Date())
+    .notNull(),
+});
+
 // Relations
-export const usersRelations = relations(users, ({ many, one }) => ({
+export const usersRelations = relations(users, ({ many }) => ({
   sessions: many(sessions),
   accounts: many(accounts),
   subscriptions: many(subscriptions),
   userUsage: many(userUsage),
   conversations: many(conversations),
+  profileOptimizations: many(profileOptimizations),
 }));
 
 export const subscriptionsRelations = relations(subscriptions, ({ one }) => ({
@@ -161,6 +187,16 @@ export const conversationsRelations = relations(conversations, ({ one }) => ({
     references: [users.id],
   }),
 }));
+
+export const profileOptimizationsRelations = relations(
+  profileOptimizations,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [profileOptimizations.userId],
+      references: [users.id],
+    }),
+  }),
+);
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
   user: one(users, {

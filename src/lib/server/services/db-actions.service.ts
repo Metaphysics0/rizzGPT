@@ -6,11 +6,14 @@ import {
   users,
   subscriptions,
   userUsage,
+  profileOptimizations,
 } from "../database/schema";
 import type {
   Conversation,
   NewConversation,
   UserWithRelations,
+  ProfileOptimization,
+  NewProfileOptimization,
 } from "../database/types";
 import { doesUserHaveActiveSubscription } from "../utils/has-active-subscription.util";
 
@@ -138,6 +141,56 @@ class DbActionsService {
         },
       },
     });
+  }
+
+  async createProfileOptimization(
+    optimizationData: NewProfileOptimization
+  ): Promise<ProfileOptimization> {
+    const [newOptimization] = await db
+      .insert(profileOptimizations)
+      .values(optimizationData)
+      .returning();
+
+    return newOptimization;
+  }
+
+  async getProfileOptimizationById(
+    optimizationId: string
+  ): Promise<ProfileOptimization | null> {
+    const result = await db
+      .select()
+      .from(profileOptimizations)
+      .where(eq(profileOptimizations.id, optimizationId))
+      .limit(1);
+
+    return result[0] || null;
+  }
+
+  async updateProfileOptimization(
+    optimizationId: string,
+    updates: Partial<Omit<NewProfileOptimization, "id" | "createdAt">>
+  ): Promise<ProfileOptimization | null> {
+    const [updatedOptimization] = await db
+      .update(profileOptimizations)
+      .set({
+        ...updates,
+        updatedAt: new Date(),
+      })
+      .where(eq(profileOptimizations.id, optimizationId))
+      .returning();
+
+    return updatedOptimization || null;
+  }
+
+  async getProfileOptimizationsForUser(
+    userId: string
+  ): Promise<ProfileOptimization[]> {
+    return db
+      .select()
+      .from(profileOptimizations)
+      .where(eq(profileOptimizations.userId, userId))
+      .orderBy(desc(profileOptimizations.createdAt))
+      .limit(100);
   }
 }
 

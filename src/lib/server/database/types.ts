@@ -5,6 +5,7 @@ import type {
   users,
   subscriptions,
   userUsage,
+  profileOptimizations,
 } from "./schema";
 
 export type User = typeof users.$inferSelect;
@@ -24,6 +25,9 @@ export type NewSubscription = typeof subscriptions.$inferInsert;
 
 export type UserUsage = typeof userUsage.$inferSelect;
 export type NewUserUsage = typeof userUsage.$inferInsert;
+
+export type ProfileOptimization = typeof profileOptimizations.$inferSelect;
+export type NewProfileOptimization = typeof profileOptimizations.$inferInsert;
 
 // Type for user with relations as returned by Drizzle
 export type UserWithRelations = User & {

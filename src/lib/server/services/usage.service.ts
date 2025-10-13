@@ -1,12 +1,7 @@
+import { and, eq, gte } from "drizzle-orm";
 import { db } from "../database/connection";
-import { userUsage } from "../database/schema";
-import { eq, and, gte } from "drizzle-orm";
+import { userUsage, type UsageType } from "../database/schema";
 import { actions } from "./db-actions.service";
-
-export type UsageType =
-  | "first-move-generation"
-  | "conversation-helper-generation"
-  | "regeneration";
 
 export interface CreateUsageOptions {
   userId: string;
@@ -32,7 +27,7 @@ export class UsageService {
       .select()
       .from(userUsage)
       .where(
-        and(eq(userUsage.userId, userId), gte(userUsage.createdAt, monthStart))
+        and(eq(userUsage.userId, userId), gte(userUsage.createdAt, monthStart)),
       );
 
     return usageRecords.length;
