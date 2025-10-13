@@ -83,7 +83,7 @@ function doesPathnameRequireSignedInUser(pathname: string) {
 }
 
 function doesPathnameRequirePaidUser(pathname: string) {
-  const premiumRoutes = ["/profile", "/ai-profile-optimizer"];
+  const premiumRoutes = ["/profile", "/history", "/optimizer"];
   return premiumRoutes.some((route) => pathname.startsWith(route));
 }
 
