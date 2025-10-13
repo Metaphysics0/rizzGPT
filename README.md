@@ -1,6 +1,6 @@
 # RizzGPT 💅
 
-A web app for generating responses for dating conversations, using modern web technologies.
+This is a web app for generating responses for dating conversations, using modern web technologies.
 
 ## Core Features
 
