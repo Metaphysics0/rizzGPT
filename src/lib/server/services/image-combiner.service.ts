@@ -1,16 +1,16 @@
-import { backblazeStorageService } from "./backblaze-storage.service";
 import ffmpegInstaller from "@ffmpeg-installer/ffmpeg";
 import ffmpeg from "fluent-ffmpeg";
-import { writeFile, unlink, mkdir, readFile } from "fs/promises";
-import { join } from "path";
-import { existsSync } from "fs";
+import { existsSync } from "node:fs";
+import { mkdir, readFile, unlink, writeFile } from "node:fs/promises";
+import { join } from "node:path";
+import { backblazeStorageService } from "./backblaze-storage.service";
 
 export class ImageCombinerService {
   private static readonly TEMP_DIR = "/tmp/image-combiner";
 
   static async combineImagesHorizontally(
     fileNames: string[],
-    userId: string
+    userId: string,
   ): Promise<string> {
     if (fileNames.length === 0) {
       throw new Error("No files provided for combination");
@@ -21,7 +21,7 @@ export class ImageCombinerService {
     console.log(
       `[ImageCombinerService] Combining ${
         fileNames.length
-      } images: ${JSON.stringify(fileNames)}`
+      } images: ${JSON.stringify(fileNames)}`,
     );
 
     // Ensure temp directory exists
@@ -41,9 +41,8 @@ export class ImageCombinerService {
         const tempFilePath = join(this.TEMP_DIR, tempFileName);
 
         console.log(`[ImageCombinerService] Downloading ${fileName}...`);
-        const downloadedFile = await backblazeStorageService.downloadFile(
-          fileName
-        );
+        const downloadedFile =
+          await backblazeStorageService.downloadFile(fileName);
         const fileBuffer = await downloadedFile.arrayBuffer();
 
         await writeFile(tempFilePath, Buffer.from(fileBuffer));
@@ -58,7 +57,7 @@ export class ImageCombinerService {
 
       const downloadedImages = await Promise.all(downloadPromises);
       console.log(
-        `[ImageCombinerService] All ${downloadedImages.length} images downloaded in parallel`
+        `[ImageCombinerService] All ${downloadedImages.length} images downloaded in parallel`,
       );
 
       // Sort by index to ensure correct order
@@ -72,11 +71,11 @@ export class ImageCombinerService {
       const uploadedFileName = await this.uploadCombinedImageFromFile(
         combinedFilePath,
         combinedFileName,
-        userId
+        userId,
       );
 
       console.log(
-        `[ImageCombinerService] Successfully combined images into: ${uploadedFileName}`
+        `[ImageCombinerService] Successfully combined images into: ${uploadedFileName}`,
       );
       return uploadedFileName;
     } finally {
@@ -93,11 +92,11 @@ export class ImageCombinerService {
 
   private static async executeFFmpegHStack(
     inputPaths: string[],
-    outputPath: string
+    outputPath: string,
   ): Promise<void> {
     return new Promise((resolve, reject) => {
       console.log(
-        `[ImageCombinerService] Processing ${inputPaths.length} images with fluent-ffmpeg`
+        `[ImageCombinerService] Processing ${inputPaths.length} images with fluent-ffmpeg`,
       );
 
       // Build filter_complex for hstack
@@ -135,20 +134,20 @@ export class ImageCombinerService {
         .on("progress", (progress) => {
           console.log(
             `[ImageCombinerService] Processing: ${Math.round(
-              progress.percent || 0
-            )}% done`
+              progress.percent || 0,
+            )}% done`,
           );
         })
         .on("end", () => {
           console.log(
-            `[ImageCombinerService] FFmpeg processing completed successfully`
+            `[ImageCombinerService] FFmpeg processing completed successfully`,
           );
           resolve();
         })
         .on("error", (error) => {
           console.error(
             `[ImageCombinerService] FFmpeg processing failed:`,
-            error
+            error,
           );
           reject(new Error(`FFmpeg failed: ${error.message}`));
         })
@@ -159,7 +158,7 @@ export class ImageCombinerService {
   private static async uploadCombinedImageFromFile(
     filePath: string,
     fileName: string,
-    userId: string
+    userId: string,
   ): Promise<string> {
     console.log(`[ImageCombinerService] Uploading combined image: ${fileName}`);
 
@@ -175,7 +174,7 @@ export class ImageCombinerService {
     });
 
     console.log(
-      `[ImageCombinerService] Upload completed: ${uploadResult.fileName}`
+      `[ImageCombinerService] Upload completed: ${uploadResult.fileName}`,
     );
     return uploadResult.fileName;
   }
@@ -189,7 +188,7 @@ export class ImageCombinerService {
         // Ignore cleanup errors (file might not exist)
         console.warn(
           `[ImageCombinerService] Failed to cleanup temp file ${filePath}:`,
-          error
+          error,
         );
       }
     });
