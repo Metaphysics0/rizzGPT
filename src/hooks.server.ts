@@ -1,15 +1,10 @@
-import { type Handle } from "@sveltejs/kit";
-import { svelteKitHandler } from "better-auth/svelte-kit";
 import { building } from "$app/environment";
 import { auth } from "$lib/server/auth";
-import { paraglideMiddleware } from "./lib/paraglide/server";
-import { sequence } from "@sveltejs/kit/hooks";
 import { actions } from "$lib/server/services/db-actions.service";
-
-function isWebhookRoute(pathname: string): boolean {
-  const webhookRoutes = ["/api/webhooks", "/api/cron"];
-  return webhookRoutes.some((route) => pathname.startsWith(route));
-}
+import type { Handle } from "@sveltejs/kit";
+import { sequence } from "@sveltejs/kit/hooks";
+import { svelteKitHandler } from "better-auth/svelte-kit";
+import { paraglideMiddleware } from "./lib/paraglide/server";
 
 const handleAuth: Handle = async ({ event, resolve }) => {
   try {
@@ -63,12 +58,12 @@ const handleParaglide: Handle = ({ event, resolve }) =>
           return html.replace("%lang%", locale);
         },
       });
-    }
+    },
   );
 
 function isChromeDevToolsRequest(url: URL) {
   return url.pathname.startsWith(
-    "/.well-known/appspecific/com.chrome.devtools"
+    "/.well-known/appspecific/com.chrome.devtools",
   );
 }
 
@@ -88,7 +83,7 @@ function doesPathnameRequireSignedInUser(pathname: string) {
 }
 
 function doesPathnameRequirePaidUser(pathname: string) {
-  const premiumRoutes = ["/conversations", "/profile", "/ai-profile-optimizer"];
+  const premiumRoutes = ["/profile", "/ai-profile-optimizer"];
   return premiumRoutes.some((route) => pathname.startsWith(route));
 }
 
