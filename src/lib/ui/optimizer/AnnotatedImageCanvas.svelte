@@ -30,19 +30,47 @@
     isLoading = false;
   }
 
-  // Calculate scale factor between natural image size and displayed size
-  const scaleFactor = $derived({
-    x: containerDimensions.width / naturalDimensions.width,
-    y: containerDimensions.height / naturalDimensions.height,
-  });
+  // Convert Gemini's normalized coordinates (0-1000) to displayed pixel coordinates
+  const getPixelPosition = (annotation: Annotation): PixelPosition => {
+    // Handle both new box_2d format and legacy boundingBox format
+    if (annotation.box_2d) {
+      // Gemini format: [y_min, x_min, y_max, x_max] with values 0-1000
+      const [y_min, x_min, y_max, x_max] = annotation.box_2d;
 
-  // Scale bounding boxes from original image coordinates to displayed coordinates
-  const getPixelPosition = (bbox: BoundingBox): PixelPosition => ({
-    left: bbox.x * scaleFactor.x,
-    top: bbox.y * scaleFactor.y,
-    width: bbox.width * scaleFactor.x,
-    height: bbox.height * scaleFactor.y,
-  });
+      // Convert from normalized (0-1000) to actual image pixels
+      const imgLeft = (x_min / 1000) * naturalDimensions.width;
+      const imgTop = (y_min / 1000) * naturalDimensions.height;
+      const imgRight = (x_max / 1000) * naturalDimensions.width;
+      const imgBottom = (y_max / 1000) * naturalDimensions.height;
+
+      // Scale to displayed size
+      const scaleFactor = {
+        x: containerDimensions.width / naturalDimensions.width,
+        y: containerDimensions.height / naturalDimensions.height,
+      };
+
+      return {
+        left: imgLeft * scaleFactor.x,
+        top: imgTop * scaleFactor.y,
+        width: (imgRight - imgLeft) * scaleFactor.x,
+        height: (imgBottom - imgTop) * scaleFactor.y,
+      };
+    }
+
+    // Legacy format: direct pixel coordinates (backwards compatibility)
+    const bbox = annotation.boundingBox!;
+    const scaleFactor = {
+      x: containerDimensions.width / naturalDimensions.width,
+      y: containerDimensions.height / naturalDimensions.height,
+    };
+
+    return {
+      left: bbox.x * scaleFactor.x,
+      top: bbox.y * scaleFactor.y,
+      width: bbox.width * scaleFactor.x,
+      height: bbox.height * scaleFactor.y,
+    };
+  };
 
   onMount(() => {
     // Update dimensions on image load and window resize
@@ -113,7 +141,7 @@
 
       {#if !isLoading && containerDimensions.width > 0 && naturalDimensions.width > 0}
         {#each annotations as annotation (annotation.id)}
-          {@const pixelPos = getPixelPosition(annotation.boundingBox)}
+          {@const pixelPos = getPixelPosition(annotation)}
           <AnnotationOverlay
             {annotation}
             position={pixelPos}
