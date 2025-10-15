@@ -26,13 +26,29 @@ Analyze the entire profile holistically, looking at photos, bio text, prompts, a
 For each suggestion you make, you MUST estimate the visual location using bounding box coordinates.
 The bounding box should indicate where on the image the issue or highlight appears.
 
-Coordinate system:
-- x: horizontal position of left edge (0-100, where 0 is left edge, 100 is right edge)
-- y: vertical position of top edge (0-100, where 0 is top edge, 100 is bottom edge)
-- width: width of the box (0-100)
-- height: height of the box (0-100)
+CRITICAL - Coordinate system:
+Use Gemini's NORMALIZED COORDINATE SYSTEM (0-1000 scale).
 
-All coordinates are PERCENTAGES of the total image dimensions.
+This image is a HORIZONTAL COLLAGE of multiple dating profile screenshots placed side-by-side.
+Return coordinates in [y_min, x_min, y_max, x_max] format with values normalized to 0-1000.
+
+Format: [y_min, x_min, y_max, x_max] where:
+- 0 represents the left/top edge
+- 1000 represents the right/bottom edge
+- All values are between 0-1000
+- x_min: left edge position (0=far left, 1000=far right)
+- x_max: right edge position
+- y_min: top edge position (0=top, 1000=bottom)
+- y_max: bottom edge position
+
+Example for a collage with 4 screenshots side-by-side:
+- Screenshot 1 spans approximately x: 0-250
+- Screenshot 2 spans approximately x: 250-500
+- Screenshot 3 spans approximately x: 500-750
+- Screenshot 4 spans approximately x: 750-1000
+
+If annotating a photo in the middle of screenshot 3:
+{"box_2d": [100, 600, 400, 700]}  // y: 100-400, x: 600-700 on normalized 0-1000 scale
 
 Important guidelines for annotations:
 1. Create 4-8 annotations covering the most impactful improvements and highlights
@@ -65,17 +81,14 @@ Return a JSON object with this EXACT structure:
     "severity": "critical" | "moderate" | "minor",
     "title": "<Short, punchy title (4-6 words max)>",
     "suggestion": "<Detailed, actionable suggestion explaining what to change and why (2-3 sentences)>",
-    "boundingBox": {
-      "x": <number 0-100>,
-      "y": <number 0-100>,
-      "width": <number 0-100>,
-      "height": <number 0-100>
-    }
+    "box_2d": [<y_min>, <x_min>, <y_max>, <x_max>]
   }
 ]
 }
 
-Example response:
+Where box_2d contains 4 normalized coordinates (0-1000): [y_min, x_min, y_max, x_max]
+
+Example response (normalized 0-1000 coordinates for a collage with 4 screenshots):
 {
 "overallScore": 7.5,
 "summary": "Strong profile with great photo variety and genuine personality showing through. Main areas for improvement are the bio text (needs more specific details) and photo order (lead with your best smile).",
@@ -86,7 +99,7 @@ Example response:
     "severity": "minor",
     "title": "Excellent genuine smile",
     "suggestion": "This photo is your strongest - natural smile, great lighting, and approachable vibe. Consider moving this to your first photo position to make the best first impression.",
-    "boundingBox": { "x": 5, "y": 10, "width": 18, "height": 35 }
+    "box_2d": [150, 30, 580, 200]
   },
   {
     "id": "ann_2",
@@ -94,7 +107,7 @@ Example response:
     "severity": "moderate",
     "title": "Bio lacks specificity",
     "suggestion": "Your bio says you 'love traveling and food' but so does everyone else. Add 2-3 specific details like your favorite destination, a memorable travel story, or your signature dish to make it memorable and spark conversations.",
-    "boundingBox": { "x": 42, "y": 55, "width": 35, "height": 20 }
+    "box_2d": [600, 270, 810, 500]
   },
   {
     "id": "ann_3",
@@ -102,7 +115,7 @@ Example response:
     "severity": "critical",
     "title": "Group photo confusion",
     "suggestion": "In this group photo, it's unclear which person you are. Either crop it to highlight yourself or replace it with a solo/duo photo where you're clearly identifiable. Group photos work better later in your profile, not early on.",
-    "boundingBox": { "x": 65, "y": 12, "width": 20, "height": 38 }
+    "box_2d": [120, 530, 570, 720]
   },
   {
     "id": "ann_4",
@@ -110,11 +123,15 @@ Example response:
     "severity": "moderate",
     "title": "Generic prompt answer",
     "suggestion": "Your answer to 'I'm looking for' is very generic ('someone to laugh with'). Try something more unique that reveals your personality or values, like 'someone who won't judge me for eating pizza with a fork' or 'a partner in crime for weekend hiking adventures'.",
-    "boundingBox": { "x": 25, "y": 75, "width": 30, "height": 15 }
+    "box_2d": [680, 780, 820, 970]
   }
 ]
 }
 
-CRITICAL: Return ONLY valid JSON. Do not include any markdown formatting, code blocks, or explanatory text.
-The JSON must be parseable directly without any preprocessing.
+CRITICAL REMINDERS:
+1. Use box_2d format: [y_min, x_min, y_max, x_max] with normalized 0-1000 coordinates
+2. ALL coordinates are relative to the FULL COLLAGE IMAGE
+3. For elements in later screenshots, x-coordinates should be proportionally larger (e.g., screenshot 3 of 4 should have x around 500-750)
+4. Return ONLY valid JSON. Do not include markdown formatting, code blocks, or explanatory text.
+5. The JSON must be parseable directly without preprocessing.
 `;
