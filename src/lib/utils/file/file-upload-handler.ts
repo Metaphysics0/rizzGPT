@@ -1,4 +1,4 @@
-import { mediaCache } from "$lib/runes/image-preview.svelte";
+import { mediaCache } from "$lib/runes/media-cache.svelte";
 import { triggerClientFileUpload } from "./client-file-upload.util";
 
 export type UploadedFile = {
@@ -56,14 +56,10 @@ export class FileUploadHandler {
   ): Promise<{ previewUrl: string; fileName: string }> {
     try {
       const fileName = await triggerClientFileUpload(file, this.userId);
-
-      // Cache the uploaded media
       mediaCache.set(fileName, previewUrl, isVideo);
 
-      // Notify about successful upload with the actual fileName
       this.onFileUploaded(fileName);
 
-      // Return both the preview URL and server fileName
       return { previewUrl, fileName };
     } catch (error) {
       console.error("Failed to upload file:", error);
