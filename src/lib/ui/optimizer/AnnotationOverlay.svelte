@@ -30,9 +30,11 @@
   const annotationNumber = annotation.id.split("_")[1];
 
   // Calculate card position (above the bounding box)
+  // Card is 288px wide (w-72), so offset by 144px to center it
+  // Position it above the bounding box with some spacing
   const cardPosition = $derived({
-    left: position.left + position.width / 2 - 144, // Center card (card width is 288px / 2)
-    top: position.top - 10, // 10px above the box
+    left: position.left + position.width / 2 - 144, // Center card horizontally
+    bottom: position.top + 20, // Position above the box (20px gap)
   });
 </script>
 
@@ -61,6 +63,6 @@
 </button>
 
 <!-- Annotation card (tooltip) -->
-<div style:left="{cardPosition.left}px" style:top="{cardPosition.top}px">
+<div class="absolute" style:left="{cardPosition.left}px" style:bottom="{cardPosition.bottom}px">
   <AnnotationCard {annotation} {isActive} />
 </div>
