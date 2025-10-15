@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import { getSignedUrlFromFilePath } from "$lib/utils/file/client-file-upload.util";
   import { mediaCache } from "$lib/runes/media-cache.svelte";
-  import type { Annotation, BoundingBox, PixelPosition } from "./types";
+  import type { Annotation, PixelPosition } from "./types";
   import AnnotationOverlay from "./AnnotationOverlay.svelte";
   import MediaSkeleton from "$lib/ui/loading-animations/MediaSkeleton.svelte";
 
@@ -21,59 +21,38 @@
   let hasError = $state(false);
   let isLoading = $state(true);
 
-  // Check cache first
   const cachedMedia = mediaCache.get(fileName);
   const imageUrl = $derived(cachedMedia?.url || getSignedUrlFromFilePath(fileName));
 
-  // If we have cached media, don't show loading
   if (cachedMedia) {
     isLoading = false;
   }
 
   // Convert Gemini's normalized coordinates (0-1000) to displayed pixel coordinates
   const getPixelPosition = (annotation: Annotation): PixelPosition => {
-    // Handle both new box_2d format and legacy boundingBox format
-    if (annotation.box_2d) {
-      // Gemini format: [y_min, x_min, y_max, x_max] with values 0-1000
-      const [y_min, x_min, y_max, x_max] = annotation.box_2d;
+    // Gemini format: [y_min, x_min, y_max, x_max] with values 0-1000
+    const [y_min, x_min, y_max, x_max] = annotation.box_2d;
 
-      // Convert from normalized (0-1000) to actual image pixels
-      const imgLeft = (x_min / 1000) * naturalDimensions.width;
-      const imgTop = (y_min / 1000) * naturalDimensions.height;
-      const imgRight = (x_max / 1000) * naturalDimensions.width;
-      const imgBottom = (y_max / 1000) * naturalDimensions.height;
+    // Convert from normalized (0-1000) to actual image pixels
+    const imgLeft = (x_min / 1000) * naturalDimensions.width;
+    const imgTop = (y_min / 1000) * naturalDimensions.height;
+    const imgRight = (x_max / 1000) * naturalDimensions.width;
+    const imgBottom = (y_max / 1000) * naturalDimensions.height;
 
-      // Scale to displayed size
-      const scaleFactor = {
-        x: containerDimensions.width / naturalDimensions.width,
-        y: containerDimensions.height / naturalDimensions.height,
-      };
-
-      return {
-        left: imgLeft * scaleFactor.x,
-        top: imgTop * scaleFactor.y,
-        width: (imgRight - imgLeft) * scaleFactor.x,
-        height: (imgBottom - imgTop) * scaleFactor.y,
-      };
-    }
-
-    // Legacy format: direct pixel coordinates (backwards compatibility)
-    const bbox = annotation.boundingBox!;
     const scaleFactor = {
       x: containerDimensions.width / naturalDimensions.width,
       y: containerDimensions.height / naturalDimensions.height,
     };
 
     return {
-      left: bbox.x * scaleFactor.x,
-      top: bbox.y * scaleFactor.y,
-      width: bbox.width * scaleFactor.x,
-      height: bbox.height * scaleFactor.y,
+      left: imgLeft * scaleFactor.x,
+      top: imgTop * scaleFactor.y,
+      width: (imgRight - imgLeft) * scaleFactor.x,
+      height: (imgBottom - imgTop) * scaleFactor.y,
     };
   };
 
   onMount(() => {
-    // Update dimensions on image load and window resize
     const updateDimensions = () => {
       if (imageRef) {
         containerDimensions = {
@@ -113,7 +92,6 @@
 
   function handleImageLoad() {
     isLoading = false;
-    // Cache the loaded media
     mediaCache.set(fileName, imageUrl, false);
   }
 </script>
@@ -141,10 +119,10 @@
 
       {#if !isLoading && containerDimensions.width > 0 && naturalDimensions.width > 0}
         {#each annotations as annotation (annotation.id)}
-          {@const pixelPos = getPixelPosition(annotation)}
+          {@const position = getPixelPosition(annotation)}
           <AnnotationOverlay
             {annotation}
-            position={pixelPos}
+            {position}
             isActive={activeAnnotationId === annotation.id}
             onclick={() => handleAnnotationClick(annotation.id)}
           />
