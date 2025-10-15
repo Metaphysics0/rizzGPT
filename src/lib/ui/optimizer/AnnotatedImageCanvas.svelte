@@ -54,16 +54,15 @@
 
   onMount(() => {
     const updateDimensions = () => {
-      if (imageRef) {
-        containerDimensions = {
-          width: imageRef.offsetWidth,
-          height: imageRef.offsetHeight,
-        };
-        naturalDimensions = {
-          width: imageRef.naturalWidth,
-          height: imageRef.naturalHeight,
-        };
-      }
+      if (!imageRef) return
+      containerDimensions = {
+        width: imageRef.offsetWidth,
+        height: imageRef.offsetHeight,
+      };
+      naturalDimensions = {
+        width: imageRef.naturalWidth,
+        height: imageRef.naturalHeight,
+      };
     };
 
     if (imageRef) {

@@ -1,8 +1,8 @@
 import {
-  BACKBLAZE_APPLICATION_ID,
-  BACKBLAZE_APPLICATION_KEY,
-  BACKBLAZE_BUCKET_ID,
-  BACKBLAZE_BUCKET_NAME,
+    BACKBLAZE_APPLICATION_ID,
+    BACKBLAZE_APPLICATION_KEY,
+    BACKBLAZE_BUCKET_ID,
+    BACKBLAZE_BUCKET_NAME,
 } from "$env/static/private";
 
 interface CacheEntry {
@@ -31,7 +31,7 @@ class BackblazeStorageService {
 
   async getSignedDownloadUrl(
     fileName: string,
-    validDurationInSeconds: number = 86400 // 24 hours since images never change
+    validDurationInSeconds: number = 60 * 60 * 24 // 24 hours since images never change
   ): Promise<string> {
     const cacheKey = `${fileName}:${validDurationInSeconds}`;
     const now = Date.now();
@@ -96,7 +96,6 @@ class BackblazeStorageService {
     }
   }
 
-  // mainly for server side uploads
   async uploadFile({ file, userId }: { file: File; userId: string }) {
     const { authorizationToken, uploadUrl } = await this.getClientUploadUrl();
 

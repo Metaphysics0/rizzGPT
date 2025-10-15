@@ -167,7 +167,6 @@ export class ImageCombinerService {
       type: "image/jpeg",
     });
 
-    // Upload to Backblaze
     const uploadResult = await backblazeStorageService.uploadFile({
       file: combinedFile,
       userId,
