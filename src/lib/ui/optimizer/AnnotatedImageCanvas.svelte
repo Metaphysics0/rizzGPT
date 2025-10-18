@@ -9,9 +9,11 @@
   let {
     annotations,
     fileName,
+    containerRef = $bindable(),
   }: {
     annotations: Annotation[];
     fileName: string;
+    containerRef?: HTMLDivElement;
   } = $props();
 
   let imageRef: HTMLImageElement | undefined = $state();
@@ -102,7 +104,7 @@
       <p class="text-red-600 text-sm mt-2">The image might be processing or temporarily unavailable.</p>
     </div>
   {:else}
-    <div class="relative">
+    <div class="relative" bind:this={containerRef}>
       {#if isLoading}
         <MediaSkeleton height="600px" aspectRatio="auto" />
       {/if}
