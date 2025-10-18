@@ -191,6 +191,15 @@ class DbActionsService {
       .orderBy(desc(profileOptimizations.createdAt))
       .limit(100);
   }
+
+  async deleteProfileOptimization(optimizationId: string): Promise<boolean> {
+    const result = await db
+      .delete(profileOptimizations)
+      .where(eq(profileOptimizations.id, optimizationId))
+      .returning();
+
+    return result.length > 0;
+  }
 }
 
 export const actions = new DbActionsService();
