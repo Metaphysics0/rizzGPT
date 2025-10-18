@@ -109,6 +109,17 @@
           <Icon icon="mingcute:sparkles-fill" class="w-3 h-3 mr-1" />
           Bio Analysis
         </span>
+        {#if optimization.status === "completed"}
+          <span
+            class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium shrink-0 {score >= 7
+              ? 'bg-green-50 text-green-700'
+              : score >= 5
+                ? 'bg-yellow-50 text-yellow-700'
+                : 'bg-red-50 text-red-700'}"
+          >
+            Score: {score}/10
+          </span>
+        {/if}
         <span
           class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium {statusInfo.bgColor} {statusInfo.color} shrink-0"
         >
@@ -118,18 +129,6 @@
 
       <div class="mb-2">
         {#if optimization.status === "completed"}
-          <div class="flex items-center space-x-2 mb-1">
-            <span class="text-sm font-semibold text-gray-700">Score:</span>
-            <span
-              class="text-sm font-bold {score >= 7
-                ? 'text-green-600'
-                : score >= 5
-                  ? 'text-yellow-600'
-                  : 'text-red-600'}"
-            >
-              {score}/10
-            </span>
-          </div>
           <p class="text-sm text-gray-600 line-clamp-2 sm:text-base">
             {optimization.summary}
           </p>
