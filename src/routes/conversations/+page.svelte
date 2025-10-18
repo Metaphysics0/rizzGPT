@@ -10,20 +10,21 @@
 
   // Merge and sort all items by updatedAt date
   type HistoryItem =
-    | { type: 'conversation'; data: ConversationsListItem }
-    | { type: 'optimization'; data: ProfileOptimization };
+    | { type: "conversation"; data: ConversationsListItem }
+    | { type: "optimization"; data: ProfileOptimization };
 
   const historyItems = $derived.by(() => {
-    const conversationItems: HistoryItem[] = conversations.map(conv => ({
-      type: 'conversation' as const,
-      data: conv
+    const conversationItems: HistoryItem[] = conversations.map((conv) => ({
+      type: "conversation" as const,
+      data: conv,
     }));
 
+    // @ts-ignore - for some reason the 'optimizations' var is not type inferred
     const optimizationItems: HistoryItem[] = optimizations
-      .filter(opt => opt.status === 'completed') // Only show completed optimizations
-      .map(opt => ({
-        type: 'optimization' as const,
-        data: opt
+      .filter((opt) => opt.status === "completed") // Only show completed optimizations
+      .map((opt) => ({
+        type: "optimization" as const,
+        data: opt,
       }));
 
     const allItems = [...conversationItems, ...optimizationItems];
@@ -65,17 +66,25 @@
 
   <div class="divide-y divide-gray-100">
     {#each historyItems as item (item.data.id)}
-      {#if item.type === 'conversation'}
-        <ConversationListItem conversation={item.data} onDelete={handleDeleteConversation} />
+      {#if item.type === "conversation"}
+        <ConversationListItem
+          conversation={item.data}
+          onDelete={handleDeleteConversation}
+        />
       {:else}
-        <OptimizationListItem optimization={item.data} onDelete={handleDeleteOptimization} />
+        <OptimizationListItem
+          optimization={item.data}
+          onDelete={handleDeleteOptimization}
+        />
       {/if}
     {/each}
 
     {#if historyItems.length === 0}
       <div class="text-center py-12">
         <p class="text-gray-500 text-lg">No history items yet</p>
-        <p class="text-gray-400 text-sm mt-2">Start generating conversations or optimize your profile!</p>
+        <p class="text-gray-400 text-sm mt-2">
+          Start generating conversations or optimize your profile!
+        </p>
       </div>
     {/if}
   </div>
