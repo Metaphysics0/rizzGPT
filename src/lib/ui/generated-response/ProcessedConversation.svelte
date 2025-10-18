@@ -8,6 +8,7 @@
   import Button from "$lib/components/button/button.svelte";
   import * as Pagination from "$lib/components/pagination";
   import toast from "svelte-french-toast";
+  import ProTip from "./ProTip.svelte";
 
   let { conversation }: { conversation: Conversation } = $props();
 
@@ -45,7 +46,7 @@
     try {
       const response = await fetch(
         `/api/conversations/${conversation.id}/regenerate`,
-        { method: "POST" }
+        { method: "POST" },
       );
 
       if (!response.ok) throw new Error("Failed to regenerate responses");
@@ -182,18 +183,9 @@
       </div>
     {/if}
 
-    <div class="mt-6 rounded-lg bg-green-50 p-3 text-sm">
-      <div class="flex items-start gap-2">
-        <Icon icon="mdi:lightbulb" class="mt-0.5 h-4 w-4 text-green-600" />
-        <div>
-          <span class="font-medium text-green-800">💡 Pro tip:</span>
-          <span class="text-green-700">
-            Click the copy button to copy any response to your clipboard, then
-            paste it into your dating app! ✨
-          </span>
-        </div>
-      </div>
-    </div>
+    <ProTip
+      text="Click the copy button to copy any response to your clipboard, then paste it into your dating app! ✨"
+    />
   {:else if showLoading}
     <ProcessingResponseSkeleton />
   {/if}

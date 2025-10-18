@@ -9,6 +9,7 @@ export const load = (async ({ setHeaders, locals }) => {
     actions.getProfileOptimizationsForUser(locals.user!.id),
   ])
 
+
   return {
     conversations,
     optimizations,
