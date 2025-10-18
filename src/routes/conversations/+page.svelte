@@ -4,8 +4,7 @@
   import type { PageData } from "./$types";
 
   const { data }: { data: PageData } = $props();
-
-  let conversations = $state(data.conversations);
+  let { conversations, optimizations } = $state(data);
 
   function handleDelete(conversationId: string) {
     conversations = conversations.filter((conv) => conv.id !== conversationId);
@@ -20,11 +19,9 @@
   <div class="mb-4 rounded-2xl border-gray-200 px-4 py-4 sm:px-6">
     <div class="flex items-center justify-between flex-wrap gap-4">
       <div>
-        <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl">
-          Conversation History
-        </h1>
+        <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl">History</h1>
         <p class="text-sm text-gray-600 mt-1">
-          {pluralizeWithCount(conversations.length, "conversation")}
+          {pluralizeWithCount(conversations.length, "generation")}
         </p>
       </div>
     </div>

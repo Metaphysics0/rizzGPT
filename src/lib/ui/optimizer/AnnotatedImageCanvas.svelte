@@ -2,9 +2,9 @@
   import { onMount } from "svelte";
   import { getSignedUrlFromFilePath } from "$lib/utils/file/client-file-upload.util";
   import { mediaCache } from "$lib/runes/media-cache.svelte";
-  import type { Annotation, PixelPosition } from "./types";
   import AnnotationOverlay from "./AnnotationOverlay.svelte";
   import MediaSkeleton from "$lib/ui/loading-animations/MediaSkeleton.svelte";
+  import type { Annotation, PixelPosition } from "$lib/types";
 
   let {
     annotations,

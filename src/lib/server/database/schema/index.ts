@@ -1,16 +1,16 @@
 import type {
-  ConversationStatus,
-  ConversationType,
-  RelationshipContext,
+    ConversationStatus,
+    ConversationType,
+    RelationshipContext,
 } from "$lib/types";
 import { relations } from "drizzle-orm";
 import {
-  boolean,
-  jsonb,
-  pgTable,
-  text,
-  timestamp,
-  uuid,
+    boolean,
+    jsonb,
+    pgTable,
+    text,
+    timestamp,
+    uuid,
 } from "drizzle-orm/pg-core";
 
 export const users = pgTable("user", {
@@ -144,9 +144,9 @@ export const profileOptimizations = pgTable("profile_optimization", {
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   combinedImageFileName: text().notNull(),
-  overallScore: text(),
-  summary: text(),
-  annotations: jsonb().$type<any[]>(),
+  overallScore: text().notNull(),
+  summary: text().notNull(),
+  annotations: jsonb().$type<any[]>().notNull(),
   status: text()
     .$type<"processing" | "completed" | "failed">()
     .default("processing")

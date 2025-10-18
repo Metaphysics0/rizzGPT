@@ -2,22 +2,21 @@ import type { ConversationsListItem, ConversationStatus } from "$lib/types";
 import { and, desc, eq } from "drizzle-orm";
 import { db } from "../database/connection";
 import {
-  conversations,
-  users,
-  subscriptions,
-  userUsage,
-  profileOptimizations,
+    conversations,
+    profileOptimizations,
+    subscriptions,
+    users,
+    userUsage,
 } from "../database/schema";
 import type {
-  Conversation,
-  NewConversation,
-  UserWithRelations,
-  ProfileOptimization,
-  NewProfileOptimization,
+    Conversation,
+    NewConversation,
+    NewProfileOptimization,
+    ProfileOptimization,
+    UserWithRelations,
 } from "../database/types";
 import { doesUserHaveActiveSubscription } from "../utils/has-active-subscription.util";
 
-// A general place to put DB actions.
 class DbActionsService {
   async createConversation(
     conversationData: NewConversation

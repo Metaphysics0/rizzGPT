@@ -24,7 +24,6 @@ const handleAuth: Handle = async ({ event, resolve }) => {
       });
     }
 
-    // Make session and user available on server
     if (session) {
       event.locals.session = session.session;
       const dbUser = await actions.getUserWithRelations(session.user.id);
@@ -83,7 +82,7 @@ function doesPathnameRequireSignedInUser(pathname: string) {
 }
 
 function doesPathnameRequirePaidUser(pathname: string) {
-  const premiumRoutes = ["/profile", "/history", "/optimizer"];
+  const premiumRoutes = ["/profile"];
   return premiumRoutes.some((route) => pathname.startsWith(route));
 }
 
