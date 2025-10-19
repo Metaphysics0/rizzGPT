@@ -29,7 +29,7 @@
         backgroundColor: "#ffffff",
       });
 
-      console.log("Image exported successfully");
+      toast.success("Image exported successfully!");
     } catch (error) {
       console.error("Failed to export image:", error);
       toast.error("Failed to export image. Please try again.");
