@@ -2,9 +2,10 @@
   import ProTip from "$lib/ui/generated-response/ProTip.svelte";
   import AnnotatedImageCanvas from "$lib/ui/optimizer/AnnotatedImageCanvas.svelte";
   import OptimizerHeader from "$lib/ui/optimizer/OptimizerHeader.svelte";
-  import { captureAndDownloadImage } from "$lib/utils/export/image-capture.util";
+  import { convertHtmlToImage } from "$lib/utils/export/image-capture.util";
   import toast from "svelte-french-toast";
   import type { PageData } from "./$types";
+  import { downloadBlob } from "$lib/utils/file/trigger-client-side-download.util";
 
   const { data }: { data: PageData } = $props();
   const { optimization } = $derived(data);
@@ -21,14 +22,13 @@
     isExporting = true;
 
     try {
+      const imageBlob = await convertHtmlToImage(canvasContainerRef);
+
+      if (!imageBlob) throw new Error("Failed to create image");
+
       const timestamp = new Date().toISOString().split("T")[0];
       const filename = `rizzgpt-profile-analysis-${timestamp}.png`;
-
-      await captureAndDownloadImage(canvasContainerRef, filename, {
-        pixelRatio: 2,
-        backgroundColor: "#ffffff",
-      });
-
+      downloadBlob(imageBlob, filename);
       toast.success("Image exported successfully!");
     } catch (error) {
       console.error("Failed to export image:", error);
