@@ -1,7 +1,10 @@
 <script lang="ts">
-  import type { Annotation } from "./types";
+  import type { Annotation } from "$lib/types";
 
-  let { annotation, isActive = false }: { annotation: Annotation; isActive?: boolean } = $props();
+  let {
+    annotation,
+    isActive = false,
+  }: { annotation: Annotation; isActive?: boolean } = $props();
 
   const severityColors = {
     critical: "border-red-500 bg-red-50 text-red-900",
@@ -19,7 +22,9 @@
 <div
   class="absolute z-50 w-72 rounded-lg border-2 bg-white p-4 shadow-xl transition-all duration-200 {severityColors[
     annotation.severity
-  ]} {isActive ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}"
+  ]} {isActive
+    ? 'opacity-100 scale-100'
+    : 'opacity-0 scale-95 pointer-events-none'}"
 >
   <div class="flex items-start gap-2">
     <span

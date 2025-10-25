@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Annotation, PixelPosition } from "./types";
+  import type { Annotation, PixelPosition } from "$lib/types";
   import AnnotationCard from "./AnnotationCard.svelte";
 
   let {
@@ -10,8 +10,8 @@
   }: {
     annotation: Annotation;
     position: PixelPosition;
-    isActive?: boolean;
-    onclick?: () => void;
+    isActive: boolean;
+    onclick: () => void;
   } = $props();
 
   const severityBorderColors = {
@@ -47,7 +47,7 @@
   style:top="{position.top}px"
   style:width="{position.width}px"
   style:height="{position.height}px"
-  onclick={onclick}
+  {onclick}
   type="button"
 >
   <!-- Animated badge with number -->
@@ -62,7 +62,10 @@
   </div>
 </button>
 
-<!-- Annotation card (tooltip) -->
-<div class="absolute" style:left="{cardPosition.left}px" style:bottom="{cardPosition.bottom}px">
+<div
+  class="absolute"
+  style:left="{cardPosition.left}px"
+  style:bottom="{cardPosition.bottom}px"
+>
   <AnnotationCard {annotation} {isActive} />
 </div>

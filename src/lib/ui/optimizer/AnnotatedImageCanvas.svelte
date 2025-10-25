@@ -24,7 +24,9 @@
   let isLoading = $state(true);
 
   const cachedMedia = mediaCache.get(fileName);
-  const imageUrl = $derived(cachedMedia?.url || getSignedUrlFromFilePath(fileName));
+  const imageUrl = $derived(
+    cachedMedia?.url || getSignedUrlFromFilePath(fileName),
+  );
 
   if (cachedMedia) {
     isLoading = false;
@@ -56,7 +58,7 @@
 
   onMount(() => {
     const updateDimensions = () => {
-      if (!imageRef) return
+      if (!imageRef) return;
       containerDimensions = {
         width: imageRef.offsetWidth,
         height: imageRef.offsetHeight,
@@ -69,7 +71,6 @@
 
     if (imageRef) {
       imageRef.addEventListener("load", updateDimensions);
-      // Initial dimension update in case image is already loaded
       updateDimensions();
     }
 
@@ -82,7 +83,8 @@
 
   const handleAnnotationClick = (annotationId: string) => {
     // Toggle active state - if clicking the same annotation, close it
-    activeAnnotationId = activeAnnotationId === annotationId ? null : annotationId;
+    activeAnnotationId =
+      activeAnnotationId === annotationId ? null : annotationId;
   };
 
   function handleImageError(error: Event) {
@@ -101,7 +103,9 @@
   {#if hasError}
     <div class="rounded-xl border border-red-200 bg-red-50 p-8 text-center">
       <p class="text-red-800 font-medium">Failed to load profile image</p>
-      <p class="text-red-600 text-sm mt-2">The image might be processing or temporarily unavailable.</p>
+      <p class="text-red-600 text-sm mt-2">
+        The image might be processing or temporarily unavailable.
+      </p>
     </div>
   {:else}
     <div class="relative" bind:this={containerRef}>
@@ -114,7 +118,9 @@
         src={imageUrl}
         alt="Profile collage"
         crossorigin="anonymous"
-        class="w-full rounded-lg {isLoading ? 'opacity-0 absolute inset-0' : ''}"
+        class="w-full rounded-lg {isLoading
+          ? 'opacity-0 absolute inset-0'
+          : ''}"
         onerror={handleImageError}
         onload={handleImageLoad}
       />
