@@ -12,5 +12,13 @@
     ],
     "exposeHeaders": ["x-bz-upload-timestamp"],
     "maxAgeSeconds": 3600
+  },
+  {
+    "corsRuleName": "dev-and-prod-download",
+    "allowedOrigins": ["http://localhost:5173", "https://www.rizzb0t.com"],
+    "allowedOperations": ["b2_download_file_by_name"],
+    "allowedHeaders": ["range", "authorization"],
+    "exposeHeaders": ["content-length", "content-type", "x-bz-content-sha1"],
+    "maxAgeSeconds": 3600
   }
 ]
