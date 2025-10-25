@@ -5,30 +5,41 @@ Add export functionality to the profile optimization results page, allowing user
 
 ---
 
-## Current Implementation
+## ✅ Current Implementation Status
+
+### Completed Features
+- ✅ **PNG Export**: Screenshot of annotated image using `html-to-image`
+- ✅ **PDF Export**: Full report with pdfmake
+- ✅ **Dropdown UI**: User can choose between PDF or PNG export
+- ✅ **Toast Notifications**: Success/error feedback
+- ✅ **Loading States**: Visual feedback during export
+
+### Tech Stack
 - **AnnotatedImageCanvas**: CSS-positioned overlays on an `<img>` element
 - **Data Structure**: Score, summary, and array of annotations with titles, suggestions, severity, and bounding boxes
 - **User Value**: Actionable feedback for profile improvement
 
 ---
 
-## 🎯 Recommended Approach: Two Export Options
+## 🎯 Implemented Approach: Two Export Options
 
-### Option 1: Screenshot of Annotated Image (PNG)
-**Tool:** `html2canvas` library (most popular, 60k+ stars)
-- Captures the entire DOM element including CSS overlays
+### Option 1: Screenshot of Annotated Image (PNG) ✅
+**Tool:** `html-to-image` library
+- Captures the entire DOM element including CSS overlays with OKLCH color support
 - Works perfectly with absolute-positioned annotations
 - Simple implementation, no need to redraw bounding boxes
+- **Implementation**: `src/lib/utils/export/image-capture.util.ts`
 
 **Why:** Users can share/save their annotated profile for reference
 
 ---
 
-### Option 2: PDF Report
-**Tool:** `jsPDF` with markdown-like structure
+### Option 2: PDF Report ✅
+**Tool:** `pdfmake` with declarative document structure
 - Clean, professional report format
 - Better for printing/sharing with friends
-- Can include both image + detailed text annotations
+- Includes both annotated image + detailed text annotations
+- **Implementation**: `src/lib/utils/export/pdf-generator.ts`
 
 **Why:** More comprehensive, easier to read all feedback at once
 
@@ -53,48 +64,32 @@ Add export functionality to the profile optimization results page, allowing user
 
 ---
 
-## 🛠️ Implementation Options
+## 🛠️ Implementation Approach
 
-### A. Simple & Fast: Screenshot Only
-- Add "Export as Image" button to OptimizerHeader
-- Use `html2canvas` to capture AnnotatedImageCanvas
-- Download as PNG
-- **Pros**: Quick, visual, shareable
-- **Cons**: Annotations might be small/hard to read
+### ✅ Chosen: Hybrid Dropdown (Both Options)
+- Single "Export Report" button with dropdown menu
+- **Option 1**: "Export as PDF" → Full report with everything
+- **Option 2**: "Export as Image" → PNG screenshot only
+- **Pros**: Clean UI, maximum flexibility, professional UX
+- **Cons**: None - best of both worlds!
 
-### B. Better UX: PDF Report (RECOMMENDED)
-- Add "Export Report" button
-- Generate PDF with:
-  - Page 1: Score card + screenshot of annotated image
-  - Page 2+: Detailed list of all annotations with full suggestions
-- **Pros**: Professional, comprehensive, printable
-- **Cons**: Slightly more complex, larger file size
+### Why This Approach:
+1. **More valuable**: Users can choose based on their needs
+2. **Professional**: Dropdown provides polished, modern UX
+3. **Complete**: PDF has image context + full text explanations
+4. **Flexible**: Quick PNG share or comprehensive PDF report
 
-### C. Hybrid: Both Options
-- "Export Image" button → PNG screenshot
-- "Export Full Report" button → PDF with everything
-- **Pros**: Maximum flexibility
-- **Cons**: Two buttons might be cluttered
-
----
-
-## 💡 Recommendation: PDF Report (Option B)
-
-### Why:
-1. **More valuable**: Users get actionable steps they can reference later
-2. **Professional**: Looks polished, can share with friends for feedback
-3. **Complete**: Image context + full text explanations
-4. **Printable**: Can physically review while editing profile
-
-### Implementation:
-- Use `jsPDF` + `html2canvas` combo
-- Capture annotated image for page 1
+### Implementation Details:
+- Use `pdfmake` + `html-to-image` combo
+- Capture annotated image for PDF page 1
 - Programmatically add text sections for annotations
-- Style with your color scheme (purple/pink gradients)
+- Style with brand colors (purple gradients)
+- Dropdown menu with clear descriptions for each option
 
-### Libraries needed:
+### Libraries Used:
 ```bash
-bun add jspdf html2canvas
+bun add pdfmake html-to-image
+bun add -d @types/pdfmake
 ```
 
 ---
@@ -131,78 +126,107 @@ bun add jspdf html2canvas
 
 ## 📝 Implementation Checklist
 
-### Phase 1: Setup
-- [ ] Install dependencies: `bun add jspdf html2canvas`
-- [ ] Create export utility function in `/src/lib/utils/export/`
-- [ ] Add TypeScript types for export options
+### Phase 1: Setup ✅
+- ✅ Install dependencies: `bun add pdfmake html-to-image`
+- ✅ Create export utility functions in `/src/lib/utils/export/`
+- ✅ Add TypeScript types for export options
 
-### Phase 2: UI Components
-- [ ] Add "Export Report" button to `OptimizerHeader.svelte`
-- [ ] Add loading state during PDF generation
-- [ ] Add success/error toast notifications
+### Phase 2: UI Components ✅
+- ✅ Add "Export Report" dropdown button to page
+- ✅ Add loading state during export generation
+- ✅ Add success/error toast notifications
+- ✅ Implement dropdown menu with both export options
 
-### Phase 3: PDF Generation
-- [ ] Capture annotated image with `html2canvas`
-- [ ] Generate PDF structure with `jsPDF`
-- [ ] Add score card and summary to page 1
-- [ ] Add annotated screenshot to page 1
-- [ ] Add detailed annotations list starting page 2
-- [ ] Sort annotations by severity (Critical → Moderate → Minor)
-- [ ] Add RizzGPT branding/footer
+### Phase 3: PDF Generation ✅
+- ✅ Capture annotated image with `html-to-image`
+- ✅ Generate PDF structure with `pdfmake`
+- ✅ Add score card and summary to page 1
+- ✅ Add annotated screenshot to page 1
+- ✅ Add detailed annotations list starting page 2
+- ✅ Sort annotations by severity (Critical → Moderate → Minor)
+- ✅ Add RizzGPT branding/footer
 
-### Phase 4: Polish
-- [ ] Add timestamp to report
-- [ ] Style PDF with brand colors
+### Phase 4: Polish ✅
+- ✅ Add timestamp to report
+- ✅ Style PDF with brand colors (purple-600, red, amber, green)
+- ✅ Optimize image quality (pixelRatio: 2)
 - [ ] Test on different screen sizes
-- [ ] Optimize image quality vs file size
-- [ ] Add analytics tracking for export feature usage
+- [ ] Add analytics tracking for export feature usage (future enhancement)
 
 ---
 
 ## Technical Implementation Details
 
-### File Structure
+### File Structure ✅
 ```
 src/
   lib/
     utils/
       export/
-        pdf-generator.ts         # Main PDF generation logic
-        image-capture.ts         # html2canvas wrapper
-        types.ts                 # Export-related types
+        pdf-generator.ts         # pdfmake PDF generation logic ✅
+        image-capture.util.ts    # html-to-image wrapper ✅
   ui/
     optimizer/
-      OptimizerHeader.svelte    # Add export button here
-      ExportButton.svelte       # New component (optional)
+      GenerateExportButton.svelte  # Dropdown export button ✅
+  routes/
+    optimizer/
+      [id]/
+        +page.svelte            # Updated to pass data to export button ✅
 ```
 
-### Key Functions
+### Key Functions ✅
 ```typescript
 // pdf-generator.ts
-export async function generateOptimizationReport(
-  optimization: ProfileOptimization,
+export async function generateOptimizationPDF(
+  data: {
+    score: number;
+    summary: string;
+    annotations: Annotation[];
+    timestamp?: Date;
+  },
   imageElement: HTMLElement
 ): Promise<Blob>
 
-// image-capture.ts
-export async function captureAnnotatedImage(
-  element: HTMLElement
-): Promise<string> // Returns base64 image
+// image-capture.util.ts
+export async function convertHtmlToImage(
+  element: HTMLElement,
+  options?: CaptureOptions
+): Promise<Blob | null>
+```
+
+### PDF Document Structure (pdfmake)
+```typescript
+- Page 1: Overview
+  - Header: "RizzGPT Profile Analysis"
+  - Timestamp
+  - Score card (color-coded by score)
+  - Summary section
+  - Annotated image (captured via html-to-image)
+
+- Page 2+: Detailed Recommendations
+  - Critical Issues (🔴 red)
+  - Moderate Issues (🟡 amber)
+  - Minor Improvements (🟢 green)
+  - Footer with RizzGPT branding
 ```
 
 ---
 
-## User Flow
+## User Flow ✅
 
 1. User views their optimization results at `/optimizer/[id]`
-2. User clicks "Export Report" button in OptimizerHeader
-3. Loading spinner appears
-4. System:
-   - Captures annotated image via html2canvas
-   - Generates PDF with jsPDF
-   - Combines image + text annotations
-5. Browser auto-downloads PDF: `rizzgpt-profile-analysis-{date}.pdf`
-6. Success toast: "Report downloaded successfully!"
+2. User clicks "Export Report" button (dropdown opens)
+3. User selects export format:
+   - **"Export as PDF"** - Full report with annotations
+   - **"Export as Image"** - PNG screenshot only
+4. Loading spinner appears
+5. System:
+   - **For PDF**: Captures annotated image via html-to-image → Generates PDF with pdfmake → Combines image + text annotations
+   - **For PNG**: Captures annotated image via html-to-image
+6. Browser auto-downloads file:
+   - PDF: `rizzgpt-profile-analysis-{date}.pdf`
+   - PNG: `rizzgpt-profile-analysis-{date}.png`
+7. Success toast: "PDF/Image exported successfully!"
 
 ---
 
