@@ -25,7 +25,7 @@
       const filename = `rizzgpt-profile-analysis-${timestamp}.png`;
 
       await captureAndDownloadImage(canvasContainerRef, filename, {
-        scale: 2,
+        pixelRatio: 2,
         backgroundColor: "#ffffff",
       });
 

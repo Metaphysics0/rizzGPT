@@ -113,6 +113,7 @@
         bind:this={imageRef}
         src={imageUrl}
         alt="Profile collage"
+        crossorigin="anonymous"
         class="w-full rounded-lg {isLoading ? 'opacity-0 absolute inset-0' : ''}"
         onerror={handleImageError}
         onload={handleImageLoad}
