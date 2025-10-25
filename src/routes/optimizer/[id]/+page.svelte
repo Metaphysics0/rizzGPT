@@ -28,6 +28,12 @@
   />
 
   <div class="w-full flex">
-    <GenerateExportButton {canvasContainerRef} className="mb-5 mx-auto" />
+    <GenerateExportButton
+      {canvasContainerRef}
+      score={Number(optimization.overallScore)}
+      summary={optimization.summary}
+      annotations={optimization.annotations}
+      className="mb-5 mx-auto"
+    />
   </div>
 </div>
