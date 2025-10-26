@@ -10,10 +10,12 @@
     annotations,
     fileName,
     containerRef = $bindable(),
+    exportMode = $bindable(false),
   }: {
     annotations: Annotation[];
     fileName: string;
     containerRef?: HTMLDivElement;
+    exportMode?: boolean;
   } = $props();
 
   let imageRef: HTMLImageElement | undefined = $state();
@@ -132,6 +134,7 @@
             {annotation}
             {position}
             isActive={activeAnnotationId === annotation.id}
+            hideBox={exportMode}
             onclick={() => handleAnnotationClick(annotation.id)}
           />
         {/each}

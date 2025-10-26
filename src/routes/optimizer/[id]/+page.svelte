@@ -8,6 +8,7 @@
   const { data }: { data: PageData } = $props();
   const { optimization } = $derived(data);
   let canvasContainerRef: HTMLDivElement | undefined = $state();
+  let exportMode = $state(false);
 </script>
 
 <div class="container mx-auto px-4 py-8 max-w-6xl">
@@ -20,6 +21,7 @@
     annotations={optimization.annotations}
     fileName={optimization.combinedImageFileName}
     bind:containerRef={canvasContainerRef}
+    bind:exportMode
   />
 
   <!-- <ProTip
@@ -33,6 +35,7 @@
       score={Number(optimization.overallScore)}
       summary={optimization.summary}
       annotations={optimization.annotations}
+      bind:exportMode
       className="mb-5 mx-auto"
     />
   </div>

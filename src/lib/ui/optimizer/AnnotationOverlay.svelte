@@ -6,11 +6,13 @@
     annotation,
     position,
     isActive = false,
+    hideBox = false,
     onclick,
   }: {
     annotation: Annotation;
     position: PixelPosition;
     isActive: boolean;
+    hideBox?: boolean;
     onclick: () => void;
   } = $props();
 
@@ -40,9 +42,9 @@
 
 <!-- Bounding box with dashed border -->
 <button
-  class="absolute border-3 border-dashed rounded-lg cursor-pointer transition-all duration-200 {severityBorderColors[
-    annotation.severity
-  ]} {isActive ? 'bg-black/10' : 'bg-transparent hover:bg-black/5'}"
+  class="absolute rounded-lg cursor-pointer transition-all duration-200 {hideBox
+    ? 'border-0 bg-transparent pointer-events-none'
+    : `border-3 border-dashed ${severityBorderColors[annotation.severity]} ${isActive ? 'bg-black/10' : 'bg-transparent hover:bg-black/5'}`}"
   style:left="{position.left}px"
   style:top="{position.top}px"
   style:width="{position.width}px"
@@ -62,10 +64,12 @@
   </div>
 </button>
 
-<div
-  class="absolute"
-  style:left="{cardPosition.left}px"
-  style:bottom="{cardPosition.bottom}px"
->
-  <AnnotationCard {annotation} {isActive} />
-</div>
+{#if !hideBox}
+  <div
+    class="absolute"
+    style:left="{cardPosition.left}px"
+    style:bottom="{cardPosition.bottom}px"
+  >
+    <AnnotationCard {annotation} {isActive} />
+  </div>
+{/if}

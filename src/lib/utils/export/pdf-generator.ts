@@ -1,5 +1,4 @@
 import pdfMake from "pdfmake/build/pdfmake";
-import pdfFonts from "pdfmake/build/vfs_fonts";
 import type { TDocumentDefinitions, Content } from "pdfmake/interfaces";
 import { convertHtmlToImage } from "./image-capture.util";
 import type { Annotation } from "$lib/types";
@@ -53,26 +52,28 @@ function groupAnnotationsBySeverity(annotations: Annotation[]) {
   };
 }
 
-function createAnnotationList(
-  annotations: Annotation[],
-  startNumber: number,
-): Content[] {
+function createAnnotationList(annotations: Annotation[]): Content[] {
   if (annotations.length === 0) return [];
 
-  return annotations.map((annotation, index) => ({
-    stack: [
-      {
-        text: `${startNumber + index}. ${annotation.title}`,
-        style: "annotationTitle",
-        marginBottom: 4,
-      },
-      {
-        text: annotation.suggestion,
-        style: "annotationText",
-        marginBottom: 12,
-      },
-    ],
-  }));
+  return annotations.map((annotation) => {
+    // Extract annotation number from ID (e.g., "ann_1" -> "1")
+    const annotationNumber = annotation.id.split("_")[1];
+
+    return {
+      stack: [
+        {
+          text: `${annotationNumber}. ${annotation.title}`,
+          style: "annotationTitle",
+          marginBottom: 4,
+        },
+        {
+          text: annotation.suggestion,
+          style: "annotationText",
+          marginBottom: 12,
+        },
+      ],
+    };
+  });
 }
 
 async function captureAnnotatedImageAsBase64(
@@ -107,7 +108,6 @@ export async function generateOptimizationPDF(
   const imageBase64 = await captureAnnotatedImageAsBase64(imageElement);
 
   const grouped = groupAnnotationsBySeverity(annotations);
-  let annotationCounter = 1;
 
   const content: Content[] = [
     // header
@@ -181,9 +181,6 @@ export async function generateOptimizationPDF(
         ]
       : []),
 
-    // Page break before detailed annotations
-    // { text: "", pageBreak: "after" as const },
-
     // Detailed Recommendations Header
     {
       text: "Detailed Recommendations",
@@ -213,10 +210,8 @@ export async function generateOptimizationPDF(
           marginTop: 15,
           marginBottom: 10,
         },
-        ...createAnnotationList(severityAnnotations, annotationCounter),
+        ...createAnnotationList(severityAnnotations),
       );
-
-      annotationCounter += severityAnnotations.length;
     }
   }
 
