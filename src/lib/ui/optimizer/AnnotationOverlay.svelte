@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { Annotation, PixelPosition } from "$lib/types";
+  import { cn } from "$lib/utils";
   import AnnotationCard from "./AnnotationCard.svelte";
 
   let {
@@ -42,9 +43,12 @@
 
 <!-- Bounding box with dashed border -->
 <button
-  class="absolute rounded-lg cursor-pointer transition-all duration-200 {hideBox
-    ? 'border-0 bg-transparent pointer-events-none'
-    : `border-3 border-dashed ${severityBorderColors[annotation.severity]} ${isActive ? 'bg-black/10' : 'bg-transparent hover:bg-black/5'}`}"
+  class={cn(
+    "absolute rounded-lg cursor-pointer transition-all duration-200",
+    hideBox && "border-0 bg-transparent pointer-events-none",
+    !hideBox &&
+      `border-3 border-dashed ${severityBorderColors[annotation.severity]} ${isActive ? "bg-black/10" : "bg-transparent hover:bg-black/5"}`,
+  )}
   style:left="{position.left}px"
   style:top="{position.top}px"
   style:width="{position.width}px"
