@@ -22,12 +22,12 @@
     bind:containerRef={canvasContainerRef}
   />
 
-  <ProTip
+  <!-- <ProTip
     className="my-6 text-lg"
     text="Click on one of the annotations to see the analysis suggestion"
-  />
+  /> -->
 
-  <div class="w-full flex">
+  <div class="w-full flex my-5">
     <GenerateExportButton
       {canvasContainerRef}
       score={Number(optimization.overallScore)}
