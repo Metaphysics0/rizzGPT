@@ -9,6 +9,7 @@
   import { authClient } from "$lib/auth-client";
   import { goto, invalidateAll, refreshAll } from "$app/navigation";
   import { cn } from "$lib/utils";
+  import NewBadge from "../general/NewBadge.svelte";
 
   const user = page.data.user;
 
@@ -28,6 +29,7 @@
     icon: string;
     href: string;
     disabled?: boolean;
+    isNewFeature?: boolean;
   }
 
   const MENU_ITEMS: MenuItem[] = [
@@ -51,7 +53,7 @@
       label: "AI Profile Optimizer",
       icon: "mingcute:quill-pen-ai-fill",
       href: "/optimizer",
-      // disabled: true,
+      isNewFeature: true,
     },
     {
       label: "Profile",
@@ -151,7 +153,7 @@
                       </p>
                       <SubscriptionStatusBadge
                         status={user.subscriptions?.find(
-                          (sub) => sub.status === "active"
+                          (sub) => sub.status === "active",
                         )
                           ? "pro"
                           : "free"}
@@ -175,11 +177,16 @@
                       item.disabled &&
                         "cursor-not-allowed opacity-20 pointer-events-none",
                       page.route.id === item.href &&
-                        "bg-slate-100 text-slate-600"
+                        "bg-slate-100 text-slate-600",
                     )}
                   >
                     <Icon icon={item.icon} class="h-4 w-4" />
-                    {item.label}
+                    <span>
+                      {item.label}
+                    </span>
+                    {#if item.isNewFeature}
+                      <NewBadge className="ml-auto" />
+                    {/if}
                   </a>
                 {/each}
 

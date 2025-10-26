@@ -4,9 +4,6 @@ import type { TDocumentDefinitions, Content } from "pdfmake/interfaces";
 import { convertHtmlToImage } from "./image-capture.util";
 import type { Annotation } from "$lib/types";
 
-// Initialize pdfMake with fonts
-// pdfMake.vfs = pdfFonts.pdfMake.vfs;
-
 interface PDFReportData {
   score: number;
   summary: string;
@@ -107,16 +104,13 @@ export async function generateOptimizationPDF(
 ): Promise<Blob> {
   const { score, summary, annotations, timestamp = new Date() } = data;
 
-  // Capture the annotated image
   const imageBase64 = await captureAnnotatedImageAsBase64(imageElement);
 
-  // Group annotations by severity
   const grouped = groupAnnotationsBySeverity(annotations);
   let annotationCounter = 1;
 
-  // Build PDF content
   const content: Content[] = [
-    // Header
+    // header
     {
       text: "RizzGPT Profile Analysis",
       style: "header",
@@ -234,7 +228,6 @@ export async function generateOptimizationPDF(
     marginTop: 30,
   });
 
-  // Define document structure
   const docDefinition: TDocumentDefinitions = {
     content,
     styles: {
@@ -292,13 +285,10 @@ export async function generateOptimizationPDF(
     pageMargins: [40, 40, 40, 40],
   };
 
-  // Generate PDF and return as Blob
   return new Promise((resolve, reject) => {
     try {
       const pdfDocGenerator = pdfMake.createPdf(docDefinition);
-      pdfDocGenerator.getBlob((blob) => {
-        resolve(blob);
-      });
+      pdfDocGenerator.getBlob((blob) => resolve(blob));
     } catch (error) {
       reject(error);
     }
