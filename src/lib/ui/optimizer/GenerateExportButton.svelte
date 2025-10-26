@@ -6,18 +6,21 @@
   import Icon from "@iconify/svelte";
   import toast from "svelte-french-toast";
   import type { Annotation } from "$lib/types";
+  import { tick } from "svelte";
 
   let {
     canvasContainerRef,
     score,
     summary,
     annotations,
+    exportMode = $bindable(false),
     className,
   }: {
     canvasContainerRef?: HTMLDivElement;
     score: number;
     summary: string;
     annotations: Annotation[];
+    exportMode?: boolean;
     className?: string;
   } = $props();
 
@@ -34,6 +37,11 @@
     showDropdown = false;
 
     try {
+      // Enable export mode to hide bounding boxes
+      exportMode = true;
+      // Wait for DOM to update
+      await tick();
+
       const imageBlob = await convertHtmlToImage(canvasContainerRef);
 
       if (!imageBlob) throw new Error("Failed to create image");
@@ -46,6 +54,8 @@
       console.error("Failed to export image:", error);
       toast.error("Failed to export image. Please try again.");
     } finally {
+      // Restore normal view
+      exportMode = false;
       isExporting = false;
     }
   }
@@ -60,6 +70,11 @@
     showDropdown = false;
 
     try {
+      // Enable export mode to hide bounding boxes
+      exportMode = true;
+      // Wait for DOM to update
+      await tick();
+
       const pdfBlob = await generateOptimizationPDF(
         {
           score,
@@ -79,6 +94,8 @@
       console.error("Failed to export PDF:", error);
       toast.error("Failed to export PDF. Please try again.");
     } finally {
+      // Restore normal view
+      exportMode = false;
       isExporting = false;
     }
   }
