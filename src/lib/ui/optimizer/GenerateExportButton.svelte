@@ -99,7 +99,7 @@
       <span>Exporting...</span>
     {:else}
       <Icon icon="mingcute:download-2-line" class="w-5 h-5" />
-      <span>Export Report</span>
+      <span>Export Report!</span>
       <Icon
         icon="mingcute:down-line"
         class="w-4 h-4 transition-transform {showDropdown ? 'rotate-180' : ''}"
@@ -119,9 +119,7 @@
         <Icon icon="mingcute:file-pdf-line" class="w-5 h-5 text-red-500" />
         <div class="flex-1">
           <div class="text-sm font-medium text-gray-900">Export as PDF</div>
-          <div class="text-xs text-gray-500">
-            Full report with annotations
-          </div>
+          <div class="text-xs text-gray-500">Full report with annotations</div>
         </div>
       </button>
 

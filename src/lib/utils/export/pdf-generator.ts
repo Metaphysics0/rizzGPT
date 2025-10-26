@@ -182,7 +182,7 @@ export async function generateOptimizationPDF(
       : []),
 
     // Page break before detailed annotations
-    { text: "", pageBreak: "after" as const },
+    // { text: "", pageBreak: "after" as const },
 
     // Detailed Recommendations Header
     {
