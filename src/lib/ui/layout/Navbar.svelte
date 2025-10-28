@@ -58,7 +58,7 @@
 </script>
 
 <nav
-  class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 {scrolled
+  class="transition-all duration-300 {scrolled
     ? 'backdrop-blur-md bg-white/80 border-b border-gray-200/50'
     : 'bg-transparent'}"
 >
@@ -80,11 +80,10 @@
     <div class="flex gap-5 items-center">
       {#if page.data.user}
         {#if page.url.pathname === "/"}
-          <div class={cn("mr-0 md:mr-24")}>
-            <LinkButton label="Generate Rizz!" href="/conversation-helper" />
-          </div>
+          <LinkButton label="Generate Rizz!" href="/conversation-helper" />
         {/if}
         <ProfileDropdownMenu
+          user={page.data.user}
           wrapperClass={cn(page.url.pathname === "/" && "hidden md:block")}
         />
       {:else}
