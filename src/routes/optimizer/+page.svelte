@@ -6,7 +6,6 @@
   import FormHeader from "$lib/ui/form/FormHeader.svelte";
 </script>
 
-x
 <svelte:head>
   <title>RizzGPT - Profile Optimizer</title>
 </svelte:head>
